@@ -33,25 +33,25 @@
 		import { Mug } from "assets/mug.js";
 
 		var gui = install( Mug );
+		var guiS = gui.addFolder( '<big>Sizes</big> <right>cm</right>' )
 
-
-		gui.add( params, 'height' )
-			.min( 5 ).max( 20 ).step(0.1)
-			.name( 'Height<right>cm</right>' )
+		guiS.add( params, 'height' )
+			.min( 5 ).max( 20 ).step(0.01)
+			.name( 'Height' )
 			.$input.classList.add( 'top' );
 
-		gui.add( params, 'wallWidth' )
-			.min( 0.5 ).max( 1 ).step(0.01)
-			.name( 'Wall<right>cm</right>' );
+		guiS.add( params, 'widthTop' )
+			.min( 6 ).max( 12 ).step(0.01)
+			.name( 'Width <right>top</right>' );
 
-		gui.add( params, 'radiusTop' )
-			.min( 5 ).max( 10 ).step(0.1)
-			.name( 'Radius <right>top</right>' );
-
-		gui.add( params, 'radiusBottom' )
-			.min( 3 ).max( 10 ).step(0.1)
+		guiS.add( params, 'widthBottom' )
+			.min( 6 ).max( 12 ).step(0.01)
 			.name( '<right>bottom</right>' );
 		
+		guiS.add( params, 'thickness' )
+			.min( 0.3 ).max( 1 ).step(0.001)
+			.name( 'Thickness' );
+
 	</script>
 </body>
 </html>

@@ -14,30 +14,31 @@ class Mug extends THREE.Group {
 		$name: 'Mug',
 
 		height: 10, // cm
-		wallWidth: 0.8, // cm
-		radiusTop: 4, // cm
-		radiusBottom: 4, // cm
+		widthTop: 8, // cm
+		widthBottom: 8, // cm
+		thickness: 0.4, // cm
 	};
 
 	constructor ( {params} ) {
 	
 		super( );
 		
-		var W = ASSETS.cm(params.wallWidth),
-			RT = ASSETS.cm(params.radiusTop),
-			RB = ASSETS.cm(params.radiusBottom),
+		
+		var T = ASSETS.cm(params.thickness),
+			WT = ASSETS.cm(params.widthTop)/2,
+			WB = ASSETS.cm(params.widthBottom)/2,
 			H = ASSETS.cm(params.height);
 		
 		var G = 0.01;
-			G = THREE.MathUtils.clamp( G, 0, 0.48*W );
+			G = THREE.MathUtils.clamp( G, 0, 0.48*T );
 		
 		// mug body
 		var shape = new ASSETS.RoundedShape( [
-			[0,W],
-			[RB-W,W,2*G],
-			[RT-W,H,G],
-			[RT,H,G],
-			[RB,0,3*G],
+			[0,T],
+			[WB-T,T,2*G],
+			[WT-T,H,G],
+			[WT,H,G],
+			[WB,0,3*G],
 			[0,0],			
 		] );
 		
@@ -46,6 +47,8 @@ class Mug extends THREE.Group {
 		this.body = new THREE.Mesh( geometry, ASSETS.defaultMaterial );
 
 		this.add( this.body );
+		
+		this.position.set( 0, -H/2, 0 );
 		
 	} // Mug.constructor
 	

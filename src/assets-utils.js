@@ -8,9 +8,9 @@
 //	defaultMaterial
 
 
-import {Shape, Vector2, DoubleSide, Color} from 'three';
-import { MeshPhysicalNodeMaterial } from 'three/nodes';
-import { marble } from "tsl-textures/marble.js";
+import {Shape, Vector2, DoubleSide, MeshPhysicalMaterial } from 'three';
+//import { MeshPhysicalNodeMaterial } from 'three/nodes';
+//import { marble } from "tsl-textures/marble.js";
 
 
 // 2D curve with rounded vertices
@@ -77,6 +77,7 @@ function cm( x )
 
 
 // drfault material for assets
+/*
 var defaultMaterial = new MeshPhysicalNodeMaterial( {
 		roughness: 0,
 		metalness: 0.2,
@@ -89,6 +90,13 @@ var defaultMaterial = new MeshPhysicalNodeMaterial( {
 			background: new Color(0xffffff),
 			seed: 0
 		} )
+} );
+*/
+var defaultMaterial = new MeshPhysicalMaterial( {
+		color: 'white',
+		roughness: 0,
+		metalness: 0.2,
+		side: DoubleSide,
 } );
 
 

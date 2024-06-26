@@ -2,7 +2,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import * as lil from "three/addons/libs/lil-gui.module.min.js";
-import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
+//import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 
 
 const HOME_URL = '../';
@@ -14,7 +14,8 @@ var params = {};
 
 // setting up the scene
 
-var renderer = new WebGPURenderer( { antialias: true } );
+//var renderer = new WebGPURenderer( { antialias: true } );
+var renderer = new THREE.WebGLRenderer( { antialias: true } );
 renderer.setSize( innerWidth, innerHeight );
 renderer.setAnimationLoop( animationLoop );
 renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
@@ -69,6 +70,9 @@ function animationLoop( /*t*/ ) {
 
 	controls.update( );
 	light.position.copy( camera.position );
+	light.position.x += 0.05;
+	light.position.y += 0.05;
+	light.position.z += 0.05;
 	renderer.render( scene, camera );
 
 }
@@ -180,7 +184,7 @@ function install( Asset ) {
 	var object = new Asset( {params} );
 	model.add( object );
 	
-	return gui.addFolder( '<big>Options</big>' );
+	return gui;
 
 	function regenerateAsset( ) {
 

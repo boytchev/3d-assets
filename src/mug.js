@@ -55,6 +55,12 @@ class Mug extends THREE.Group {
 		this.body.material.dispose( );
 	} // Mug.dispose
 		
+		
+	random( ) {
+		// TO DO
+	} // Mug.random
+	
+	
 } // Mug
 
 

@@ -8,8 +8,7 @@ import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 const HOME_URL = '../';
 
 
-var params = {},
-	dynamics = {};
+var params = {};
 
 
 
@@ -281,7 +280,7 @@ model.material.opacityNode = ${name}.opacity ( {
 }
 */
 
-function goHome( event ) {
+function goHome( /*event*/ ) {
 
 	window.location.assign( HOME_URL );
 

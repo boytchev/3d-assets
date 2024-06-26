@@ -81,19 +81,16 @@ var defaultMaterial = new MeshPhysicalNodeMaterial( {
 		roughness: 0,
 		metalness: 0.2,
 		side: DoubleSide,
-} );
-
-if( !true )
-{
-	defaultMaterial.colorNode = marble( {
+		colorNode: marble( {
 			scale: 4,
 			thinness: 12,
 			noise: 0,
 			color: new Color(0xd0e0ff),
 			background: new Color(0xffffff),
 			seed: 0
-		} );
-}
+		} )
+} );
+
 
 
 export { RoundedShape, cm, defaultMaterial };

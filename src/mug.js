@@ -38,8 +38,10 @@ class Mug extends THREE.Group {
 			[WB-T,T,2*G],
 			[WT-T,H,G],
 			[WT,H,G],
-			[WB,0,3*G],
-			[0,0],			
+			[WB,0,2*G],
+			[WB-T,0,G],
+			[WB-2*T,T/4,G],
+			[0,T/4],			
 		] );
 		
 		var geometry = new THREE.LatheGeometry( shape.getPoints(6), 60 );

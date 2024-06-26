@@ -1,11 +1,11 @@
 {
-  "name": "assets",
+  "name": "3d-assets",
   "version": "0.0.1",
   "description": "Procedural 3D assets",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/boytchev/assets.git"
+    "url": "git+https://github.com/boytchev/3d-assets.git"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,7 +16,7 @@
     "assets",
     "generators"
   ],
-  "homepage": "https://boytchev.github.io/assets/",
+  "homepage": "https://boytchev.github.io/3d-assets/",
   "author": "Pavel Boytchev",
   "files": [
     "LICENSE",
@@ -26,7 +26,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/boytchev/assets/issues"
+    "url": "https://github.com/boytchev/3d-assets/issues"
   },
   "devDependencies": {
     "@eslint/js": "^9.5.0",

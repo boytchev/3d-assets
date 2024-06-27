@@ -12,7 +12,7 @@ on a snapshot to open it online.
 
 <p class="gallery">
 
-	<a class="style-block nocaption" href="../online/mug.html?mugHeight=19.91&mugSize=9.28&mugShape=-0.6&mugWidth=0.999&handlePosition=75&handleHeight=17.82&handleSize=9.14&handleShape=-17.3&handleWidth=1.84&handleThickness=0.36&complexity=63.02&complexityHandle=23.16">
+	<a class="style-block nocaption" href="../online/mug.html?mugHeight=10&mugSize=8&mugShape=0&mugWidth=0.4&handlePosition=20&handleHeight=6&handleSize=7&handleShape=20&handleWidth=1.5&handleThickness=0.6&complexity=70&complexityHandle=70">
 		<img src="images/mug-1.png">
 	</a>
 

@@ -138,9 +138,11 @@ function install( Asset ) {
 	gui.$title.style.marginBottom = "2em";
 	gui.onChange( regenerateAsset );
 
-	document.getElementById( 'home' ).addEventListener( 'click', (event)=>{
+	document.getElementById( 'home' ).addEventListener( 'click', ( event )=>{
+
 		event.stopPropagation();
 		goHome();
+
 	} );
 	document.getElementById( 'info' ).addEventListener( 'click', ( event )=>{
 
@@ -150,49 +152,50 @@ function install( Asset ) {
 	} );
 
 	document.getElementById( 'url' ).addEventListener( 'click', ( event )=>{
-		
+
 		event.stopPropagation();
-		window.alert("Export of a link is not implemented");
+		window.alert( "Export of a link is not implemented" );
 		//shareURL( event, name );
 
 	} );
-	
+
 	document.getElementById( 'code' ).addEventListener( 'click', ( event )=>{
 
 		event.stopPropagation();
-		window.alert("Export of a code is not implemented");
+		window.alert( "Export of a code is not implemented" );
 		//getCode( event, funcname, filename, tslTexture );
 
 	} );
-	
+
 	document.getElementById( 'gltf' ).addEventListener( 'click', ( event )=>{
 
 		event.stopPropagation();
-		window.alert("Export of a GLTF is not implemented");
+		window.alert( "Export of a GLTF is not implemented" );
 
 	} );
-	
+
 	document.getElementById( 'random' )?.addEventListener( 'click', randomModel );
 
 	onResize( );
 
-/*
+	/*
 	processParameters( ); // causes recalculation of dynamics
 
 */
 
-	var object = new Asset( {params} );
+	var object = new Asset( { params } );
 	model.add( object );
-	
+
 	return gui;
 
 	function regenerateAsset( ) {
 
 		model.clear( );
 		object.dispose( );
-		object = new Asset( {params} );
+		object = new Asset( { params } );
 		model.add( object );
-	}	
+
+	}
 
 }
 
@@ -302,6 +305,7 @@ function randomModel( event ) {
 
 	event.stopPropagation();
 	// to do
+
 }
 
 

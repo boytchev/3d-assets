@@ -4,7 +4,7 @@
 
 
 
-import {Shape, Vector2, DoubleSide, MeshPhysicalMaterial, MathUtils } from 'three';
+import { DoubleSide, MathUtils, MeshPhysicalMaterial, Shape, Vector2 } from 'three';
 //import { MeshPhysicalNodeMaterial } from 'three/nodes';
 //import { marble } from "tsl-textures/marble.js";
 
@@ -13,69 +13,75 @@ import {Shape, Vector2, DoubleSide, MeshPhysicalMaterial, MathUtils } from 'thre
 // path = [vertex, vertex, vertex,...]
 // where sharp vertex = [x,y]
 // rounded vertex = [x,y,radius]
-class RoundedShape extends Shape
-{
-	constructor( path )
-	{
+class RoundedShape extends Shape {
+
+	constructor( path ) {
+
 		super();
-		
+
 		var v = new Vector2(), // current point
 			u = new Vector2();
-			
+
 		var len, r;
-		
-		for( var i=0; i< path.length; i++ )
-		{
-			var point = path[i];
-			if( point.length == 2 )
-			{
+
+		for ( var i=0; i< path.length; i++ ) {
+
+			var point = path[ i ];
+			if ( point.length == 2 ) {
+
 				// [x, y]
 				v.set( ...point );
-				if( i == 0 )
+				if ( i == 0 )
 					this.moveTo( v.x, v.y );
 				else
 					this.lineTo( v.x, v.y );
-			}
-			else
-			{
+
+			} else {
+
 				// [x, y, radius]
-				var radius = point[2];
-					
-				function calc()
-				{
-					v = v.sub(u);
+				var radius = point[ 2 ];
+
+				function calc() {
+
+					v = v.sub( u );
 					len = v.length();
 					r = Math.min( radius, 0.8*len );
-					v.setLength(r);
-					v.addVectors(u,v);
+					v.setLength( r );
+					v.addVectors( u, v );
+
 				}
-				
-				u.set(point[0],point[1]);
+
+				u.set( point[ 0 ], point[ 1 ]);
 				calc();
 				this.lineTo( v.x, v.y );
-				
-				v.set( path[i+1][0], path[i+1][1] );
+
+				v.set( path[ i+1 ][ 0 ], path[ i+1 ][ 1 ]);
 				calc();
 				this.quadraticCurveTo( u.x, u.y, v.x, v.y );
+
 			}
+
 		}
+
 	}
+
 } // class RoundedShape
 
 
 
 // converts centimeters to meters
-function cm( x )
-{
+function cm( x ) {
+
 	return x/100;
+
 } // cm
 
 
 // converts degrees to slope
-function slope( x )
-{
-	return Math.sin(x*Math.PI/180);
-	
+function slope( x ) {
+
+	return Math.sin( x*Math.PI/180 );
+
 } // sope
 
 
@@ -98,10 +104,10 @@ var defaultMaterial = new MeshPhysicalNodeMaterial( {
 } );
 */
 var defaultMaterial = new MeshPhysicalMaterial( {
-		color: 'white',
-		roughness: 0,
-		metalness: 0.2,
-		side: DoubleSide,
+	color: 'white',
+	roughness: 0,
+	metalness: 0.2,
+	side: DoubleSide,
 } );
 
 

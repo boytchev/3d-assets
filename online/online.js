@@ -109,7 +109,7 @@ function install( Asset ) {
 		}
 
 
-	var name = Asset.defaults.$name;
+	var name = Asset.name;
 	var filename = name.split( ' ' ).join( '-' ).toLowerCase();
 
 	var funcname = name.split( ' ' );
@@ -122,7 +122,7 @@ function install( Asset ) {
 
 	funcname = funcname.join( '' );
 
-	var title = `<big><em>${Asset.defaults.$name}</em> generator</big>
+	var title = `<big><em>${Asset.name}</em> generator</big>
 			<small class="fullline">
 				<span id="home" class="link">HOME</span> &middot; 
 				<span id="url" class="link">LINK</span> &middot; 

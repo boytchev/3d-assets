@@ -32,25 +32,71 @@
 		import { install, params, model } from "./online.js";
 		import { Mug } from "assets/mug.js";
 
-		var gui = install( Mug );
-		var guiS = gui.addFolder( '<big>Sizes</big> <right>cm</right>' )
 
-		guiS.add( params, 'height' )
-			.min( 5 ).max( 20 ).step(0.01)
-			.name( 'Height' )
+
+		var gui = install( Mug );
+		
+		
+		
+		var guiM = gui.addFolder( '<big>Mug</big>' )
+
+		guiM.add( params, 'mugHeight' )
+			.min( 7 ).max( 20 ).step(0.01)
+			.name( 'Height<right>cm</right>' )
 			.$input.classList.add( 'top' );
 
-		guiS.add( params, 'widthTop' )
+		guiM.add( params, 'mugSize' )
 			.min( 6 ).max( 12 ).step(0.01)
-			.name( 'Width <right>top</right>' );
+			.name( 'Size<right>cm</right>' );
 
-		guiS.add( params, 'widthBottom' )
-			.min( 6 ).max( 12 ).step(0.01)
-			.name( '<right>bottom</right>' );
+		guiM.add( params, 'mugShape' )
+			.min( -15 ).max( 15 ).step(0.1)
+			.name( 'Shape<right>&deg;</right>' );
 		
-		guiS.add( params, 'thickness' )
+		guiM.add( params, 'mugWidth' )
 			.min( 0.3 ).max( 1 ).step(0.001)
+			.name( 'Width<right>cm</right>' )
+			.$input.classList.add( 'bottom' );
+
+
+			
+		var guiH = gui.addFolder( '<big>Handle</big>' )
+		
+		guiH.add( params, 'handlePosition' )
+			.min( -100 ).max( 100 ).step(1)
+			.name( 'Position<right>%</right>' );
+
+		guiH.add( params, 'handleHeight' )
+			.min( 3 ).max( 18 ).step(0.01)
+			.name( 'Height<right>cm</right>' );
+		
+		guiH.add( params, 'handleSize' )
+			.min( 3 ).max( 10 ).step(0.01)
+			.name( 'Size<right>cm</right>' );
+
+		guiH.add( params, 'handleShape' )
+			.min( -40 ).max( 40 ).step(0.1)
+			.name( 'Shape <right>&deg;</right>' );
+
+		guiH.add( params, 'handleWidth' )
+			.min( 1 ).max( 2 ).step(0.01)
+			.name( 'Width <right>cm</right>' );
+		
+		guiH.add( params, 'handleThickness' )
+			.min( 0.3 ).max( 1 ).step(0.01)
 			.name( 'Thickness' );
+
+			
+		var guiT = gui.addFolder( '<big>Complexity</big><span id="show-vertices"></span>' )
+
+		guiT.add( params, 'complexity' )
+			.min( 0 ).max( 100 )
+			.name( 'Mug<right>%</right>' );
+		
+		guiT.add( params, 'complexityHandle' )
+			.min( 0 ).max( 100 )
+			.name( 'Handle<right>%</right>' );
+		
 
 	</script>
 </body>

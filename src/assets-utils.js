@@ -1,14 +1,10 @@
 ﻿
 //	Assets: Unitity functions and classes
 //
-//	new RoundedShape(path)
-//
-//	cm( x )
-//
-//	defaultMaterial
 
 
-import {Shape, Vector2, DoubleSide, MeshPhysicalMaterial } from 'three';
+
+import {Shape, Vector2, DoubleSide, MeshPhysicalMaterial, MathUtils } from 'three';
 //import { MeshPhysicalNodeMaterial } from 'three/nodes';
 //import { marble } from "tsl-textures/marble.js";
 
@@ -68,11 +64,20 @@ class RoundedShape extends Shape
 
 
 
-// convert centimeters to meters
+// converts centimeters to meters
 function cm( x )
 {
 	return x/100;
 } // cm
+
+
+// converts degrees to slope
+function slope( x )
+{
+	return Math.sin(x*Math.PI/180);
+	
+} // sope
+
 
 
 
@@ -101,4 +106,26 @@ var defaultMaterial = new MeshPhysicalMaterial( {
 
 
 
-export { RoundedShape, cm, defaultMaterial };
+// linear map between two intervals
+function map( x, toMin=0, toMax=1, fromMin=0, fromMax=100 ) {
+
+	x = MathUtils.mapLinear( x, fromMin, fromMax, toMin, toMax );
+
+	return x;
+
+}
+
+
+
+// exponential map between two intervals
+function mapExp( x, toMin, toMax, fromMin=0, fromMax=100 ) {
+
+	x = map( x, 0, 1, fromMin, fromMax );
+	x = 2**( x * Math.log2( toMax/toMin ) + Math.log2( toMin ) );
+
+	return x;
+
+}
+
+
+export { RoundedShape, cm, slope, defaultMaterial, map, mapExp };

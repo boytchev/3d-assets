@@ -24,11 +24,20 @@ h3 {
 	font-weight: normal;
 }
 
+.bottomfixed {
+	position: absolute;
+	bottom: 0;
+	z-index: 10;
+	width: 100%;
+}
+
 .footnote {
+	border-top: solid whitesmoke 1px;
 	text-align: center;
 	font-size: 1em;
-	font-weight: normal;
+	margin-bottom: 1em;
 }
+
 
 .lil-gui {
 	--name-width: 6em;
@@ -93,6 +102,10 @@ a, .link {
 	padding: 0.25em;
 }
 
+.footnote a {
+	font-weight: 300;
+}
+
 a:hover, a:visited, a:link, a:active, .link:hover {
 	color: gray;
 	text-decoration: none;
@@ -102,6 +115,11 @@ a:hover, a:visited, a:link, a:active, .link:hover {
 a:hover, .link:hover {
 	text-decoration: none;
 	color: white;
+}
+
+.footnote a:hover {
+	text-decoration: none;
+	color: black;
 }
 
 .lil-gui .controller.string input {

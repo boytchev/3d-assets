@@ -139,13 +139,28 @@ class Mug extends THREE.Group {
 	} // Mug.dispose
 
 
-	random( ) {
-		// TO DO
+	// returns a set of random parameters
+	static random( ) {
+		return {
+			mugHeight: ASSETS.random(7,20),
+			mugSize: ASSETS.random(6,12),
+			mugShape: ASSETS.random(-15,15,1),
+			mugWidth: ASSETS.random(0.3,1,3),
+
+			handlePosition: ASSETS.random(-100,100,0),
+			handleHeight: ASSETS.random(3,18),
+			handleSize: ASSETS.random(3,10),
+			handleShape: ASSETS.random(-40,40,1),
+			handleWidth: ASSETS.random(1,2),
+			handleThickness: ASSETS.random(0.3,1),
+
+			complexity: ASSETS.random(0,50)+ASSETS.random(0,50),
+			complexityHandle: ASSETS.random(0,50)+ASSETS.random(0,50),
+		};
 	} // Mug.random
 
 
 } // Mug
-
 
 
 

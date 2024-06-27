@@ -6,32 +6,26 @@
 
 ## Mug
 
-TO DO (Intro)
-
-TO DO (Demos)
-
-<!--
-This texture immitates the grains of a rough concrete 
-surface. It is designed to be used as normap map node on
-a mesh with material with tangents. Click on a snapshot to
-open it online.
+This generator creates a 3D mug with a handle. A set of
+parameters control the size and the shape of the mug. Click
+on a snapshot to open it online.
 
 <p class="gallery">
 
-	<a class="style-block nocaption" href="../online/concrete.html?scale=2&density=0.5&bump=1.72&seed=0">
-		<img src="images/concrete-1.png">
+	<a class="style-block nocaption" href="../online/mug.html?mugHeight=19.91&mugSize=9.28&mugShape=-0.6&mugWidth=0.999&handlePosition=75&handleHeight=17.82&handleSize=9.14&handleShape=-17.3&handleWidth=1.84&handleThickness=0.36&complexity=63.02&complexityHandle=23.16">
+		<img src="images/mug-1.png">
 	</a>
 
-	<a class="style-block nocaption" href="../online/concrete.html?scale=0&density=0.63&bump=2&seed=0">
-		<img src="images/concrete-2.png">
+	<a class="style-block nocaption" href="../online/mug.html?mugHeight=9.86&mugSize=8.46&mugShape=-13.5&mugWidth=0.699&handlePosition=56&handleHeight=6.9&handleSize=5.66&handleShape=40&handleWidth=1.04&handleThickness=0.76&complexity=89.79&complexityHandle=53.03">
+		<img src="images/mug-2.png">
 	</a>
 
-	<a class="style-block nocaption" href="../online/concrete.html?scale=2.6&density=0.14&bump=-2&seed=0">
-		<img src="images/concrete-3.png">
+	<a class="style-block nocaption" href="../online/mug.html?mugHeight=14.54&mugSize=9.48&mugShape=15&mugWidth=0.699&handlePosition=-100&handleHeight=6.9&handleSize=5.66&handleShape=-16.8&handleWidth=2&handleThickness=0.76&complexity=100&complexityHandle=53.03">
+		<img src="images/mug-3.png">
 	</a>
 
 </p>
-->>
+
 
 ### Code example
 

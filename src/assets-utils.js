@@ -134,4 +134,14 @@ function mapExp( x, toMin, toMax, fromMin=0, fromMax=100 ) {
 }
 
 
-export { RoundedShape, cm, slope, defaultMaterial, map, mapExp };
+function random (min, max, digits=2)
+{
+	var power = 10**digits;
+	
+	var x = MathUtils.randFloat( min, max );
+	
+	return Math.round( power*x)/power;
+}
+
+
+export { RoundedShape, cm, slope, defaultMaterial, map, mapExp, random };

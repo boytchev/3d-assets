@@ -124,11 +124,9 @@ function install( Asset ) {
 
 	var title = `<big><em>${Asset.name}</em> generator</big>
 			<small class="fullline">
-				<span id="home" class="link">HOME</span> &middot; 
 				<span id="url" class="link">LINK</span> &middot; 
 				<span id="code" class="link">CODE</span> &middot;
 				<span id="gltf" class="link">GLTF</span> &middot;
-				<span id="info" class="link">INFO</span> &middot; 
 				<span id="random" class="link">RANDOM</span>`;
 
 
@@ -138,28 +136,24 @@ function install( Asset ) {
 	gui.$title.style.marginBottom = "2em";
 	gui.onChange( regenerateAsset );
 
-	document.getElementById( 'home' ).addEventListener( 'click', ( event )=>{
+//	document.getElementById( 'home' ).addEventListener( 'click', ( event )=>{
+//
+//		event.stopPropagation();
+//		goHome();
+//
+//	} );
+
+	document.getElementById( 'info' )?.setAttribute( 'href', `../docs/${filename}.html` );
+
+	document.getElementById( 'url' )?.addEventListener( 'click', ( event )=>{
 
 		event.stopPropagation();
-		goHome();
-
-	} );
-	document.getElementById( 'info' ).addEventListener( 'click', ( event )=>{
-
-		event.stopPropagation();
-		goToWebPage( filename );
-
-	} );
-
-	document.getElementById( 'url' ).addEventListener( 'click', ( event )=>{
-
-		event.stopPropagation();
-		window.alert( "Export of a link is not implemented" );
-		//shareURL( event, name );
+		//window.alert( "Export of a link is not implemented" );
+		shareURL( event, name );
 
 	} );
 
-	document.getElementById( 'code' ).addEventListener( 'click', ( event )=>{
+	document.getElementById( 'code' )?.addEventListener( 'click', ( event )=>{
 
 		event.stopPropagation();
 		window.alert( "Export of a code is not implemented" );
@@ -167,14 +161,17 @@ function install( Asset ) {
 
 	} );
 
-	document.getElementById( 'gltf' ).addEventListener( 'click', ( event )=>{
+	document.getElementById( 'gltf' )?.addEventListener( 'click', ( event )=>{
 
 		event.stopPropagation();
 		window.alert( "Export of a GLTF is not implemented" );
 
 	} );
 
-	document.getElementById( 'random' )?.addEventListener( 'click', randomModel );
+	document.getElementById( 'random' )?.addEventListener( 'click', (event)=>{
+		event.stopPropagation();
+		randomizeAsset();
+	}	);
 
 	onResize( );
 
@@ -197,12 +194,27 @@ function install( Asset ) {
 
 	}
 
+	function randomizeAsset( ) {
+
+		model.clear( );
+		object.dispose( );
+		
+		// copy random value keeping the same object reference
+		Object.assign(params, Asset.random());
+		
+		object = new Asset( { params } );
+		model.add( object );
+
+		for( var c of gui.controllersRecursive() )
+			c.updateDisplay();
+	}
+
 }
 
 
 
 
-/*
+
 function shareURL( event, name ) {
 
 	event.stopPropagation();
@@ -224,7 +236,7 @@ function shareURL( event, name ) {
 	alert( `URL for this ${name} copied to the clipboard.` );
 
 }
-*/
+
 
 /*
 function getCode( event, name, filename, tslTexture ) {
@@ -287,26 +299,18 @@ model.material.opacityNode = ${name}.opacity ( {
 }
 */
 
-function goHome( /*event*/ ) {
-
-	window.location.assign( HOME_URL );
-
-}
-
-
-function goToWebPage( filename ) {
-
-	window.location.assign( `../docs/${filename}.html` );
-
-}
+//function goHome( /*event*/ ) {
+//
+//	window.location.assign( HOME_URL );
+//
+//}
 
 
-function randomModel( event ) {
-
-	event.stopPropagation();
-	// to do
-
-}
+//function goToWebPage( filename ) {
+//
+//	window.location.assign( `../docs/${filename}.html` );
+//
+//}
 
 
 export { scene, model, install, params, light, ambientLight };

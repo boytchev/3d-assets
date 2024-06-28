@@ -5,8 +5,6 @@ import * as lil from "three/addons/libs/lil-gui.module.min.js";
 //import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 
 
-const HOME_URL = '../';
-
 
 var params = {};
 

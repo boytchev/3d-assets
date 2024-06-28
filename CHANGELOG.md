@@ -1,8 +1,11 @@
-# TSL Textures
+# 3D Assets
 
+
+## 0.3.0
+* Added "Plate" in *plate.js*
 
 ## 0.2.0
-* Added "Plate" in "plate.js"
+(skipped version)
 
 ## 0.1.1
 * Changed convention for passing asset parameters

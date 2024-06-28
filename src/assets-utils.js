@@ -134,15 +134,20 @@ function mapExp( x, toMin, toMax, fromMin=0, fromMax=100 ) {
 }
 
 
-function random( min, max, digits=2 ) {
 
-	var power = 10**digits;
+function round( x, digits=3 ) // not 2 as in random
+{
+	return Number(`${Math.round(`${x}e${digits}`)}e-${digits}`);
+}
+
+
+function random( min, max, digits=2 ) {
 
 	var x = MathUtils.randFloat( min, max );
 
-	return Math.round( power*x )/power;
+	return round( x, digits );
 
 }
 
 
-export { RoundedShape, cm, slope, defaultMaterial, map, mapExp, random };
+export { RoundedShape, cm, slope, defaultMaterial, map, mapExp, round, random };

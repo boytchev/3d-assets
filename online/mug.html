@@ -33,7 +33,7 @@
 	<script type="module">
 
 		import * as THREE from "three";
-		import { install, params, model } from "./online.js";
+		import { install, params, model, updateModelStatistics } from "./online.js";
 		import { Mug } from "assets/mug.js";
 
 
@@ -91,16 +91,24 @@
 			.name( 'Thickness' );
 
 			
-		var guiT = gui.addFolder( '<big>Complexity</big><span id="show-vertices"></span>' )
+		var guiT = gui.addFolder( '<big>Complexity</big><right id="model-statistics"></right>' )
 
-		guiT.add( params, 'complexity' )
+		guiT.add( params, 'mugComplexity' )
 			.min( 0 ).max( 100 )
 			.name( 'Mug<right>%</right>' );
 		
-		guiT.add( params, 'complexityHandle' )
+		guiT.add( params, 'handleComplexity' )
 			.min( 0 ).max( 100 )
 			.name( 'Handle<right>%</right>' );
 		
+		guiT.add( params, 'edges' )
+			.name( 'Edges' );
+		
+		guiT.add( params, 'flat' )
+			.name( 'Flat' );
+		
+		
+		updateModelStatistics();
 
 	</script>
 </body>

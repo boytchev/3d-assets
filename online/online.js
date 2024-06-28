@@ -2,6 +2,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import * as lil from "three/addons/libs/lil-gui.module.min.js";
+import * as ASSETS from "../src/assets-utils.js";
+
 //import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 
 
@@ -114,7 +116,7 @@ function install( Asset ) {
 	for ( var i=0; i<funcname.length; i++ ) {
 
 		funcname[ i ] = funcname[ i ].toLowerCase();
-		if ( i > 0 ) funcname[ i ] = funcname[ i ][ 0 ].toUpperCase() + funcname[ i ].slice( 1 );
+		funcname[ i ] = funcname[ i ][ 0 ].toUpperCase() + funcname[ i ].slice( 1 );
 
 	}
 
@@ -154,8 +156,8 @@ function install( Asset ) {
 	document.getElementById( 'code' )?.addEventListener( 'click', ( event )=>{
 
 		event.stopPropagation();
-		window.alert( "Export of a code is not implemented" );
-		//getCode( event, funcname, filename, tslTexture );
+		//window.alert( "Export of a code is not implemented" );
+		getCode( event, funcname, filename, Asset );
 
 	} );
 
@@ -182,6 +184,9 @@ function install( Asset ) {
 
 	var object = new Asset( params );
 	model.add( object );
+	
+	// delay stats because the DOM element is not created yet
+	updateModelStatistics();
 
 	return gui;
 
@@ -191,6 +196,7 @@ function install( Asset ) {
 		object.dispose( );
 		object = new Asset( params );
 		model.add( object );
+		updateModelStatistics();
 
 	}
 
@@ -204,6 +210,7 @@ function install( Asset ) {
 
 		object = new Asset( params );
 		model.add( object );
+		updateModelStatistics();
 
 		for ( var c of gui.controllersRecursive() )
 			c.updateDisplay();
@@ -215,20 +222,28 @@ function install( Asset ) {
 
 
 
+function paramsToArray( )
+{
+	var array = [];
+	for ( const [ key, value ] of Object.entries( params ) )
+		if ( value instanceof THREE.Color )
+			array.push( `${key}=${value.getHex()}` );
+		else
+		if ( value == true || value == false )
+			array.push( `${key}=${value}` );
+		else
+			array.push( `${key}=${ASSETS.round(value)}` );
+		
+	return array;
+}
+
+
 
 function shareURL( event, name ) {
 
 	event.stopPropagation();
 
-	var url = [];
-
-	for ( const [ key, value ] of Object.entries( params ) )
-		if ( value instanceof THREE.Color )
-			url.push( `${key}=${value.getHex()}` );
-		else
-			url.push( `${key}=${value}` );
-
-	url = url.join( '&' );
+	var url = paramsToArray().join( '&' );
 
 	url = window.location.href.split( '?' )[ 0 ].split( '#' )[ 0 ] + '?' + url;
 
@@ -239,58 +254,32 @@ function shareURL( event, name ) {
 }
 
 
-/*
+
 function getCode( event, name, filename, tslTexture ) {
 
 	event.stopPropagation();
 
-	var paramsStr = [];
-
-	for ( const [ key, value ] of Object.entries( params ) )
-		if ( value instanceof THREE.Color )
-			paramsStr.push( `${key}: new THREE.Color(${value.getHex()})` );
-		else
-			paramsStr.push( `${key}: ${value}` );
-
-	paramsStr = paramsStr.join( `,\n	` );
+	var paramsStr = paramsToArray().join( `,\n	` );
 
 	var js = `
 <script type="importmap">
 	{
 		"imports": {
-			"three": "https://cdn.jsdelivr.net/npm/three@0.164.0/build/three.module.js",
-			"three/nodes": "https://cdn.jsdelivr.net/npm/three@0.164.0/examples/jsm/nodes/Nodes.js",
-			"tsl-textures/": "../src/"
+			"three": "https://cdn.jsdelivr.net/npm/three@latest/build/three.module.js",
+			"three/nodes": "https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/nodes/Nodes.js",
+			"https://cdn.jsdelivr.net/npm/3d-assets@latest/src/"
 		}
 	}
 </script>
 
-import { ${name} } from "tsl-textures/${filename}.js";
-`;
-	if ( tslTexture.defaults.$normalNode )
-		js += `
-model.material.normalNode = ${name} ( {
-	${paramsStr}
-} );
-`;
-	else
-		js += `model.material.colorNode = ${name} ( {
-	${paramsStr}
-} );
-`;
+import { ${name} } from "3d-assets/${filename}.js";
 
-	if ( tslTexture.opacity ) {
-
-		js += `
-model.material.transparent = true;
-model.material.opacity = 1;
-model.material.side = THREE.DoubleSide;
-model.material.opacityNode = ${name}.opacity ( {
+var model = new ${name} ({
 	${paramsStr}
-} );
-`;
+});
 
-	}
+scene.add( model );
+`;
 
 
 	navigator.clipboard.writeText( js );
@@ -298,7 +287,7 @@ model.material.opacityNode = ${name}.opacity ( {
 	alert( `Javascript code fragment for this ${name} copied to the clipboard.` );
 
 }
-*/
+
 
 //function goHome( /*event*/ ) {
 //
@@ -314,4 +303,45 @@ model.material.opacityNode = ${name}.opacity ( {
 //}
 
 
-export { scene, model, install, params, light, ambientLight };
+function updateModelStatistics( )
+{
+	var vertices = 0;
+	var triangles = 0;
+	
+	model.traverse( (child)=>{
+		var geo = child.geometry;
+		if( !geo ) return;
+		
+		var pos = geo.getAttribute( 'position' );
+		var idx = geo.getAttribute( 'index' );
+		
+		vertices += pos.count;
+		
+		if( idx )
+			triangles += Math.round(idx.count/3);
+		else
+			triangles += Math.round(pos.count/3);		
+	} );
+	
+	
+	if( vertices > 10000 )
+		vertices = Math.round(vertices/1024)+'</em>k';
+	else
+	if( vertices > 1000 )
+		vertices = (vertices/1024).toFixed(1)+'</em>k';
+	
+	
+	if( triangles > 10000 )
+		triangles = Math.round(triangles/1024)+'</em>k';
+	else
+	if( triangles > 1000 )
+		triangles = (triangles/1024).toFixed(1)+'</em>k';
+	
+	
+	var stats = document.getElementById( 'model-statistics' );
+	if( stats ) stats.innerHTML = `<em>${vertices}</em>V <em>${triangles}</em>T</em>`;
+	
+}
+
+
+export { scene, model, install, params, light, ambientLight, updateModelStatistics };

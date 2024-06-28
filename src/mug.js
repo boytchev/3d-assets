@@ -4,6 +4,7 @@
 
 
 import * as THREE from 'three';
+import { mergeVertices, toCreasedNormals } from 'three/addons/utils/BufferGeometryUtils.js';
 import * as ASSETS from './assets-utils.js';
 
 
@@ -18,6 +19,7 @@ class Mug extends THREE.Group {
 		mugSize: 8, // cm
 		mugShape: 0, // degrees
 		mugWidth: 0.4, // cm
+		mugComplexity: 70,
 
 		handlePosition: 20, // %
 		handleHeight: 6, // cm
@@ -25,9 +27,10 @@ class Mug extends THREE.Group {
 		handleShape: 20, // degrees
 		handleWidth: 1.5, // cm
 		handleThickness: 0.6, // cm
-
-		complexity: 70,
-		complexityHandle: 70,
+		handleComplexity: 70,
+		
+		edges: true,
+		flat: false,
 	};
 
 	constructor( params ) {
@@ -60,27 +63,38 @@ class Mug extends THREE.Group {
 
 
 		// complexities
-		var mC = Math.floor( ASSETS.mapExp( params.complexity, 6, 100 ) ),
-			hC = Math.floor( ASSETS.mapExp( params.complexityHandle, 10, 100 ) ),
-			hC2 = Math.floor( ASSETS.mapExp( params.complexityHandle, 2, 12 ) );
+		var mC = Math.floor( ASSETS.mapExp( params.mugComplexity, 6, 100 ) ),
+			hC = Math.floor( ASSETS.mapExp( params.handleComplexity, 3, 100 ) ),
+			hC2 = Math.floor( ASSETS.mapExp( params.handleComplexity, 2, 12 ) );
 
-		// roundness
-		var mG = THREE.MathUtils.clamp( 0.01, 0, 0.48*mW ),
-			hG = 0.48*Math.min( hW, hT );
+		// edgess
+		var mG = params.edges ? THREE.MathUtils.clamp( 0.01, 0, 0.48*mW ) : 0,
+			hG = params.edges ? 0.48*Math.min( hW, hT ) : 0;
 
 
+		// material
+		ASSETS.defaultMaterial.flatShading = params.flat;
+		
 		// body
 
-		var bodyShape = new ASSETS.RoundedShape([
+		var points = [
 			[ 0, mW ],
 			[ mBotS-mW, mW, 2*mG ],
 			[ mTopS-mW, mH, mG ],
 			[ mTopS, mH, mG ],
 			[ mBotS, 0, 2*mG ],
 			[ mBotS-mW, 0, mG ],
-			[ mBotS-2*mW, mW/4, mG ],
-			[ 0, mW/4 ],
-		]);
+		];
+		
+		if( params.edges )
+			points.push(
+				[ mBotS-2*mW, mW/4, mG ], // concave bottom
+				[ 0, mW/4 ],
+			);
+		else
+			points.push( [ 0, 0 ] ); // flat bottom
+
+		var bodyShape = new ASSETS.RoundedShape( points );
 
 		var bodyGeometry = new THREE.LatheGeometry( bodyShape.getPoints( 6 ), mC );
 
@@ -115,12 +129,25 @@ class Mug extends THREE.Group {
 		 );
 
 		var handleGeometry = new THREE.ExtrudeGeometry( handleProfileShape, {
-			curveSegments: hC2,
+			curveSegments: 1+0*hC2,
 			steps: hC,
 			bevelEnabled: false,
 			extrudePath: handleCurve
 		} );
+		
+		handleGeometry.deleteAttribute( 'uv' );
 
+		// a hack to make handle normals good
+		// otherwise the caps destroy some of the side normals
+		var nor = handleGeometry.getAttribute('normal');
+		var pos = handleGeometry.getAttribute('position');
+		for( var i=0; i<nor.count; i++ )
+			if( nor.getX(i) >-0.9 || (pos.getY(i)<hTopH-hT-0.001 && pos.getY(i)>hBotH+hT+0.001) )
+			//if( nor.getX(i) >-0.99  )
+				nor.setXYZ(i,1,0,0);
+		handleGeometry = mergeVertices( handleGeometry );
+		handleGeometry.computeVertexNormals();
+		
 		this.handle = new THREE.Mesh( handleGeometry, ASSETS.defaultMaterial );
 
 		this.add( this.handle );

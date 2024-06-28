@@ -74,7 +74,7 @@ class Mug extends THREE.Group {
 
 		// material
 		var material = ASSETS.defaultMaterial.clone();
-			material.flatShading = params.flat;
+		material.flatShading = params.flat;
 
 		// body
 
@@ -98,7 +98,7 @@ class Mug extends THREE.Group {
 		var bodyShape = new ASSETS.RoundedShape( points );
 
 		var bodyGeometry = new THREE.LatheGeometry( bodyShape.getPoints( 6 ), mC );
-			
+
 		this.body = new THREE.Mesh( bodyGeometry, material );
 		this.body.rotation.y = Math.PI/2 + Math.PI/mC;
 
@@ -184,7 +184,7 @@ class Mug extends THREE.Group {
 
 			mugComplexity: ASSETS.random( 0, 50 )+ASSETS.random( 0, 50 ),
 			handleComplexity: ASSETS.random( 0, 50 )+ASSETS.random( 0, 50 ),
-			
+
 			edges: ASSETS.random( 0, 100 ) > 30,
 			flat: ASSETS.random( 0, 100 ) < 30,
 		};

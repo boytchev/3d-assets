@@ -157,7 +157,7 @@ function install( Asset ) {
 
 		event.stopPropagation();
 		//window.alert( "Export of a code is not implemented" );
-		getCode( event, funcname, filename, Asset );
+		getCode( event, funcname, filename );
 
 	} );
 
@@ -256,7 +256,7 @@ function shareURL( event, name ) {
 
 
 
-function getCode( event, name, filename, Asset ) {
+function getCode( event, name, filename ) {
 
 	event.stopPropagation();
 

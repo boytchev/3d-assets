@@ -15,7 +15,7 @@ import { DoubleSide, MathUtils, MeshPhysicalMaterial, Shape, Vector2 } from 'thr
 // rounded vertex = [x,y,radius]
 class RoundedShape extends Shape {
 
-	constructor( path, swap ) {
+	constructor( path ) {
 
 		super();
 
@@ -27,7 +27,7 @@ class RoundedShape extends Shape {
 		for ( var i=0; i< path.length; i++ ) {
 
 			var point = path[ i ];
-			if ( point.length == 2 || (point.length == 3 && point[2]==0) ) {
+			if ( point.length == 2 || ( point.length == 3 && point[ 2 ]==0 ) ) {
 
 				// [x, y]
 				v.set( ...point );

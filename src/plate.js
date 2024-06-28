@@ -4,7 +4,6 @@
 
 
 import * as THREE from 'three';
-import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 import * as ASSETS from './assets-utils.js';
 
 
@@ -49,7 +48,7 @@ class Plate extends THREE.Group {
 
 		// material
 		var material = ASSETS.defaultMaterial.clone();
-			material.flatShading = params.flat;
+		material.flatShading = params.flat;
 
 		// body
 
@@ -74,13 +73,13 @@ class Plate extends THREE.Group {
 		var bodyShape = new ASSETS.RoundedShape( points, true );
 
 		var bodyGeometry = new THREE.LatheGeometry( bodyShape.getPoints( 6 ), pC );
-			
-			
+
+
 		this.body = new THREE.Mesh( bodyGeometry, material );
 		this.body.rotation.y = Math.PI/2 + Math.PI/pC;
-		
+
 		this.add( this.body );
-		
+
 		this.position.set( 0, -pH/2, 0 );
 
 	} // Plate.constructor
@@ -102,7 +101,7 @@ class Plate extends THREE.Group {
 			plateShape: ASSETS.random( 0, 35, 1 ),
 			plateWidth: ASSETS.random( 0.3, 1, 3 ),
 			plateComplexity: ASSETS.random( 0, 50 )+ASSETS.random( 0, 50 ),
-			
+
 			edges: ASSETS.random( 0, 100 ) > 30,
 			flat: ASSETS.random( 0, 100 ) < 30,
 		};

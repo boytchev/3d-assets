@@ -180,7 +180,7 @@ function install( Asset ) {
 
 */
 
-	var object = new Asset( { params } );
+	var object = new Asset( params );
 	model.add( object );
 
 	return gui;
@@ -189,7 +189,7 @@ function install( Asset ) {
 
 		model.clear( );
 		object.dispose( );
-		object = new Asset( { params } );
+		object = new Asset( params );
 		model.add( object );
 
 	}
@@ -202,7 +202,7 @@ function install( Asset ) {
 		// copy random value keeping the same object reference
 		Object.assign( params, Asset.random() );
 
-		object = new Asset( { params } );
+		object = new Asset( params );
 		model.add( object );
 
 		for ( var c of gui.controllersRecursive() )

@@ -30,10 +30,9 @@ class Mug extends THREE.Group {
 		complexityHandle: 70,
 	};
 
-	constructor( { params } ) {
+	constructor( params ) {
 
 		super( );
-
 
 		var // mug primary parameters
 			mH = ASSETS.cm( params.mugHeight ),

@@ -22,12 +22,8 @@ on a snapshot to open it online.
 		<img src="images/mug-2.png">
 	</a>
 
-	<a class="style-block nocaption" href="../online/mug.html?mugHeight=14.54&mugSize=9.48&mugShape=15&mugWidth=0.699&handlePosition=-100&handleHeight=6.9&handleSize=5.66&handleShape=-16.8&handleWidth=2&handleThickness=0.76&mugComplexity=100&handleComplexity=53.03&edges=true&flat=false">
+	<a class="style-block nocaption" href="../online/mug.html?mugHeight=10.12&mugSize=6.37&mugShape=9.4&mugWidth=0.3&mugComplexity=21&handlePosition=-100&handleHeight=4.8&handleSize=5.17&handleShape=-40&handleWidth=1.15&handleThickness=0.91&handleComplexity=10&edges=false&flat=true">
 		<img src="images/mug-3.png">
-	</a>
-
-	<a class="style-block nocaption" href="../online/mug.html?mugHeight=7&mugSize=6.37&mugShape=9.4&mugWidth=0.3&mugComplexity=21&handlePosition=100&handleHeight=3&handleSize=5.17&handleShape=9.3&handleWidth=1.15&handleThickness=0.91&handleComplexity=10&edges=false&flat=true&complexity=78.55&complexityHandle=41.57">
-		<img src="images/mug-4.png">
 	</a>
 
 </p>

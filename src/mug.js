@@ -28,7 +28,7 @@ class Mug extends THREE.Group {
 		handleWidth: 1.5, // cm
 		handleThickness: 0.6, // cm
 		handleComplexity: 70,
-		
+
 		edges: true,
 		flat: false,
 	};
@@ -74,7 +74,7 @@ class Mug extends THREE.Group {
 
 		// material
 		ASSETS.defaultMaterial.flatShading = params.flat;
-		
+
 		// body
 
 		var points = [
@@ -85,14 +85,14 @@ class Mug extends THREE.Group {
 			[ mBotS, 0, 2*mG ],
 			[ mBotS-mW, 0, mG ],
 		];
-		
-		if( params.edges )
+
+		if ( params.edges )
 			points.push(
 				[ mBotS-2*mW, mW/4, mG ], // concave bottom
 				[ 0, mW/4 ],
 			);
 		else
-			points.push( [ 0, 0 ] ); // flat bottom
+			points.push([ 0, 0 ]); // flat bottom
 
 		var bodyShape = new ASSETS.RoundedShape( points );
 
@@ -134,20 +134,20 @@ class Mug extends THREE.Group {
 			bevelEnabled: false,
 			extrudePath: handleCurve
 		} );
-		
+
 		handleGeometry.deleteAttribute( 'uv' );
 
 		// a hack to make handle normals good
 		// otherwise the caps destroy some of the side normals
-		var nor = handleGeometry.getAttribute('normal');
-		var pos = handleGeometry.getAttribute('position');
-		for( var i=0; i<nor.count; i++ )
-			if( nor.getX(i) >-0.9 || (pos.getY(i)<hTopH-hT-0.001 && pos.getY(i)>hBotH+hT+0.001) )
+		var nor = handleGeometry.getAttribute( 'normal' );
+		var pos = handleGeometry.getAttribute( 'position' );
+		for ( var i=0; i<nor.count; i++ )
+			if ( nor.getX( i ) >-0.9 || ( pos.getY( i )<hTopH-hT-0.001 && pos.getY( i )>hBotH+hT+0.001 ) )
 			//if( nor.getX(i) >-0.99  )
-				nor.setXYZ(i,1,0,0);
+				nor.setXYZ( i, 1, 0, 0 );
 		handleGeometry = mergeVertices( handleGeometry );
 		handleGeometry.computeVertexNormals();
-		
+
 		this.handle = new THREE.Mesh( handleGeometry, ASSETS.defaultMaterial );
 
 		this.add( this.handle );

@@ -184,7 +184,7 @@ function install( Asset ) {
 
 	var object = new Asset( params );
 	model.add( object );
-	
+
 	// delay stats because the DOM element is not created yet
 	updateModelStatistics();
 
@@ -222,19 +222,20 @@ function install( Asset ) {
 
 
 
-function paramsToArray( )
-{
+function paramsToArray( ) {
+
 	var array = [];
 	for ( const [ key, value ] of Object.entries( params ) )
 		if ( value instanceof THREE.Color )
 			array.push( `${key}=${value.getHex()}` );
 		else
-		if ( value == true || value == false )
-			array.push( `${key}=${value}` );
-		else
-			array.push( `${key}=${ASSETS.round(value)}` );
-		
+			if ( value == true || value == false )
+				array.push( `${key}=${value}` );
+			else
+				array.push( `${key}=${ASSETS.round( value )}` );
+
 	return array;
+
 }
 
 
@@ -303,44 +304,46 @@ scene.add( model );
 //}
 
 
-function updateModelStatistics( )
-{
+function updateModelStatistics( ) {
+
 	var vertices = 0;
 	var triangles = 0;
-	
-	model.traverse( (child)=>{
+
+	model.traverse( ( child )=>{
+
 		var geo = child.geometry;
-		if( !geo ) return;
-		
+		if ( !geo ) return;
+
 		var pos = geo.getAttribute( 'position' );
 		var idx = geo.getAttribute( 'index' );
-		
+
 		vertices += pos.count;
-		
-		if( idx )
-			triangles += Math.round(idx.count/3);
+
+		if ( idx )
+			triangles += Math.round( idx.count/3 );
 		else
-			triangles += Math.round(pos.count/3);		
+			triangles += Math.round( pos.count/3 );
+
 	} );
-	
-	
-	if( vertices > 10000 )
-		vertices = Math.round(vertices/1024)+'</em>k';
+
+
+	if ( vertices > 10000 )
+		vertices = Math.round( vertices/1024 )+'</em>k';
 	else
-	if( vertices > 1000 )
-		vertices = (vertices/1024).toFixed(1)+'</em>k';
-	
-	
-	if( triangles > 10000 )
-		triangles = Math.round(triangles/1024)+'</em>k';
+		if ( vertices > 1000 )
+			vertices = ( vertices/1024 ).toFixed( 1 )+'</em>k';
+
+
+	if ( triangles > 10000 )
+		triangles = Math.round( triangles/1024 )+'</em>k';
 	else
-	if( triangles > 1000 )
-		triangles = (triangles/1024).toFixed(1)+'</em>k';
-	
-	
+		if ( triangles > 1000 )
+			triangles = ( triangles/1024 ).toFixed( 1 )+'</em>k';
+
+
 	var stats = document.getElementById( 'model-statistics' );
-	if( stats ) stats.innerHTML = `<em>${vertices}</em>V <em>${triangles}</em>T</em>`;
-	
+	if ( stats ) stats.innerHTML = `<em>${vertices}</em>V <em>${triangles}</em>T</em>`;
+
 }
 
 

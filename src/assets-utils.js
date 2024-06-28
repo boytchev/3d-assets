@@ -137,7 +137,9 @@ function mapExp( x, toMin, toMax, fromMin=0, fromMax=100 ) {
 
 function round( x, digits=3 ) // not 2 as in random
 {
-	return Number(`${Math.round(`${x}e${digits}`)}e-${digits}`);
+
+	return Number( `${Math.round( `${x}e${digits}` )}e-${digits}` );
+
 }
 
 

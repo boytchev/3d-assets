@@ -136,12 +136,12 @@ function install( Asset ) {
 	gui.$title.style.marginBottom = "2em";
 	gui.onChange( regenerateAsset );
 
-//	document.getElementById( 'home' ).addEventListener( 'click', ( event )=>{
-//
-//		event.stopPropagation();
-//		goHome();
-//
-//	} );
+	//	document.getElementById( 'home' ).addEventListener( 'click', ( event )=>{
+	//
+	//		event.stopPropagation();
+	//		goHome();
+	//
+	//	} );
 
 	document.getElementById( 'info' )?.setAttribute( 'href', `../docs/${filename}.html` );
 
@@ -168,9 +168,11 @@ function install( Asset ) {
 
 	} );
 
-	document.getElementById( 'random' )?.addEventListener( 'click', (event)=>{
+	document.getElementById( 'random' )?.addEventListener( 'click', ( event )=>{
+
 		event.stopPropagation();
 		randomizeAsset();
+
 	}	);
 
 	onResize( );
@@ -198,15 +200,16 @@ function install( Asset ) {
 
 		model.clear( );
 		object.dispose( );
-		
+
 		// copy random value keeping the same object reference
-		Object.assign(params, Asset.random());
-		
+		Object.assign( params, Asset.random() );
+
 		object = new Asset( { params } );
 		model.add( object );
 
-		for( var c of gui.controllersRecursive() )
+		for ( var c of gui.controllersRecursive() )
 			c.updateDisplay();
+
 	}
 
 }

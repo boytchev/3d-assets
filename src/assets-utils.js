@@ -134,13 +134,14 @@ function mapExp( x, toMin, toMax, fromMin=0, fromMax=100 ) {
 }
 
 
-function random (min, max, digits=2)
-{
+function random( min, max, digits=2 ) {
+
 	var power = 10**digits;
-	
+
 	var x = MathUtils.randFloat( min, max );
-	
-	return Math.round( power*x)/power;
+
+	return Math.round( power*x )/power;
+
 }
 
 

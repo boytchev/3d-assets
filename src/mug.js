@@ -4,7 +4,7 @@
 
 
 import * as THREE from 'three';
-import { mergeVertices, toCreasedNormals } from 'three/addons/utils/BufferGeometryUtils.js';
+import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 import * as ASSETS from './assets-utils.js';
 
 
@@ -73,7 +73,8 @@ class Mug extends THREE.Group {
 
 
 		// material
-		ASSETS.defaultMaterial.flatShading = params.flat;
+		var material = ASSETS.defaultMaterial.clone();
+			material.flatShading = params.flat;
 
 		// body
 
@@ -97,8 +98,8 @@ class Mug extends THREE.Group {
 		var bodyShape = new ASSETS.RoundedShape( points );
 
 		var bodyGeometry = new THREE.LatheGeometry( bodyShape.getPoints( 6 ), mC );
-
-		this.body = new THREE.Mesh( bodyGeometry, ASSETS.defaultMaterial );
+			
+		this.body = new THREE.Mesh( bodyGeometry, material );
 		this.body.rotation.y = Math.PI/2 + Math.PI/mC;
 
 		this.add( this.body );
@@ -148,7 +149,7 @@ class Mug extends THREE.Group {
 		handleGeometry = mergeVertices( handleGeometry );
 		handleGeometry.computeVertexNormals();
 
-		this.handle = new THREE.Mesh( handleGeometry, ASSETS.defaultMaterial );
+		this.handle = new THREE.Mesh( handleGeometry, material );
 
 		this.add( this.handle );
 
@@ -160,7 +161,7 @@ class Mug extends THREE.Group {
 	dispose( ) {
 
 		this.body.geometry.dispose( );
-		this.body.material.dispose( );
+		this.handle.geometry.dispose( );
 
 	} // Mug.dispose
 
@@ -181,8 +182,11 @@ class Mug extends THREE.Group {
 			handleWidth: ASSETS.random( 1, 2 ),
 			handleThickness: ASSETS.random( 0.3, 1 ),
 
-			complexity: ASSETS.random( 0, 50 )+ASSETS.random( 0, 50 ),
-			complexityHandle: ASSETS.random( 0, 50 )+ASSETS.random( 0, 50 ),
+			mugComplexity: ASSETS.random( 0, 50 )+ASSETS.random( 0, 50 ),
+			handleComplexity: ASSETS.random( 0, 50 )+ASSETS.random( 0, 50 ),
+			
+			edges: ASSETS.random( 0, 100 ) > 30,
+			flat: ASSETS.random( 0, 100 ) < 30,
 		};
 
 	} // Mug.random

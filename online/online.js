@@ -256,7 +256,7 @@ function shareURL( event, name ) {
 
 
 
-function getCode( event, name, filename, tslTexture ) {
+function getCode( event, name, filename, Asset ) {
 
 	event.stopPropagation();
 
@@ -315,7 +315,7 @@ function updateModelStatistics( ) {
 		if ( !geo ) return;
 
 		var pos = geo.getAttribute( 'position' );
-		var idx = geo.getAttribute( 'index' );
+		var idx = geo.index;
 
 		vertices += pos.count;
 

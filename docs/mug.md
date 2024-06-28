@@ -55,8 +55,6 @@ var model = new Mug ({
 
 ### Parameters
 
-<img src="images/mug-scheme.png">
-
 #### Mug parameters
 
 * `mugHeight` &ndash; height of the mug, in cm, [7, 20]

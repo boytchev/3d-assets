@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+
+
+<html>
+
+
+<head>
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<link rel="shortcut icon" type="image/png" href="../assets/logo/logo.png"/>
+	<link rel="stylesheet" href="styles.css">
+
+	<script type="importmap">
+	  {
+		"imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.0/examples/jsm/",
+			"three/nodes": "https://cdn.jsdelivr.net/npm/three@0.164.0/examples/jsm/nodes/Nodes.js",
+			"tsl-textures/": "https://cdn.jsdelivr.net/npm/tsl-textures@latest/src/",
+			"assets/": "../src/"
+		}
+	  }
+	</script>
+</head>
+
+
+<body>
+	<div class="footnote bottomfixed">
+		<a href="../">Home</a> &middot;
+		<a id="info" href="">Info</a>
+	</div>
+	
+	<script type="module">
+
+		import * as THREE from "three";
+		import { install, params, model, updateModelStatistics } from "./online.js";
+		import { Plate } from "assets/plate.js";
+
+
+
+		var gui = install( Plate );
+		
+		
+		
+		var guiM = gui.addFolder( '<big>Plate</big>' )
+
+		guiM.add( params, 'plateHeight' )
+			.min( 0.5 ).max( 5 ).step(0.01)
+			.name( 'Height<right>cm</right>' )
+			.$input.classList.add( 'top' );
+
+		guiM.add( params, 'plateSize' )
+			.min( 6 ).max( 30 ).step(0.01)
+			.name( 'Size<right>cm</right>' );
+
+		guiM.add( params, 'plateShape' )
+			.min( 0 ).max( 35 ).step(0.1)
+			.name( 'Shape<right>&deg;</right>' );
+		
+		guiM.add( params, 'plateWidth' )
+			.min( 0.3 ).max( 1 ).step(0.001)
+			.name( 'Width<right>cm</right>' )
+			.$input.classList.add( 'bottom' );
+			
+		var guiT = gui.addFolder( '<big>Complexity</big><right id="model-statistics"></right>' )
+
+		guiT.add( params, 'plateComplexity' )
+			.min( 0 ).max( 100 )
+			.name( 'Plate<right>%</right>' );
+		
+		guiT.add( params, 'edges' )
+			.name( 'Edges' );
+		
+		guiT.add( params, 'flat' )
+			.name( 'Flat' );
+		
+		
+		updateModelStatistics();
+
+	</script>
+</body>
+</html>

@@ -33,9 +33,19 @@ class Mug extends THREE.Group {
 		flat: false,
 	};
 
+
 	constructor( params ) {
 
 		super( );
+
+		this.generate( params );
+
+	}
+
+
+	generate( params ) {
+
+		this.dispose( );
 
 		var // mug primary parameters
 			mH = ASSETS.cm( params.mugHeight ),
@@ -78,22 +88,25 @@ class Mug extends THREE.Group {
 
 		// body
 
-		var points = [
-			[ 0, mW ],
-			[ mBotS-mW, mW, 2*mG ],
-			[ mTopS-mW, mH, mG ],
-			[ mTopS, mH, mG ],
-			[ mBotS, 0, 2*mG ],
-			[ mBotS-mW, 0, mG ],
-		];
+		var points = [];
 
 		if ( params.edges )
 			points.push(
-				[ mBotS-2*mW, mW/4, mG ], // concave bottom
 				[ 0, mW/4 ],
+				[ mBotS-2*mW, mW/4, mG ], // concave bottom
 			);
 		else
 			points.push([ 0, 0 ]); // flat bottom
+
+		points.push(
+			[ mBotS-mW, 0, mG ],
+			[ mBotS, 0, 2*mG ],
+			[ mTopS, mH, mG ],
+			[ mTopS-mW, mH, mG ],
+			[ mBotS-mW, mW, 2*mG ],
+			[ 0, mW ],
+		);
+
 
 		var bodyShape = new ASSETS.RoundedShape( points );
 
@@ -151,17 +164,18 @@ class Mug extends THREE.Group {
 
 		this.handle = new THREE.Mesh( handleGeometry, material );
 
-		this.add( this.handle );
+		this.position.y = -mH/2;
 
-		this.position.set( 0, -mH/2, 0 );
+		this.add( this.handle );
 
 	} // Mug.constructor
 
 
 	dispose( ) {
 
-		this.body.geometry.dispose( );
-		this.handle.geometry.dispose( );
+		this.body?.geometry.dispose( );
+		this.handle?.geometry.dispose( );
+		this.clear( );
 
 	} // Mug.dispose
 

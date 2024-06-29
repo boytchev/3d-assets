@@ -9,7 +9,7 @@ import * as ASSETS from "../src/assets-utils.js";
 
 
 var params = {};
-
+var debugTexture; // loaded once in toggleDebugTexture()
 
 
 // setting up the scene
@@ -136,12 +136,7 @@ function install( Asset ) {
 	gui.$title.style.marginBottom = "2em";
 	gui.onChange( regenerateAsset );
 
-	//	document.getElementById( 'home' ).addEventListener( 'click', ( event )=>{
-	//
-	//		event.stopPropagation();
-	//		goHome();
-	//
-	//	} );
+	window.addEventListener( 'keydown', onKeyDown );
 
 	document.getElementById( 'info' )?.setAttribute( 'href', `../docs/${filename}.html` );
 
@@ -184,6 +179,7 @@ function install( Asset ) {
 
 	var object = new Asset( params );
 	model.add( object );
+
 
 	// delay stats because the DOM element is not created yet
 	updateModelStatistics();
@@ -346,5 +342,88 @@ function updateModelStatistics( ) {
 
 }
 
+
+var keysDebugMode = false;
+
+function onKeyDown( event ) {
+
+	if ( event.key == 'd' )
+		keysDebugMode = true;
+	else {
+
+		if ( keysDebugMode ) {
+
+			switch ( event.key ) {
+
+				case 't': toggleDebugTexture();
+
+			}
+
+		}
+
+		keysDebugMode = false;
+
+	}
+
+	//var texture;
+
+	// advanced mode - only when run in localhost
+	//if( location.hostname == 'localhost' )
+	//{
+	//	ASSETS.defaultMaterial.map = new THREE.TextureLoader().load('../assets/textures/uv_grid_opengl.jpg' );
+	//}
+
+	//	document.getElementById( 'home' ).addEventListener( 'click', ( event )=>{
+	//
+	//		event.stopPropagation();
+	//		goHome();
+	//
+	//	} );
+
+}
+
+
+var debugTextureMode = false;
+
+function toggleDebugTexture( ) {
+
+	// load debug texture if not loaded
+	if ( !debugTexture ) {
+
+		debugTexture = new THREE.TextureLoader().load( '../assets/textures/uv_grid_opengl.jpg' );
+
+	}
+
+	debugTextureMode = !debugTextureMode;
+
+	if ( debugTextureMode ) {
+
+		model.traverse( child => {
+
+			if ( child.material ) {
+
+				child.material.map = debugTexture;
+				child.material.needsUpdate = true;
+
+			}
+
+		} );
+
+	} else {
+
+		model.traverse( child => {
+
+			if ( child.material?.map == debugTexture ) {
+
+				child.material.map = null;
+				child.material.needsUpdate = true;
+
+			}
+
+		} );
+
+	}
+
+}
 
 export { scene, model, install, params, light, ambientLight, updateModelStatistics };

@@ -4,7 +4,7 @@
 
 
 
-import { DoubleSide, MathUtils, MeshPhysicalMaterial, Shape, Vector2 } from 'three';
+import { MathUtils, MeshPhysicalMaterial, Shape, Vector2 } from 'three';
 //import { MeshPhysicalNodeMaterial } from 'three/nodes';
 //import { marble } from "tsl-textures/marble.js";
 
@@ -107,7 +107,7 @@ var defaultMaterial = new MeshPhysicalMaterial( {
 	color: 'white',
 	roughness: 0,
 	metalness: 0.2,
-	side: DoubleSide,
+	//side: DoubleSide,
 } );
 
 

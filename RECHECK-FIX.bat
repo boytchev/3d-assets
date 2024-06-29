@@ -6,6 +6,8 @@ call npx eslint --fix src\*.js
 
 call npx eslint --fix online\*.js
 
+call npx eslint --fix demos\*.js
+
 pause
 exit
 

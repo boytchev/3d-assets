@@ -25,9 +25,19 @@ class Plate extends THREE.Group {
 		flat: false,
 	};
 
+
 	constructor( params ) {
 
 		super( );
+
+		this.generate( params );
+
+	}
+
+
+	generate( params ) {
+
+		this.dispose( );
 
 		var // plate primary parameters
 			pH = ASSETS.cm( params.plateHeight ),
@@ -52,23 +62,25 @@ class Plate extends THREE.Group {
 
 		// body
 
-		var points = [
-			[ 0, pW ],
-			[ pBotS-pW, pW, 2*pG ],
-			[ pTopS-pW, pH, 2*pG ],
-			[ pTopS, pH, 2*pG ],
-			[ pTopS, pH-pW/2, 2*pG ],
-			[ pBotS, 0, 2*pG ],
-			[ pBotS-pW, 0, pG ],
-		];
+		var points = [ ];
 
 		if ( params.edges )
 			points.push(
-				[ pBotS-2*pW, pW/4, pG ], // concave bottom
 				[ 0, pW/4 ],
+				[ pBotS-2*pW, pW/4, pG ], // concave bottom
 			);
 		else
 			points.push([ 0, 0 ]); // flat bottom
+
+		points.push(
+			[ pBotS-pW, 0, pG ],
+			[ pBotS, 0, 2*pG ],
+			[ pTopS, pH-pW/2, 2*pG ],
+			[ pTopS, pH, 2*pG ],
+			[ pTopS-pW, pH, 2*pG ],
+			[ pBotS-pW, pW, 2*pG ],
+			[ 0, pW ],
+		);
 
 		var bodyShape = new ASSETS.RoundedShape( points, true );
 
@@ -78,16 +90,17 @@ class Plate extends THREE.Group {
 		this.body = new THREE.Mesh( bodyGeometry, material );
 		this.body.rotation.y = Math.PI/2 + Math.PI/pC;
 
-		this.add( this.body );
+		this.position.y = -pH/2;
 
-		this.position.set( 0, -pH/2, 0 );
+		this.add( this.body );
 
 	} // Plate.constructor
 
 
 	dispose( ) {
 
-		this.body.geometry.dispose( );
+		this.body?.geometry.dispose( );
+		this.clear( );
 
 	} // Plate.dispose
 

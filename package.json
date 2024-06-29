@@ -1,6 +1,6 @@
 {
   "name": "3d-assets",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Procedural 3D assets",
   "main": "index.js",
   "repository": {

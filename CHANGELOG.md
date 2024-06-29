@@ -1,6 +1,10 @@
 # 3D Assets
 
 
+## 0.3.1
+
+* Refactored asset generation and randomization
+
 ## 0.3.0
 * Added "Plate" in *plate.js*
 

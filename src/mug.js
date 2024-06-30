@@ -1,5 +1,5 @@
 ﻿
-//	Assets: Mug
+//	3D Assets: Mug
 
 
 
@@ -94,12 +94,12 @@ class Mug extends THREE.Group {
 			points.push(
 				[ 0, mW/4 ],
 				[ mBotS-2*mW, mW/4, mG ], // concave bottom
+				[ mBotS-mW, 0, mG ],
 			);
 		else
 			points.push([ 0, 0 ]); // flat bottom
 
 		points.push(
-			[ mBotS-mW, 0, mG ],
 			[ mBotS, 0, 2*mG ],
 			[ mTopS, mH, mG ],
 			[ mTopS-mW, mH, mG ],

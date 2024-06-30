@@ -1,5 +1,5 @@
 ﻿
-//	Assets: Plate
+//	3D Assets: Plate
 
 
 
@@ -68,12 +68,12 @@ class Plate extends THREE.Group {
 			points.push(
 				[ 0, pW/4 ],
 				[ pBotS-2*pW, pW/4, pG ], // concave bottom
+				[ pBotS-pW, 0, pG ],
 			);
 		else
 			points.push([ 0, 0 ]); // flat bottom
 
 		points.push(
-			[ pBotS-pW, 0, pG ],
 			[ pBotS, 0, 2*pG ],
 			[ pTopS, pH-pW/2, 2*pG ],
 			[ pTopS, pH, 2*pG ],
@@ -82,9 +82,10 @@ class Plate extends THREE.Group {
 			[ 0, pW ],
 		);
 
+
 		var bodyShape = new ASSETS.RoundedShape( points, true );
 
-		var bodyGeometry = new THREE.LatheGeometry( bodyShape.getPoints( 6 ), pC );
+		var bodyGeometry = new THREE.LatheGeometry( bodyShape.getPoints( 4 ), pC );
 
 
 		this.body = new THREE.Mesh( bodyGeometry, material );

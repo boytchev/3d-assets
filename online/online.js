@@ -1,6 +1,7 @@
 ﻿
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
 import * as lil from "three/addons/libs/lil-gui.module.min.js";
 import * as ASSETS from "../src/assets-utils.js";
 
@@ -159,7 +160,13 @@ function install( Asset ) {
 	document.getElementById( 'gltf' )?.addEventListener( 'click', ( event )=>{
 
 		event.stopPropagation();
-		window.alert( "Export of a GLTF is not implemented" );
+
+		var now = new Date(),
+			hh = ( now.getHours()+'' ).padStart( 2, '0' ),
+			mm = ( now.getMinutes()+'' ).padStart( 2, '0' ),
+			ss = ( now.getSeconds()+'' ).padStart( 2, '0' );
+
+		exportAsGLTF( `${filename}-${hh}${mm}${ss}.glb`, true );
 
 	} );
 
@@ -425,5 +432,37 @@ function toggleDebugTexture( ) {
 	}
 
 }
+
+
+
+var exporter = new GLTFExporter();
+var exporterLink = document.createElement( 'a' );
+
+function exportAsGLTF( fileName, binary ) {
+
+	exporter.parse(
+		model.children[ 0 ],
+		( gltf ) => {
+
+			var type = binary ? 'application/octet-stream' : 'text/plain;charset=utf-8',
+				data = binary ? gltf : JSON.stringify( gltf ),
+				blob = new Blob([ data ], { type: type } );
+
+			exporterLink.href = URL.createObjectURL( blob );
+			exporterLink.download = fileName;
+			exporterLink.click();
+
+		},
+		( error ) => {
+
+			throw error;
+
+		},
+		{ binary: binary }
+	);
+
+}
+
+
 
 export { scene, model, install, params, light, ambientLight, updateModelStatistics };

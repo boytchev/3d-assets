@@ -35,20 +35,20 @@ on a snapshot to open it online.
 import { Mug } from "3d-assets/mug.js";
 
 var model = new Mug ({
-	mugHeight=19.8,
-	mugSize=8.64,
-	mugShape=3.2,
-	mugWidth=0.329,
-	mugComplexity=40.58,
-	handlePosition=95,
-	handleHeight=7.3,
-	handleSize=6.07,
-	handleShape=-34.9,
-	handleWidth=1.42,
-	handleThickness=0.74,
-	handleComplexity=70,
-	edges=true,
-	flat=false
+	mugHeight: 19.8,
+	mugSize: 8.64,
+	mugShape: 3.2,
+	mugWidth: 0.329,
+	mugComplexity: 40.58,
+	handlePosition: 95,
+	handleHeight: 7.3,
+	handleSize: 6.07,
+	handleShape: -34.9,
+	handleWidth: 1.42,
+	handleThickness: 0.74,
+	handleComplexity: 70,
+	edges: true,
+	flat: false
 });
 ```
 

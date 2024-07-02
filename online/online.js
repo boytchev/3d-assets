@@ -42,7 +42,7 @@ camera.lookAt( scene.position );
 
 var light = new THREE.DirectionalLight( 'white', 2.5 );
 light.decay = 0;
-light.offset = new THREE.Vector3(0.05,0.05,0.05);
+light.offset = new THREE.Vector3( 0.05, 0.05, 0.05 );
 scene.add( light );
 
 var ambientLight = new THREE.AmbientLight( 'white', 1 );
@@ -74,7 +74,7 @@ onResize( );
 function install( AssetClass ) {
 
 	Asset = AssetClass;
-	
+
 	// process URL options
 	var urlAddress = window.location.search.split( '#' )[ 0 ], // skip all after #
 		urlParameters = new URLSearchParams( urlAddress ),
@@ -150,7 +150,7 @@ function install( AssetClass ) {
 // converts the params object into an array
 // this is used for exporting links and code
 
-function paramsToArray( ) {
+function paramsToArray( symbol ) {
 
 	var array = [];
 	for ( const [ key, value ] of Object.entries( params ) )
@@ -160,7 +160,7 @@ function paramsToArray( ) {
 			if ( value == true || value == false )
 				array.push( `${key}=${value}` );
 			else
-				array.push( `${key}=${ASSETS.round( value )}` );
+				array.push( `${key}${symbol}${ASSETS.round( value )}` );
 
 	return array;
 
@@ -177,8 +177,10 @@ var lastKey = '';
 function onKeyDown( event ) {
 
 	switch ( lastKey + event.key ) {
+
 		case 'dt': toggleDebugTexture(); break;
 		case 'dg': toggleDebugGeometry(); break;
+
 	}
 
 	lastKey = event.key;
@@ -204,7 +206,7 @@ function toggleDebugTexture( ) {
 	debugTextureMode = !debugTextureMode;
 
 	if ( debugTextureMode ) {
-		
+
 		// apply debug texture
 		model.traverse( child => {
 
@@ -267,7 +269,7 @@ function exportAsURL( event ) {
 
 	event.stopPropagation();
 
-	var url = paramsToArray().join( '&' );
+	var url = paramsToArray( '=' ).join( '&' );
 	url = window.location.href.split( '?' )[ 0 ].split( '#' )[ 0 ] + '?' + url;
 
 	navigator.clipboard.writeText( url );
@@ -285,7 +287,7 @@ function exportAsCode( event ) {
 
 	event.stopPropagation();
 
-	var paramsStr = paramsToArray().join( `,\n	` );
+	var paramsStr = paramsToArray( ': ' ).join( `,\n	` );
 
 	var js = `
 <script type="importmap">
@@ -331,7 +333,7 @@ function exportAsGLTF( event ) {
 		ss = ( now.getSeconds()+'' ).padStart( 2, '0' );
 
 	// currently always export as GLB
-	const binary = true; 
+	const binary = true;
 
 	// do he export
 	exporter.parse(
@@ -368,10 +370,19 @@ function regenerateAsset( ) {
 
 	asset = new Asset( params );
 	model.add( asset );
-	
-	if( debugTextureMode ) { toggleDebugTexture( ); toggleDebugTexture( ); }
-	if( debugGeometryMode ) { toggleDebugGeometry( ); toggleDebugGeometry( ); }
-	
+
+	if ( debugTextureMode ) {
+
+		toggleDebugTexture( ); toggleDebugTexture( );
+
+	}
+
+	if ( debugGeometryMode ) {
+
+		toggleDebugGeometry( ); toggleDebugGeometry( );
+
+	}
+
 	updateModelStatistics();
 
 } // regenerateAsset
@@ -383,7 +394,7 @@ function regenerateAsset( ) {
 function randomizeAsset( event ) {
 
 	event.stopPropagation();
-	
+
 	// copy random values keeping the same object reference
 	Object.assign( params, Asset.random() );
 
@@ -402,12 +413,12 @@ function randomizeAsset( event ) {
 function updateModelStatistics( ) {
 
 	var stats = document.getElementById( 'model-statistics' );
-	
-	if( stats )
-	{	
+
+	if ( stats ) {
+
 		// cannot use renderer.info.render.triangles, because in
 		// debug geometry mode it gives 0 triangles (wireframe)
-		
+
 		var vertices = 0,
 			triangles = 0;
 
@@ -423,9 +434,11 @@ function updateModelStatistics( ) {
 			triangles += idx ? idx.count/3 : pos.count/3;
 
 		} );
-		
+
 		stats.innerHTML = `<em>${vertices}</em> V <em>${triangles}</em> T`;
+
 	}
+
 } // updateModelStatistics
 
 

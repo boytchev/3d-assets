@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+
+
+<html>
+
+
+<head>
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<link rel="shortcut icon" type="image/png" href="../assets/logo/logo.png"/>
+	<link rel="stylesheet" href="styles.css">
+
+	<script type="importmap">
+	  {
+		"imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.0/examples/jsm/",
+			"three/nodes": "https://cdn.jsdelivr.net/npm/three@0.164.0/examples/jsm/nodes/Nodes.js",
+			"tsl-textures/": "https://cdn.jsdelivr.net/npm/tsl-textures@latest/src/",
+			"assets/": "../src/"
+		}
+	  }
+	</script>
+</head>
+
+
+<body>
+	<div class="footnote bottomfixed">
+		<a href="../">Home</a> &middot;
+		<a id="info" href="">Info</a>
+	</div>
+	
+	<script type="module">
+
+		import * as THREE from "three";
+		import { install, params, model, updateModelStatistics } from "./online.js";
+		import { DrinkCan } from "assets/drink-can.js";
+
+
+
+		var gui = install( DrinkCan );
+		
+		
+		
+		var guiC = gui.addFolder( '<big>Can</big>' )
+
+		guiC.add( params, 'canHeight' )
+			.min( 5 ).max( 20 ).step(0.01)
+			.name( 'Height<right>cm</right>' )
+			.$input.classList.add( 'top' );
+
+		guiC.add( params, 'canSize' )
+			.min( 5 ).max( 8 ).step(0.01)
+			.name( 'Size<right>cm</right>' )
+			.$input.classList.add( 'bottom' );
+
+			
+		var guiN = gui.addFolder( '<big>Neck</big>' )
+		
+		guiN.add( params, 'neckHeight' )
+			.min( 1 ).max( 3 ).step(0.01)
+			.name( 'Height<right>cm</right>' )
+			.$input.classList.add( 'top' );
+		
+		guiN.add( params, 'neckSize' )
+			.min( 4 ).max( 9 ).step(0.01)
+			.name( 'Size<right>cm</right>' );
+		
+		guiN.add( params, 'neckLid' )
+			.name( 'Lid' );
+		
+		guiN.add( params, 'neckTag' )
+			.name( 'Tag' );
+
+			
+		var guiT = gui.addFolder( '<big>Complexity</big><right id="model-statistics"></right>' )
+
+		guiT.add( params, 'canComplexity' )
+			.min( 0 ).max( 100 )
+			.name( 'Can<right>%</right>' );
+		
+		guiT.add( params, 'edges' )
+			.name( 'Edges' );
+		
+		guiT.add( params, 'flat' )
+			.name( 'Flat' );
+		
+		
+		updateModelStatistics();
+
+	</script>
+</body>
+</html>

@@ -35,13 +35,13 @@ on a snapshot to open it online.
 import { Plate } from "3d-assets/plate.js";
 
 var model = new Plate ({
-	plateHeight=1.6,
-	plateSize=18,
-	plateShape=25,
-	plateWidth=0.3,
-	plateComplexity=70,
-	edges=true,
-	flat=false
+	plateHeight: 1.6,
+	plateSize: 18,
+	plateShape: 25,
+	plateWidth: 0.3,
+	plateComplexity: 70,
+	edges: true,
+	flat: false
 });
 ```
 

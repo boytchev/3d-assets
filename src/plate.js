@@ -66,20 +66,20 @@ class Plate extends THREE.Group {
 
 		if ( params.edges )
 			points.push(
-				[ 0, pW/4 ],
-				[ pBotS-2*pW, pW/4, pG ], // concave bottom
-				[ pBotS-pW, 0, pG ],
+				[ 0, pW/4 ], //0a
+				[ pBotS-2*pW, pW/4, pG ], // 1, concave bottom
+				[ pBotS-pW, 0, pG ], // 2
 			);
 		else
-			points.push([ 0, 0 ]); // flat bottom
+			points.push([ 0, 0 ]); // 0b, flat bottom
 
 		points.push(
-			[ pBotS, 0, 2*pG ],
-			[ pTopS, pH-pW/2, 2*pG ],
-			[ pTopS, pH, 2*pG ],
-			[ pTopS-pW, pH, 2*pG ],
-			[ pBotS-pW, pW, 2*pG ],
-			[ 0, pW ],
+			[ pBotS, 0, 2*pG ], // 3
+			[ pTopS, pH-pW/2, 2*pG ], // 4
+			[ pTopS, pH, 2*pG ], // 5
+			[ pTopS-pW, pH, 2*pG ], // 6
+			[ pBotS-pW, pW, 2*pG ], // 7
+			[ 0, pW ], // 8
 		);
 
 
@@ -87,6 +87,32 @@ class Plate extends THREE.Group {
 
 		var bodyGeometry = new THREE.LatheGeometry( bodyShape.getPoints( 4 ), pC );
 
+		// set uv
+		var pos = bodyGeometry.getAttribute( 'position' ),
+			uv = bodyGeometry.getAttribute( 'uv' );
+
+		var v = new THREE.Vector3(); // temp
+		var maxDist = pTopS+pH; // from 0b to 5
+
+		for ( var i=0; i<pos.count; i++ ) {
+
+			v.fromBufferAttribute( pos, i );
+
+			var dist = ( v.x**2+v.z**2 )**0.5 + Math.abs( v.y );
+
+			if ( uv.getY( i )<0.6 ) {
+
+				// bottom of plate
+				uv.setY( i, 0.5-0.5*( 1-dist/maxDist ) );
+
+			} else {
+
+				// top of plate
+				uv.setY( i, 0.5+0.5*( 1-dist/maxDist ) );
+
+			}
+
+		}
 
 		this.body = new THREE.Mesh( bodyGeometry, material );
 		this.body.name = 'body';

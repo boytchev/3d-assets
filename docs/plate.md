@@ -62,13 +62,22 @@ var model = new Plate ({
 * `flat` &ndash; if *true* flat shading is used, if *false* smooth shading is used, boolean
 	
 	
-### Online generator
+### Internal structure
 
-[online/plate.html](../online/plate.html)
+An instance of `Plate` is a `THREE.Group` with one submesh
+called `body`. 
 
-### Source
+The texture mapping is concentric: the *u-axis* is circular
+along the perimeter of the plate, the *v-axis* is radial,
+starting from 0 the bottom center, 0.5 at the rim and 1 at
+the top center.
 
-[src/plate.js](https://github.com/boytchev/assets/blob/main/src/plate.js)
+
+### Links:
+
+* Online generator: [online/plate.html](../online/plate.html)
+* Minimal example: [demos/minimal-plate.html](../demos/minimal-plate.html)
+* Source code: [src/plate.js](https://github.com/boytchev/assets/blob/main/src/plate.js)
 
 		
 <div class="footnote">

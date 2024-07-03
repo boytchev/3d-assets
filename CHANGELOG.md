@@ -1,6 +1,9 @@
 # 3D Assets
 
 
+## 0.4.1
+* Plate generates traditional UV coordinates
+
 ## 0.4.0
 * Added "Drink can" in *drink-can.js*
 

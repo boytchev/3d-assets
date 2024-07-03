@@ -18,7 +18,6 @@ var Asset; // current asset class
 var asset; // current asset instance
 var assetClone; // a clone of the current asset instance
 var params = {}; // current asset parameters
-var model = new THREE.Group(); // current wrapper (of the asset)
 var filename; // asset filename, e.g. 'round-table'
 var classname; // asset class name, e.g. 'RoundTable'
 var gui; // the top-level GUI
@@ -35,7 +34,6 @@ document.body.appendChild( renderer.domElement );
 
 var scene = new THREE.Scene();
 scene.background = new THREE.Color( 'white' );
-scene.add( model );
 
 var camera = new THREE.PerspectiveCamera( 30, innerWidth/innerHeight, 0.01, 10 );
 camera.position.set( 0, 0, 0.5 );
@@ -210,7 +208,7 @@ function toggleDebugTexture( ) {
 	if ( debugTextureMode ) {
 
 		// apply debug texture
-		model.traverse( child => {
+		asset.traverse( child => {
 
 			if ( child.material ) {
 
@@ -224,7 +222,7 @@ function toggleDebugTexture( ) {
 	} else {
 
 		// remove debug texture
-		model.traverse( child => {
+		asset.traverse( child => {
 
 			if ( child.material?.map == debugTexture ) {
 
@@ -250,7 +248,7 @@ function toggleDebugGeometry( ) {
 	debugGeometryMode = !debugGeometryMode;
 
 	// apply debug geometry
-	model.traverse( child => {
+	asset.traverse( child => {
 
 		if ( child.material ) {
 
@@ -302,7 +300,7 @@ function toggleDebugProfile( ) {
 // create a clone of the asset with flat color
 // and inverse sides
 var assetCloneMaterial = new THREE.MeshBasicMaterial( {
-	color: 'RoyalBlue',
+	color: 'FireBrick',
 	side: THREE.BackSide,
 } );
 
@@ -409,7 +407,7 @@ function exportAsGLTF( event ) {
 
 	// do he export
 	exporter.parse(
-		model.children[ 0 ],
+		asset,
 		( gltf ) => {
 
 			var type = binary ? 'application/octet-stream' : 'text/plain;charset=utf-8',
@@ -437,11 +435,11 @@ function exportAsGLTF( event ) {
 
 function regenerateAsset( ) {
 
-	model.clear( );
+	scene.remove( asset );
 	asset?.dispose( );
 
 	asset = new Asset( params );
-	model.add( asset );
+	scene.add( asset );
 
 	if ( debugTextureMode ) {
 
@@ -501,7 +499,7 @@ function updateModelStatistics( ) {
 		var vertices = 0,
 			triangles = 0;
 
-		model.traverse( ( child )=>{
+		asset.traverse( ( child )=>{
 
 			var geo = child.geometry;
 			if ( !geo ) return;
@@ -534,4 +532,11 @@ function animationLoop( /*t*/ ) {
 
 
 
-export { scene, model, install, params, light, ambientLight, updateModelStatistics };
+// update the statistics in 1 second, this time should be
+// enought for the asset to be constructed. if not, the update
+// will happend after the first change
+setTimeout( updateModelStatistics, 1000 );
+
+
+
+export { install, params };

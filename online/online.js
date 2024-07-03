@@ -16,6 +16,7 @@ import * as ASSETS from "../src/assets-utils.js";
 
 var Asset; // current asset class
 var asset; // current asset instance
+var assetClone; // a clone of the current asset instance
 var params = {}; // current asset parameters
 var model = new THREE.Group(); // current wrapper (of the asset)
 var filename; // asset filename, e.g. 'round-table'
@@ -180,6 +181,7 @@ function onKeyDown( event ) {
 
 		case 'dt': toggleDebugTexture(); break;
 		case 'dg': toggleDebugGeometry(); break;
+		case 'dp': toggleDebugProfile(); break;
 
 	}
 
@@ -260,6 +262,76 @@ function toggleDebugGeometry( ) {
 	} );
 
 } // toggleDebugTexture
+
+
+
+// debug profile mode - cuts a slice of the object
+
+var debugProfileMode = 0;
+
+function toggleDebugProfile( ) {
+
+	debugProfileMode = ( debugProfileMode+1 )%3;
+
+	switch ( debugProfileMode ) {
+
+		case 0: // no clipping
+			removeAssetClone();
+			renderer.clippingPlanes = [];
+			break;
+
+		case 1: // clip along x axis
+			createAssetClone();
+			renderer.clippingPlanes = [
+				new THREE.Plane( new THREE.Vector3( 1, 0, 0 ), 0 ),
+			];
+			break;
+
+		case 2: // clip along z axis
+			renderer.clippingPlanes = [
+				new THREE.Plane( new THREE.Vector3( 0, 0, -1 ), 0 ),
+			];
+			break;
+
+	}
+
+} // toggleDebugProfile
+
+
+
+// create a clone of the asset with flat color
+// and inverse sides
+var assetCloneMaterial = new THREE.MeshBasicMaterial( {
+	color: 'RoyalBlue',
+	side: THREE.BackSide,
+} );
+
+function createAssetClone( ) {
+
+	assetClone = new Asset( params );
+
+	// adjust materials
+	assetClone.traverse( child => {
+
+		if ( child.material ) child.material = assetCloneMaterial;
+
+	} );
+
+	scene.add( assetClone );
+
+} // createAssetClone
+
+
+
+// remove the clone created by createAssetClone
+function removeAssetClone( ) {
+
+	scene.remove( assetClone );
+	assetClone = undefined;
+
+} // removeAssetClone
+
+
 
 
 
@@ -380,6 +452,13 @@ function regenerateAsset( ) {
 	if ( debugGeometryMode ) {
 
 		toggleDebugGeometry( ); toggleDebugGeometry( );
+
+	}
+
+	if ( debugProfileMode > 0 ) {
+
+		removeAssetClone();
+		createAssetClone();
 
 	}
 

@@ -89,6 +89,7 @@ class Plate extends THREE.Group {
 
 
 		this.body = new THREE.Mesh( bodyGeometry, material );
+		this.body.name = 'body';
 		this.body.rotation.y = Math.PI/2 + Math.PI/pC;
 
 		this.position.y = -pH/2;

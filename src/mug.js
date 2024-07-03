@@ -114,6 +114,7 @@ class Mug extends THREE.Group {
 
 		this.body = new THREE.Mesh( bodyGeometry, material );
 		this.body.rotation.y = Math.PI/2 + Math.PI/mC;
+		this.body.name = 'body';
 
 		this.add( this.body );
 
@@ -163,6 +164,7 @@ class Mug extends THREE.Group {
 		handleGeometry.computeVertexNormals();
 
 		this.handle = new THREE.Mesh( handleGeometry, material );
+		this.handle.name = 'handle';
 
 		this.position.y = -mH/2;
 

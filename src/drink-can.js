@@ -128,6 +128,7 @@ class DrinkCan extends THREE.Group {
 		var bodyGeometry = new THREE.LatheGeometry( bodyShape.getPoints( 6 ), cC );
 
 		this.body = new THREE.Mesh( bodyGeometry, material );
+		this.body.name = 'body';
 
 		this.add( this.body );
 
@@ -148,6 +149,7 @@ class DrinkCan extends THREE.Group {
 				new THREE.CircleGeometry( nS-nP/2, cC ),
 				lidMaterial
 			);
+			this.lid.name = 'lid';
 			this.lid.rotation.set( -Math.PI/2, -Math.PI/2-0*Math.PI/cC, 0, 'YXZ' );
 
 			this.lid.position.y = cH-nL;
@@ -188,17 +190,9 @@ class DrinkCan extends THREE.Group {
 				bevelThickness: 0.001,
 				bevelSize: 0.001,
 			} );
-			/*
-			var nor = tagGeometry.getAttribute( 'normal' );
-			var pos = tagGeometry.getAttribute( 'position' );
-			for( var i=0; i<pos.count; i++ )
-			{
-				if( nor.getZ(i)==0 )
-					//nor.setZ( i, pos.getZ(i) );
-					nor.setXYZ( i, 0, 0, 0 );
-			}
-			*/
+
 			this.tag = new THREE.Mesh( tagGeometry, material.clone() );
+			this.tag.name = 'tag';
 			this.tag.material.color.set( 1.1, 1.1, 1.1 );
 			this.tag.position.x = tH*0.39;
 			this.tag.position.y = cH-nL+0.0005;
@@ -215,6 +209,8 @@ class DrinkCan extends THREE.Group {
 	dispose( ) {
 
 		this.body?.geometry.dispose( );
+		this.lid?.geometry.dispose( );
+		this.tag?.geometry.dispose( );
 		this.clear( );
 
 	} // DrinkCan.dispose

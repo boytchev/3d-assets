@@ -140,6 +140,8 @@ function install( AssetClass ) {
 	// everything is ready, generate the asset
 	regenerateAsset( );
 
+	//toggleDebugTexture();
+
 	return gui;
 
 } // install
@@ -200,6 +202,7 @@ function toggleDebugTexture( ) {
 	if ( !debugTexture ) {
 
 		debugTexture = new THREE.TextureLoader().load( '../assets/textures/uv_grid_opengl.jpg' );
+		debugTexture.wrapS = debugTexture.wrapT = THREE.RepeatWrapping;
 
 	}
 
@@ -443,7 +446,8 @@ function regenerateAsset( ) {
 
 	if ( debugTextureMode ) {
 
-		toggleDebugTexture( ); toggleDebugTexture( );
+		toggleDebugTexture( );
+		toggleDebugTexture( );
 
 	}
 
@@ -539,4 +543,4 @@ setTimeout( updateModelStatistics, 1000 );
 
 
 
-export { install, params };
+export { install, params, scene/* ^..^ */ };

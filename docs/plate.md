@@ -69,11 +69,11 @@ called `body`.
 
 The texture mapping is concentric: the *u-axis* is circular
 along the perimeter of the plate, the *v-axis* is radial,
-starting from 0 the bottom center, 0.5 at the rim and 1 at
+starting from 0 at the bottom center, 0.5 at the rim and 1 at
 the top center.
 
 
-### Links:
+### Links
 
 * Online generator: [online/plate.html](../online/plate.html)
 * Minimal example: [demos/minimal-plate.html](../demos/minimal-plate.html)

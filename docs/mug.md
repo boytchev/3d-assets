@@ -79,13 +79,27 @@ var model = new Mug ({
 * `flat` &ndash; if *true* flat shading is used, if *false* smooth shading is used, boolean
 	
 	
-### Online generator
+### Internal structure
 
-[online/mug.html](../online/mug.html)
+An instance of `Mug` is a `THREE.Group` with two submeshes
+called `body` and `handle`. 
 
-### Source
+For the body of the mug the texture mapping is concentric:
+the *u-axis* is circular along the perimeter of the mug,
+the *v-axis* is radial, starting from 0 at the bottom center,
+0.5 at the rim and 1 at the inside top center.
 
-[src/mug.js](https://github.com/boytchev/assets/blob/main/src/mug.js)
+For the handle the texture mapping is cylindric: the *u-axis*
+is circular around the perimeter of the handle, the *v-axis*
+is along the handle, starting from 0 at the bottom center,
+and 1 at the inside top center.
+
+
+### Links
+
+* Online generator: [online/mug.html](../online/mug.html)
+* Minimal example: [demos/minimal-mug.html](../demos/minimal-mug.html)
+* Source code: [src/mug.js](https://github.com/boytchev/assets/blob/main/src/mug.js)
 
 		
 <div class="footnote">

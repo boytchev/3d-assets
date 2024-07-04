@@ -1,6 +1,9 @@
 # 3D Assets
 
 
+## 0.4.3
+* Remove leftover code from *mug.js*
+
 ## 0.4.2
 * Mug generates traditional UV coordinates
 

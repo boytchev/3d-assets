@@ -6,7 +6,6 @@
 import * as THREE from 'three';
 import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 import * as ASSETS from './assets-utils.js';
-import { scene } from "../online/online.js";
 
 
 class Mug extends THREE.Group {
@@ -250,18 +249,6 @@ class Mug extends THREE.Group {
 
 		// attr is uv
 		var uv = [];
-
-		// experimentaly found that after merge vertices the first two
-		// lines along the exctrusion go interleaved, then all next
-		// lines non-interleaved
-		for ( var i=0; i<0*rows; i++ ) {
-
-			var s = new THREE.Mesh( new THREE.SphereGeometry( 0.001 ), new THREE.MeshBasicMaterial( { color: 'red' } ) );
-			s.position.fromBufferAttribute( handleGeometry.attributes.position, i );
-			s.position.y -= mH/2;
-			scene.add( s );
-
-		}
 
 		// first two lines
 		for ( var i=0; i<rows; i++ ) {

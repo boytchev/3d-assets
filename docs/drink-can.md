@@ -83,7 +83,7 @@ the rim are planar.
 
 ### Minimal example
 
-[demos/minimal-drink-can.html](../demos/drink-can.html)
+[demos/minimal-drink-can.html](../demos/minimal-drink-can.html)
 
 
 ### Online generator

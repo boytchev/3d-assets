@@ -69,6 +69,23 @@ var model = new DrinkCan ({
 * `flat` &ndash; if *true* flat shading is used, if *false* smooth shading is used, boolean
 	
 	
+### Internal structure
+
+An instance of `DrinkCan` is a `THREE.Group` with three submeshes
+called `body`, `lid` and `tag`. 
+
+The texture mapping of the body is concentric: the *u-axis*
+is circular along the perimeter of the plate, the *v-axis*
+is radial, starting from 0 at the bottom center, 0.5 at the
+rim and 1 at the top rim. The texture mapping of the lid and
+the rim are planar.
+
+
+### Minimal example
+
+[demos/minimal-drink-can.html](../demos/drink-can.html)
+
+
 ### Online generator
 
 [online/drink-can.html](../online/drink-can.html)

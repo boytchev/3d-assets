@@ -140,7 +140,7 @@ function install( AssetClass ) {
 	// everything is ready, generate the asset
 	regenerateAsset( );
 
-	//toggleDebugTexture();
+	//toggleDebugTexture(); // ^..^
 
 	return gui;
 

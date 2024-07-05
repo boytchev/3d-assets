@@ -1,6 +1,9 @@
 # 3D Assets
 
 
+## 0.4.4
+* Drink can generates traditional UV coordinates
+
 ## 0.4.3
 * Remove leftover code from *mug.js*
 

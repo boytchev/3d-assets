@@ -95,11 +95,19 @@ is along the handle, starting from 0 at the bottom center,
 and 1 at the inside top center.
 
 
-### Links
+### Minimal example
 
-* Online generator: [online/mug.html](../online/mug.html)
-* Minimal example: [demos/minimal-mug.html](../demos/minimal-mug.html)
-* Source code: [src/mug.js](https://github.com/boytchev/assets/blob/main/src/mug.js)
+[demos/minimal-mug.html](../demos/minimal-mug.html)
+
+
+### Online generator
+
+[online/mug.html](../online/mug.html)
+
+
+### Source
+
+[src/mug.js](https://github.com/boytchev/assets/blob/main/src/mug.js)
 
 		
 <div class="footnote">

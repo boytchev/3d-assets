@@ -73,11 +73,19 @@ starting from 0 at the bottom center, 0.5 at the rim and 1 at
 the top center.
 
 
-### Links
+### Minimal example
 
-* Online generator: [online/plate.html](../online/plate.html)
-* Minimal example: [demos/minimal-plate.html](../demos/minimal-plate.html)
-* Source code: [src/plate.js](https://github.com/boytchev/assets/blob/main/src/plate.js)
+[demos/minimal-plate.html](../demos/minimal-plate.html)
+
+
+### Online generator
+
+[online/plate.html](../online/plate.html)
+
+
+### Source
+
+[src/plate.js](https://github.com/boytchev/assets/blob/main/src/plate.js)
 
 		
 <div class="footnote">

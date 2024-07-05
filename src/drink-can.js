@@ -94,38 +94,78 @@ class DrinkCan extends THREE.Group {
 
 		if ( params.edges )
 			points.push(
-				[ 0, 2*nL ],
-				[ nS-2*nP, 2*nL, nS ], // concave bottom
-				[ nS-2*nP, 0, cG ],
-				[ nS-nP, 0, cG ],
-				[ nS*0.7+0.3*cS, nK/2, nS ],
-				[ cS, nK, cG ],
+				[ 0, 2*nL ], // 0a
+				[ nS-2*nP, 2*nL, nS ], // 1, concave bottom
+				[ nS-2*nP, 0, cG ], // 2
+				[ nS-nP, 0, cG ], // 3
+				[ nS*0.7+0.3*cS, nK/2, nS ], // 4
+
 			);
 		else
 			points.push(
-				[ 0, 0 ],
-				[ nS, 0 ],
-				[ cS, nK ],
+				[ 0, 0 ], // 0b
+				[ nS, 0 ], // 3b
 			); // flat bottom
 
+		points.push(
+			[ cS, nK, cG ], // 5
+		);
 
 		if ( cS!=nS )
-			points.push([ cS, cH-nH, 2*cG ]);
+			points.push([ cS, cH-nH, 2*cG ]); // 6
 
 		points.push(
-			[ nS, cH-2*nP, cG ],
-			[ nS, cH, cG ],
-			[ nS-nP, cH, cG ],
-			[ nS-nP, cH-nL ],
+			[ nS, cH-2*nP, cG ], // 7
+			[ nS, cH, cG ], // 8
+			[ nS-nP, cH, cG ], // 9
+			[ nS-nP, cH-nL ], // 10
 			//[ 0, cH-nL],
 		);
 
 		if ( !params.neckLid )
-			points.push([ 0, cH-nL ]);
+			points.push([ 0, cH-nL ]); // 11
 
 		var bodyShape = new ASSETS.RoundedShape( points );
 
 		var bodyGeometry = new THREE.LatheGeometry( bodyShape.getPoints( 6 ), cC );
+
+		// fix body UVs
+		var pos = bodyGeometry.getAttribute( 'position' ),
+			uv = bodyGeometry.getAttribute( 'uv' );
+
+		var v = new THREE.Vector3(); // temp
+
+		var rows = cC+1;
+		var perRow = pos.count / rows;
+
+		var botIndex = params.edges ? 13 : 1;
+		var topIndex = params.edges ? ( cS!=nS?55:48 ) : ( cS!=nS?5:4 );
+		var botDist = new THREE.Vector3().fromBufferAttribute( pos, botIndex ).length();
+		var botY = new THREE.Vector3().fromBufferAttribute( pos, botIndex ).y;
+
+		for ( var i=0; i<pos.count; i++ ) {
+
+			v.fromBufferAttribute( pos, i );
+			var dist = v.length();
+
+			var inRow = i % perRow;
+
+			if ( inRow<=botIndex )
+				uv.setY( i, 0.1*dist/botDist );
+			else
+				if ( inRow<=topIndex ) {
+
+					var y = v.y;
+					uv.setY( i, THREE.MathUtils.mapLinear( y, botY, cH, 0.1, 0.98 ) );
+
+				} else {
+
+					var y = v.y;
+					uv.setY( i, THREE.MathUtils.mapLinear( y, cH, cH-nL, 0.98, 1 ) );
+
+				}
+
+		}
 
 		this.body = new THREE.Mesh( bodyGeometry, material );
 		this.body.name = 'body';
@@ -190,6 +230,10 @@ class DrinkCan extends THREE.Group {
 				bevelThickness: 0.001,
 				bevelSize: 0.001,
 			} );
+
+			var uv = tagGeometry.getAttribute( 'uv' );
+			for ( var i=0; i<uv.count; i++ )
+				uv.setXY( i, ( -uv.getX( i ) )*100+0.5, uv.getY( i )*57.15+0.2857 );
 
 			this.tag = new THREE.Mesh( tagGeometry, material.clone() );
 			this.tag.name = 'tag';

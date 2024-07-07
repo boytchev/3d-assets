@@ -67,7 +67,7 @@ var model = new Mug ({
 * `handlePosition` &ndash; vertical position of the handle, as percentage, [-100, 100]
 * `handleHeight` &ndash; desired height of the handle, in cm, [3, 18]
 * `handleSize` &ndash; desired extension size of the handle, in cm, [3, 10]
-* `handleShape` &ndash; slope of handle, in degrees, [-40, 40]
+* `handleShape` &ndash; slope of handle control points, in degrees, [-80, 80]
 * `handleWidth` &ndash; width of the handle cross-section, in cm, [1, 2]
 * `handleThickness` &ndash; thickness of the handle cross-section, in cm, [0.3, 1]
 

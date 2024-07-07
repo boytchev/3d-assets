@@ -73,6 +73,7 @@ An instance of `DrinkCan` is a `THREE.Group` with submeshes
 called `body` and `lid`. If `hasTag` is *true* there is also
 submesh called `tag`. 
 
+<img src="images/drink-can-scheme.png">
 
 
 ### Minimal example

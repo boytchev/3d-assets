@@ -494,7 +494,7 @@ function randomizeAsset( event ) {
 function gotoInfoPage( event ) {
 
 	event.stopPropagation();
-	
+
 	window.location.href = `../docs/${filename}.html`;
 
 }

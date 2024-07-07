@@ -91,26 +91,26 @@ class Mug extends THREE.Group {
 		if ( params.simple )
 			points = [
 				// x,y,		   rad tex
-				[ 0, 0 					], // 1 bottom
-				[ mBotS*0.9, 0			], // 2
-				[ mBotS, 0,		0, 0.1	], // 3
-				[ mTopS, mH,	0, 0.5	], // 4 rim
-				[ mTopS-mW, mH			], // 5
-				[ mBotS-mW, mW,	0, 0.9	], // 6
+				[ 0, 0 					], // 0 bottom
+				[ mBotS*0.9, 0			], // 1
+				[ mBotS, 0,		0, 0.1	], // 2
+				[ mTopS, mH,	0, 0.5	], // 3 rim
+				[ mTopS-mW, mH			], // 4
+				[ mBotS-mW, mW,	0, 0.9	], // 5
 				[ mBotS-mW*1.1, mW,	0	], // 6
 				[ 0, mW 				], // 7 top
 			];
 		else
 			points = [
 				// x,y,				rad	  tex
-				[ 0, mW/4 						], // 1
-				[ mBotS-2*mW, mW/4,	mG 			], // 2
-				[ mBotS-mW, 0, 		mG 			], // 3
-				[ mBotS, 0, 		2*mG, 0.1 	], // 4
-				[ mTopS, mH, 		mG, 0.5 	], // 5
-				[ mTopS-mW, mH, 	mG 			], // 6
-				[ mBotS-mW, mW, 	2*mG, 0.9 	], // 7
-				[ 0, mW 						], // 8
+				[ 0, mW/4 						], // 0 bottom
+				[ mBotS-2*mW, mW/4,	mG 			], // 1
+				[ mBotS-mW, 0, 		mG 			], // 2
+				[ mBotS, 0, 		2*mG, 0.1 	], // 3
+				[ mTopS, mH, 		mG, 0.5 	], // 4 rim
+				[ mTopS-mW, mH, 	mG 			], // 5
+				[ mBotS-mW, mW, 	2*mG, 0.9 	], // 6
+				[ 0, mW 						], // 7 top
 			];
 
 		var bodyGeometry = new ASSETS.LatheUVGeometry( points, mC );

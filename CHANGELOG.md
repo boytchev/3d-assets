@@ -1,6 +1,10 @@
 # 3D Assets
 
 
+## 0.5.0
+* Existing assets converted to use *LatheUVGeometry*
+
+
 ## 0.4.4
 * Drink can generates traditional UV coordinates
 

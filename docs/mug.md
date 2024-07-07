@@ -14,15 +14,15 @@ on a snapshot to open it online.
 
 <p class="gallery">
 
-	<a class="style-block nocaption" href="../online/mug.html?mugHeight=10&mugSize=8&mugShape=0&mugWidth=0.4&handlePosition=20&handleHeight=6&handleSize=7&handleShape=20&handleWidth=1.5&handleThickness=0.6&mugComplexity=70&handleComplexity=70&edges=true&flat=false">
+	<a class="style-block nocaption" href="../online/mug.html?mugHeight=10&mugSize=8&mugShape=0&mugWidth=0.4&handlePosition=20&handleHeight=6&handleSize=7&handleShape=20&handleWidth=1.5&handleThickness=0.6&mugComplexity=50&handleComplexity=30&simple=false&flat=false">
 		<img src="images/mug-1.png">
 	</a>
 
-	<a class="style-block nocaption" href="../online/mug.html?mugHeight=9.86&mugSize=8.46&mugShape=-13.5&mugWidth=0.699&handlePosition=56&handleHeight=6.9&handleSize=5.66&handleShape=40&handleWidth=1.04&handleThickness=0.76&mugComplexity=89.79&handleComplexity=53.03&edges=true&flat=false">
+	<a class="style-block nocaption" href="../online/mug.html?mugHeight=9.86&mugSize=8.46&mugShape=-13.5&mugWidth=0.699&handlePosition=56&handleHeight=6.9&handleSize=5.66&handleShape=40&handleWidth=1.04&handleThickness=0.76&mugComplexity=80&handleComplexity=40&simple=false&flat=false">
 		<img src="images/mug-2.png">
 	</a>
 
-	<a class="style-block nocaption" href="../online/mug.html?mugHeight=10.12&mugSize=6.37&mugShape=9.4&mugWidth=0.3&mugComplexity=21&handlePosition=-100&handleHeight=4.8&handleSize=5.17&handleShape=-40&handleWidth=1.15&handleThickness=0.91&handleComplexity=10&edges=false&flat=true">
+	<a class="style-block nocaption" href="../online/mug.html?mugHeight=10.12&mugSize=6.37&mugShape=9.4&mugWidth=0.3&handlePosition=-100&handleHeight=4.8&handleSize=5.17&handleShape=-40&handleWidth=1.15&handleThickness=0.91&mugComplexity=10&handleComplexity=4&simple=true&flat=true">
 		<img src="images/mug-3.png">
 	</a>
 
@@ -39,15 +39,15 @@ var model = new Mug ({
 	mugSize: 8.64,
 	mugShape: 3.2,
 	mugWidth: 0.329,
-	mugComplexity: 40.58,
+	mugComplexity: 50,
 	handlePosition: 95,
 	handleHeight: 7.3,
 	handleSize: 6.07,
 	handleShape: -34.9,
 	handleWidth: 1.42,
 	handleThickness: 0.74,
-	handleComplexity: 70,
-	edges: true,
+	handleComplexity: 30,
+	simple: false,
 	flat: false
 });
 ```
@@ -73,10 +73,10 @@ var model = new Mug ({
 
 #### Complexity parameters
 
-* `mugComplexity` &ndash; number of faces along the mug perimeter, as percentage, [0, 100]
-* `handleComplexity` &ndash; number of faces along and across the handle, as percentage, [0, 100]
-* `edges` &ndash; if *true* edges are rounded, if *false* edges are sharp, boolean
-* `flat` &ndash; if *true* flat shading is used, if *false* smooth shading is used, boolean
+* `mugComplexity` &ndash; number of faces along the mug perimeter, [4, 120]
+* `handleComplexity` &ndash; number of faces along the handle, [3, 80]
+* `simple` &ndash; if *true* the complexity of the profile is reduced, boolean
+* `flat` &ndash; if *true* flat shading is used, boolean
 	
 	
 ### Internal structure
@@ -84,15 +84,7 @@ var model = new Mug ({
 An instance of `Mug` is a `THREE.Group` with two submeshes
 called `body` and `handle`. 
 
-For the body of the mug the texture mapping is concentric:
-the *u-axis* is circular along the perimeter of the mug,
-the *v-axis* is radial, starting from 0 at the bottom center,
-0.5 at the rim and 1 at the inside top center.
-
-For the handle the texture mapping is cylindric: the *u-axis*
-is circular around the perimeter of the handle, the *v-axis*
-is along the handle, starting from 0 at the bottom center,
-and 1 at the inside top center.
+<img src="images/mug-scheme.png">
 
 
 ### Minimal example

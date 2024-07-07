@@ -20,7 +20,6 @@
 	  {
 		"imports": {
 			"three": "https://cdn.jsdelivr.net/npm/three@0.166.0/build/three.module.js",
-			"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166.0/examples/jsm/",
 			"3d-assets/": "https://cdn.jsdelivr.net/npm/3d-assets@latest/src/"
 		}
 	  }
@@ -51,9 +50,10 @@
 
 		var object = new DrinkCan( DrinkCan.defaults );
 		scene.add( object );
+		console.log(object)
 
-		renderer.render( scene, camera );
-		
+		renderer.setAnimationLoop( ()=>renderer.render( scene, camera ) );
+
 	</script>
 </body>
 </html>

@@ -19,9 +19,9 @@ class Plate extends THREE.Group {
 		plateSize: 18, // cm
 		plateShape: 25, // degrees
 		plateWidth: 0.3, // cm
-		plateComplexity: 70, // pertentage
+		plateComplexity: 50, // n
 
-		edges: true,
+		simple: false,
 		flat: false,
 	};
 
@@ -50,11 +50,10 @@ class Plate extends THREE.Group {
 			pTopS = pS/2; // plate top size
 
 		// complexities
-		var pC = Math.floor( ASSETS.mapExp( params.plateComplexity, 4, 140 ) );
+		var pC = Math.floor( params.plateComplexity );
 
-		// edgess
-		var pG = params.edges ? THREE.MathUtils.clamp( 0.01, 0, 0.48*pW ) : 0;
-
+		// roundness of edges
+		var pG = THREE.MathUtils.clamp( 0.02, 0, 0.96*pW );
 
 		// material
 		var material = ASSETS.defaultMaterial.clone();
@@ -62,61 +61,39 @@ class Plate extends THREE.Group {
 
 		// body
 
-		var points = [ ];
+		var points;
 
-		if ( params.edges )
-			points.push(
-				[ 0, pW/4 ], //0a
-				[ pBotS-2*pW, pW/4, pG ], // 1, concave bottom
-				[ pBotS-pW, 0, pG ], // 2
-			);
+		if ( params.simple )
+			points = [
+				// x, y,			rad	tex
+				[ 0, 0,						], // 0 bottom
+				[ pBotS*0.9, 0,			 	], // 1
+				[ pBotS, 0,				 	], // 1
+				[ pTopS, pH-pW/2,		 	], // 2
+				[ pTopS, pH,		0,	0.5	], // 3 rim
+				[ pTopS-pW, pH,				], // 4
+				[ pBotS-pW, pW,				], // 5
+				[ 0, pW,					], // 6 top
+			];
 		else
-			points.push([ 0, 0 ]); // 0b, flat bottom
+			points = [
+				// x, y,			rad	tex
+				[ 0, pW/4, 					], // 0 bottom
+				[ pBotS-2*pW, pW/4,	pG/2	], // 1
+				[ pBotS-pW, 0,		pG/2	], // 2
+				[ pBotS, 0,			pG 		], // 3
+				[ pTopS, pH-pW/2,	pG 		], // 4
+				[ pTopS, pH,		pG, 0.5	], // 5 rim
+				[ pTopS-pW, pH,		pG		], // 6
+				[ pBotS-pW, pW,		pG 		], // 7
+				[ 0, pW,					], // 8 top
+			];
 
-		points.push(
-			[ pBotS, 0, 2*pG ], // 3
-			[ pTopS, pH-pW/2, 2*pG ], // 4
-			[ pTopS, pH, 2*pG ], // 5
-			[ pTopS-pW, pH, 2*pG ], // 6
-			[ pBotS-pW, pW, 2*pG ], // 7
-			[ 0, pW ], // 8
-		);
 
-
-		var bodyShape = new ASSETS.RoundedShape( points, true );
-
-		var bodyGeometry = new THREE.LatheGeometry( bodyShape.getPoints( 4 ), pC );
-
-		// set uv
-		var pos = bodyGeometry.getAttribute( 'position' ),
-			uv = bodyGeometry.getAttribute( 'uv' );
-
-		var v = new THREE.Vector3(); // temp
-		var maxDist = pTopS+pH; // from 0b to 5
-
-		for ( var i=0; i<pos.count; i++ ) {
-
-			v.fromBufferAttribute( pos, i );
-
-			var dist = ( v.x**2+v.z**2 )**0.5 + Math.abs( v.y );
-
-			if ( uv.getY( i )<0.6 ) {
-
-				// bottom of plate
-				uv.setY( i, 0.5-0.5*( 1-dist/maxDist ) );
-
-			} else {
-
-				// top of plate
-				uv.setY( i, 0.5+0.5*( 1-dist/maxDist ) );
-
-			}
-
-		}
+		var bodyGeometry = new ASSETS.LatheUVGeometry( points, pC );
 
 		this.body = new THREE.Mesh( bodyGeometry, material );
 		this.body.name = 'body';
-		this.body.rotation.y = Math.PI/2 + Math.PI/pC;
 
 		this.position.y = -pH/2;
 
@@ -141,9 +118,9 @@ class Plate extends THREE.Group {
 			plateSize: ASSETS.random( 6, 30 ),
 			plateShape: ASSETS.random( 0, 35, 1 ),
 			plateWidth: ASSETS.random( 0.3, 1, 3 ),
-			plateComplexity: ASSETS.random( 0, 50 )+ASSETS.random( 0, 50 ),
+			plateComplexity: Math.floor( ASSETS.mapExp( Math.random(), 4, 120, 0, 1 ) ),
 
-			edges: ASSETS.random( 0, 100 ) > 30,
+			simple: ASSETS.random( 0, 100 ) < 30,
 			flat: ASSETS.random( 0, 100 ) < 30,
 		};
 

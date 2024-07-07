@@ -120,6 +120,7 @@ function install( AssetClass ) {
 				<span id="url" class="link">LINK</span> &middot; 
 				<span id="code" class="link">CODE</span> &middot;
 				<span id="gltf" class="link">GLTF</span> &middot;
+				<a id="info" class="link">INFO</a> &middot;
 				<span id="random" class="link">RANDOM</span>`;
 
 
@@ -131,7 +132,7 @@ function install( AssetClass ) {
 
 	window.addEventListener( 'keydown', onKeyDown );
 
-	document.getElementById( 'info' )?.setAttribute( 'href', `../docs/${filename}.html` );
+	document.getElementById( 'info' )?.addEventListener( 'click', gotoInfoPage );
 	document.getElementById( 'url' )?.addEventListener( 'click', exportAsURL );
 	document.getElementById( 'code' )?.addEventListener( 'click', exportAsCode );
 	document.getElementById( 'gltf' )?.addEventListener( 'click', exportAsGLTF );
@@ -159,7 +160,7 @@ function paramsToArray( symbol ) {
 			array.push( `${key}=${value.getHex()}` );
 		else
 			if ( value == true || value == false )
-				array.push( `${key}=${value}` );
+				array.push( `${key}${symbol}${value}` );
 			else
 				array.push( `${key}${symbol}${ASSETS.round( value )}` );
 
@@ -367,7 +368,6 @@ function exportAsCode( event ) {
 	{
 		"imports": {
 			"three": "https://cdn.jsdelivr.net/npm/three@latest/build/three.module.js",
-			"three/nodes": "https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/nodes/Nodes.js",
 			"https://cdn.jsdelivr.net/npm/3d-assets@latest/src/"
 		}
 	}
@@ -486,6 +486,16 @@ function randomizeAsset( event ) {
 		c.updateDisplay();
 
 } // randomizeAsset
+
+
+
+// go to the web page with more info
+
+function gotoInfoPage( ) {
+
+	window.location.href = `../docs/${filename}.html`;
+
+}
 
 
 

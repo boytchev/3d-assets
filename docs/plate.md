@@ -14,15 +14,15 @@ on a snapshot to open it online.
 
 <p class="gallery">
 
-	<a class="style-block nocaption" href="../online/plate.html?plateHeight=1.6&plateSize=18&plateShape=25&plateWidth=0.3&plateComplexity=70&edges=true&flat=false">
+	<a class="style-block nocaption" href="../online/plate.html?plateHeight=1.6&plateSize=18&plateShape=25&plateWidth=0.3&plateComplexity=70&simple=false&flat=false">
 		<img src="images/plate-1.png">
 	</a>
 
-	<a class="style-block nocaption" href="../online/plate.html?plateHeight=1.94&plateSize=18&plateShape=0&plateWidth=0.384&plateComplexity=99&edges=true&flat=false">
+	<a class="style-block nocaption" href="../online/plate.html?plateHeight=1.94&plateSize=18&plateShape=0&plateWidth=0.384&plateComplexity=99&simple=false&flat=false">
 		<img src="images/plate-2.png">
 	</a>
 
-	<a class="style-block nocaption" href="../online/plate.html?plateHeight=2.8&plateSize=24.72&plateShape=35&plateWidth=1&plateComplexity=15&edges=false&flat=true">
+	<a class="style-block nocaption" href="../online/plate.html?plateHeight=2.8&plateSize=24.72&plateShape=35&plateWidth=1&plateComplexity=6&simple=true&flat=true">
 		<img src="images/plate-3.png">
 	</a>
 
@@ -39,8 +39,8 @@ var model = new Plate ({
 	plateSize: 18,
 	plateShape: 25,
 	plateWidth: 0.3,
-	plateComplexity: 70,
-	edges: true,
+	plateComplexity: 50,
+	simple: false,
 	flat: false
 });
 ```
@@ -57,20 +57,16 @@ var model = new Plate ({
 
 #### Complexity parameters
 
-* `plateComplexity` &ndash; number of faces along the plate perimeter, as percentage, [0, 100]
-* `edges` &ndash; if *true* edges are rounded, if *false* edges are sharp, boolean
-* `flat` &ndash; if *true* flat shading is used, if *false* smooth shading is used, boolean
+* `plateComplexity` &ndash; number of faces along the plate perimeter, [4, 120]
+* `simple` &ndash; if *true* the complexity of the profile is reduced, boolean
+* `flat` &ndash; if *true* flat shading is used, boolean
 	
 	
 ### Internal structure
 
-An instance of `Plate` is a `THREE.Group` with one submesh
-called `body`. 
+An instance of `Plate` is a `THREE.Group` with one submesh called `body`. 
 
-The texture mapping is concentric: the *u-axis* is circular
-along the perimeter of the plate, the *v-axis* is radial,
-starting from 0 at the bottom center, 0.5 at the rim and 1 at
-the top center.
+<img src="images/plate-scheme.png">
 
 
 ### Minimal example

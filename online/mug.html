@@ -26,8 +26,7 @@
 
 <body>
 	<div class="footnote bottomfixed">
-		<a href="../">Home</a> &middot;
-		<a id="info" href="">Info</a>
+		<a href="../">Home</a>
 	</div>
 	
 	<script type="module">
@@ -79,7 +78,7 @@
 			.name( 'Size<right>cm</right>' );
 
 		guiH.add( params, 'handleShape' )
-			.min( -40 ).max( 40 ).step(0.1)
+			.min( -80 ).max( 80 ).step(0.1)
 			.name( 'Shape <right>&deg;</right>' );
 
 		guiH.add( params, 'handleWidth' )
@@ -94,15 +93,15 @@
 		var guiT = gui.addFolder( '<big>Complexity</big><right id="model-statistics"></right>' )
 
 		guiT.add( params, 'mugComplexity' )
-			.min( 0 ).max( 100 )
-			.name( 'Mug<right>%</right>' );
+			.min( 4 ).max( 120 ).step( 1 )
+			.name( 'Mug<right>n</right>' );
 		
 		guiT.add( params, 'handleComplexity' )
-			.min( 0 ).max( 100 )
-			.name( 'Handle<right>%</right>' );
+			.min( 3 ).max( 80 ).step( 1 )
+			.name( 'Handle<right>n</right>' );
 		
-		guiT.add( params, 'edges' )
-			.name( 'Edges' );
+		guiT.add( params, 'simple' )
+			.name( 'Simple' );
 		
 		guiT.add( params, 'flat' )
 			.name( 'Flat' );

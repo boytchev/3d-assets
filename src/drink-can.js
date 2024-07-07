@@ -31,15 +31,13 @@ class DrinkCan extends THREE.Group {
 
 		canHeight: 12, // cm
 		canSize: 6, // cm
-		canComplexity: 70, // %
+		canComplexity: 50, // n
 
 		neckHeight: 1.5, // cm
 		neckSize: 5, // cm
 
-		neckLid: true, //
-		neckTag: true, //
-
-		edges: true,
+		hasTag: true,
+		simple: false,
 		flat: false,
 	};
 
@@ -72,17 +70,17 @@ class DrinkCan extends THREE.Group {
 
 			// tag derivative paameters
 			tS = 0.7*nS,	// tag size
-			tW = nS/2.5,	// tag width
-			tP = 1.5*nP,
+			tW = 0.4*nS,	// tag width
+			tP = 0.07*nS,
 			tH = tW-2*tP,	// tag hole size
-			tG = tH/1.15, // roundness of tag
+			tG = 0.4*tW, 		// roundness of tag
 
 			// complexities
-			cC = Math.floor( ASSETS.mapExp( params.canComplexity, 6, 100 ) ),
-			tC = Math.floor( ASSETS.mapExp( params.canComplexity, 4, 20 ) );
+			cC = Math.floor( params.canComplexity ),
+			tC = Math.floor( ASSETS.map( params.canComplexity, 4, 30, 8, 120 ) );
 
-		// edges
-		var cG = params.edges ? 0.001 : 0; // 1 mm
+		// roundness of edges
+		var cG = 0.001; // 1 mm
 
 		// material
 		var material = ASSETS.defaultMaterial.clone();
@@ -90,82 +88,36 @@ class DrinkCan extends THREE.Group {
 
 		// body
 
-		var points = [];
+		var points;
 
-		if ( params.edges )
-			points.push(
-				[ 0, 2*nL ], // 0a
-				[ nS-2*nP, 2*nL, nS ], // 1, concave bottom
-				[ nS-2*nP, 0, cG ], // 2
-				[ nS-nP, 0, cG ], // 3
-				[ nS*0.7+0.3*cS, nK/2, nS ], // 4
-
-			);
+		if ( params.simple )
+			points = [
+				// x,y		   rad txt
+				[ 0, 0,					], // 0
+				[ nS*0.95,				], // 1
+				[ nS, 0, 				], // 2
+				[ cS, nK, 		0, 0.15	], // 3
+				[ cS, cH-nH,	0, 0.85, cS!=nS ], // 4
+				[ nS, cH, 				], // 5
+			];
 		else
-			points.push(
-				[ 0, 0 ], // 0b
-				[ nS, 0 ], // 3b
-			); // flat bottom
+			points = [
+				[ 0, 2*nL,					], // 0
+				[ nS-2*nP, 2*nL, 	nS,		], // 1
+				[ nS-2*nP, 0, 		cG,		], // 2
+				[ nS-nP, 0,			cG,		], // 3
+				//[ nS*0.7+0.3*cS, nK/2, nS, 	], // 4
+				[ nS-nP, nK/2, 		nS, 	], // 4
+				[ cS, nK, 			cG, 0.15 ], // 5
+				[ cS, cH-nH, 		2*cG, ASSETS.AUTO, cS!=nS ], // 6
+				[ nS, cH-2*nP, 		cG 		], // 7
+				[ nS, cH, 			cG 		], // 8
+				[ nS-nP, cH, 		cG 		], // 9
+				[ nS-nP, cH-nL,		0,		], // 10
+			];
 
-		points.push(
-			[ cS, nK, cG ], // 5
-		);
 
-		if ( cS!=nS )
-			points.push([ cS, cH-nH, 2*cG ]); // 6
-
-		points.push(
-			[ nS, cH-2*nP, cG ], // 7
-			[ nS, cH, cG ], // 8
-			[ nS-nP, cH, cG ], // 9
-			[ nS-nP, cH-nL ], // 10
-			//[ 0, cH-nL],
-		);
-
-		if ( !params.neckLid )
-			points.push([ 0, cH-nL ]); // 11
-
-		var bodyShape = new ASSETS.RoundedShape( points );
-
-		var bodyGeometry = new THREE.LatheGeometry( bodyShape.getPoints( 6 ), cC );
-
-		// fix body UVs
-		var pos = bodyGeometry.getAttribute( 'position' ),
-			uv = bodyGeometry.getAttribute( 'uv' );
-
-		var v = new THREE.Vector3(); // temp
-
-		var rows = cC+1;
-		var perRow = pos.count / rows;
-
-		var botIndex = params.edges ? 13 : 1;
-		var topIndex = params.edges ? ( cS!=nS?55:48 ) : ( cS!=nS?5:4 );
-		var botDist = new THREE.Vector3().fromBufferAttribute( pos, botIndex ).length();
-		var botY = new THREE.Vector3().fromBufferAttribute( pos, botIndex ).y;
-
-		for ( var i=0; i<pos.count; i++ ) {
-
-			v.fromBufferAttribute( pos, i );
-			var dist = v.length();
-
-			var inRow = i % perRow;
-
-			if ( inRow<=botIndex )
-				uv.setY( i, 0.1*dist/botDist );
-			else
-				if ( inRow<=topIndex ) {
-
-					var y = v.y;
-					uv.setY( i, THREE.MathUtils.mapLinear( y, botY, cH, 0.1, 0.98 ) );
-
-				} else {
-
-					var y = v.y;
-					uv.setY( i, THREE.MathUtils.mapLinear( y, cH, cH-nL, 0.98, 1 ) );
-
-				}
-
-		}
+		var bodyGeometry = new ASSETS.LatheUVGeometry( points, cC );
 
 		this.body = new THREE.Mesh( bodyGeometry, material );
 		this.body.name = 'body';
@@ -173,32 +125,27 @@ class DrinkCan extends THREE.Group {
 		this.add( this.body );
 
 
-		// lid
+		// lid with bump texture
 
-		if ( params.neckLid ) {
+		var lidMaterial = ASSETS.defaultMaterial.clone();
+		lidMaterial.flatShading = params.flat;
+		lidMaterial.bumpMap = getLidTexture();
+		lidMaterial.bumpScale = params.simple ? 2.5 : 1.5;
 
-			// flat lid with bump texture
+		this.lid = new THREE.Mesh(
+			new THREE.CircleGeometry( params.simple ? nS : nS-nP/2, cC ),
+			lidMaterial
+		);
+		this.lid.name = 'lid';
+		this.lid.rotation.set( -Math.PI/2, -Math.PI/2-0*Math.PI/cC, 0, 'YXZ' );
 
-			// material
-			var lidMaterial = ASSETS.defaultMaterial.clone();
-			lidMaterial.flatShading = params.flat;
-			lidMaterial.bumpMap = getLidTexture();
-			lidMaterial.bumpScale = 1.5;
+		this.lid.position.y = params.simple ? cH : cH-nL;
+		this.add( this.lid );
 
-			this.lid = new THREE.Mesh(
-				new THREE.CircleGeometry( nS-nP/2, cC ),
-				lidMaterial
-			);
-			this.lid.name = 'lid';
-			this.lid.rotation.set( -Math.PI/2, -Math.PI/2-0*Math.PI/cC, 0, 'YXZ' );
-
-			this.lid.position.y = cH-nL;
-			this.add( this.lid );
-
-		}
 
 		// tag
-		if ( params.neckTag ) {
+
+		if ( params.hasTag ) {
 
 			// lid tag as 3D object
 			var tMinY = -tH/2-tP,
@@ -227,19 +174,22 @@ class DrinkCan extends THREE.Group {
 				steps: 1,
 				depth: 0.001,
 				bevelEnabled: false,
-				bevelThickness: 0.001,
-				bevelSize: 0.001,
 			} );
 
 			var uv = tagGeometry.getAttribute( 'uv' );
+			var pos = tagGeometry.getAttribute( 'position' );
 			for ( var i=0; i<uv.count; i++ )
-				uv.setXY( i, ( -uv.getX( i ) )*100+0.5, uv.getY( i )*57.15+0.2857 );
+				uv.setXY( i,
+					ASSETS.map( pos.getX( i ), 0, 1, -tW/2, tW/2 ),
+					ASSETS.map( pos.getY( i ), 0, 1, tMinY, tMaxY )
+				);
+
 
 			this.tag = new THREE.Mesh( tagGeometry, material.clone() );
 			this.tag.name = 'tag';
 			this.tag.material.color.set( 1.1, 1.1, 1.1 );
-			this.tag.position.x = tH*0.39;
-			this.tag.position.y = cH-nL+0.0005;
+			this.tag.position.x = tH*0.26;
+			this.tag.position.y = cH+0.0005 - ( params.simple?0:nL );
 			this.tag.rotation.set( Math.PI/2, Math.PI/2, 0, 'YXZ' );
 			this.add( this.tag );
 
@@ -270,12 +220,11 @@ class DrinkCan extends THREE.Group {
 			neckHeight: ASSETS.random( 1, 3 ),
 			neckSize: ASSETS.random( 4, 9 ),
 
-			canComplexity: ASSETS.random( 0, 50 )+ASSETS.random( 0, 50 ),
+			canComplexity: Math.floor( ASSETS.mapExp( Math.random(), 8, 120, 0, 1 ) ),
 
-			edges: ASSETS.random( 0, 100 ) > 30,
+			hasTag: ASSETS.random( 0, 100 ) < 70,
+			simple: ASSETS.random( 0, 100 ) < 30,
 			flat: ASSETS.random( 0, 100 ) < 30,
-
-			canComplexity: ASSETS.random( 0, 50 )+ASSETS.random( 0, 50 ),
 		};
 
 	} // DrinkCan.random

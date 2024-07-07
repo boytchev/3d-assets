@@ -14,15 +14,15 @@ to open it online.
 
 <p class="gallery">
 
-	<a class="style-block nocaption" href="../online/drink-can.html?canHeight=12&canSize=6&canComplexity=70&neckHeight=1.5&neckSize=5&neckLid=true&neckTag=true&edges=true&flat=false">
+	<a class="style-block nocaption" href="../online/drink-can.html?canHeight=12&canSize=6&canComplexity=50&neckHeight=1.5&neckSize=5&hasTag=true&simple=false&flat=false">
 		<img src="images/drink-can-1.png">
 	</a>
 
-	<a class="style-block nocaption" href="../online/drink-can.html?canHeight=5&canSize=7.46&canComplexity=70&neckHeight=1.5&neckSize=6.5&neckLid=true&neckTag=true&edges=true&flat=false">
+	<a class="style-block nocaption" href="../online/drink-can.html?canHeight=5&canSize=7.46&canComplexity=50&neckHeight=1.5&neckSize=6.5&hasTag=true&simple=false&flat=false">
 		<img src="images/drink-can-2.png">
 	</a>
 
-	<a class="style-block nocaption" href="../online/drink-can.html?canHeight=13.4&canSize=5&canComplexity=70&neckHeight=1.5&neckSize=5.9&neckLid=true&neckTag=true&edges=true&flat=false">
+	<a class="style-block nocaption" href="../online/drink-can.html?canHeight=13.4&canSize=5&canComplexity=50&neckHeight=1.5&neckSize=5.9&hasTag=true&simple=false&flat=false">
 		<img src="images/drink-can-3.png">
 	</a>
 
@@ -37,12 +37,11 @@ import { DrinkCan } from "3d-assets/drink-can.js";
 var model = new DrinkCan ({
 	canHeight: 12,
 	canSize: 6,
-	canComplexity: 70,
+	canComplexity: 50,
 	neckHeight: 1.5,
 	neckSize: 5,
-	neckLid: true,
-	neckTag: true,
-	edges: true,
+	hasTag: true,
+	simple: false,
 	flat: false
 });
 ```
@@ -59,26 +58,21 @@ var model = new DrinkCan ({
 
 * `neckHeight` &ndash; desired height of the neck, in cm, [1, 3]
 * `neckSize` &ndash; desired size of the neck, in cm, [4, 9]
-* `neckLid` &ndash; if *true* the lid is textured, if *false* the lid is flat, boolean
-* `neckTag` &ndash; if *true* the lid has a tag, if *false* the lid has no tag, boolean
 
 #### Complexity parameters
 
-* `canComplexity` &ndash; number of faces along the drink can perimeter, as percentage, [0, 100]
-* `edges` &ndash; if *true* edges are rounded, if *false* edges are sharp, boolean
-* `flat` &ndash; if *true* flat shading is used, if *false* smooth shading is used, boolean
+* `canComplexity` &ndash; number of faces along the can perimeter, [8, 120]
+* `hasTag` &ndash; if *true* the lid has a 3D tag, boolean
+* `simple` &ndash; if *true* the complexity of the profile is reduced, boolean
+* `flat` &ndash; if *true* flat shading is used, boolean
 	
 	
 ### Internal structure
 
-An instance of `DrinkCan` is a `THREE.Group` with three submeshes
-called `body`, `lid` and `tag`. 
+An instance of `DrinkCan` is a `THREE.Group` with submeshes
+called `body` and `lid`. If `hasTag` is *true* there is also
+submesh called `tag`. 
 
-The texture mapping of the body is concentric: the *u-axis*
-is circular along the perimeter of the plate, the *v-axis*
-is radial, starting from 0 at the bottom center, 0.5 at the
-rim and 1 at the top rim. The texture mapping of the lid and
-the rim are planar.
 
 
 ### Minimal example

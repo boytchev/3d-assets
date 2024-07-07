@@ -4,15 +4,17 @@
 
 
 
-import { MathUtils, MeshPhysicalMaterial, Shape, Vector2 } from 'three';
+import { LatheGeometry, MathUtils, MeshPhysicalMaterial, Shape, Vector2 } from 'three';
 //import { MeshPhysicalNodeMaterial } from 'three/nodes';
 //import { marble } from "tsl-textures/marble.js";
 
 
+const AUTO = null;
+
 // 2D curve with rounded vertices
 // path = [vertex, vertex, vertex,...]
-// where sharp vertex = [x,y]
-// rounded vertex = [x,y,radius]
+// where sharp vertex = [x,y,t]
+// rounded vertex = [x,y,radius,texture]
 class RoundedShape extends Shape {
 
 	constructor( path ) {
@@ -24,22 +26,39 @@ class RoundedShape extends Shape {
 
 		var len, r;
 
+		var firstTexture = null;
+
 		for ( var i=0; i< path.length; i++ ) {
 
-			var point = path[ i ];
-			if ( point.length == 2 || ( point.length == 3 && point[ 2 ]==0 ) ) {
+			var [ x, y, radius, texture ] = path[ i ];
+
+			if ( texture == undefined ) texture = AUTO;
+
+			if ( radius == 0 || radius == undefined ) {
+
+				v.set( x, y );
 
 				// [x, y]
-				v.set( ...point );
-				if ( i == 0 )
-					this.moveTo( v.x, v.y );
-				else
-					this.lineTo( v.x, v.y );
+				if ( i==0 ) {
+
+					this.moveTo( x, y );
+					firstTexture = texture;
+
+				} else {
+
+					this.lineTo( x, y );
+					if ( firstTexture!==null ) {
+
+						this.curves[ this.curves.length-1 ].v1.t = firstTexture;
+						firstTexture = null;
+
+					}
+
+					this.curves[ this.curves.length-1 ].v2.t = texture;
+
+				}
 
 			} else {
-
-				// [x, y, radius]
-				var radius = point[ 2 ];
 
 				function calc() {
 
@@ -51,21 +70,143 @@ class RoundedShape extends Shape {
 
 				}
 
-				u.set( point[ 0 ], point[ 1 ]);
+				u.set( x, y );
 				calc();
 				this.lineTo( v.x, v.y );
+				if ( firstTexture!==null ) {
+
+					this.curves[ this.curves.length-1 ].v1.t = firstTexture;
+					firstTexture = null;
+
+				}
 
 				v.set( path[ i+1 ][ 0 ], path[ i+1 ][ 1 ]);
 				calc();
 				this.quadraticCurveTo( u.x, u.y, v.x, v.y );
+				this.curves[ this.curves.length-1 ].v2.t = texture;
+
+			}
+
+		} // for i
+
+		//console.log( this.curves );
+
+	} // RoundedShape.constructor
+
+	getPoints( divisions ) {
+
+		var points = [];
+
+		for ( var i = 0, curves = this.curves; i < curves.length; i++ ) {
+
+			var curve = curves[ i ];
+
+			if ( curve.isLineCurve ) {
+
+				points.push( curve.v1, curve.v2 );
+
+			} else {
+
+				var pts = curve.getPoints( divisions );
+
+				var midJ = Math.floor( pts.length/2 );
+
+				for ( var j = 0; j < pts.length; j++ ) {
+
+					const point = pts[ j ];
+
+					if ( j==midJ ) point.t = curve.v2.t;
+
+					points.push( point );
+
+				} // for j
+
+			} // if curve
+
+		} // for i
+
+		return points;
+
+	} // RoundedShape.getPoints
+
+} // class RoundedShape
+
+
+
+// Lathe geometry with input = array of 2D points
+// each point is [x, y, radius, uv, active], where
+//		- x,y - 2D coordinates of point along the profile
+//		- uv - texture coordinates (usually v)
+//		- radius - curvature at this points
+
+class LatheUVGeometry extends LatheGeometry {
+
+	constructor( path, segments = 12, phiStart = 0, phiLength = Math.PI * 2 ) {
+
+		path = path.filter( ( e ) => e.length<5 || e[ 4 ]===true );
+
+		if ( path[ 0 ][ 3 ] == undefined ) path[ 0 ][ 3 ] = 0; // texture v=0
+		if ( path[ path.length-1 ][ 3 ] == undefined ) path[ path.length-1 ][ 3 ] = 1; // texture v=1
+
+		//console.table(path)
+
+		// get all points (includes duplicates)
+		var points = new RoundedShape( path ).getPoints( 4 );
+
+		//console.table(points)
+
+		// calculate lengths from beginning to each point
+		var lengths = [ 0 ];
+		for ( var i=1; i<points.length; i++ )
+			lengths[ i ] = lengths[ i-1 ]+ points[ i ].distanceTo( points[ i-1 ]);
+
+		//console.table(lengths)
+
+		var j = 0; // next non-null uv index
+		for ( var i=1; i<points.length-1; i++ ) {
+
+			if ( points[ i ].t==undefined || points[ i ].t==null ) {
+
+				if ( j<i ) {
+
+					j = i+1;
+					while ( points[ j ].t==undefined || points[ j ].t==null ) j++;
+
+				}
+
+				points[ i ].t = MathUtils.mapLinear(
+					lengths[ i ],
+					lengths[ i-1 ], lengths[ j ],
+					points[ i-1 ].t, points[ j ].t );
 
 			}
 
 		}
 
-	}
+		//console.table(points);
 
-} // class RoundedShape
+		var uniques = [ points[ 0 ] ];
+		for ( var i=1; i<points.length; i++ ) {
+
+			if ( ( points[ i ].x == points[ i-1 ].x )
+				&& ( points[ i ].y == points[ i-1 ].y )
+				&& ( points[ i ].t == points[ i-1 ].t )
+			) continue;
+			uniques.push( points[ i ]);
+
+		}
+
+		//console.table(uniques);
+
+		super( uniques, segments, phiStart, phiLength );
+
+		var uv = this.getAttribute( 'uv' );
+		for ( var i=0; i<uv.count; i++ )
+			uv.setY( i, uniques[ i%uniques.length ].t );
+
+	} // LatheUVGeometry.constructor
+
+} // LatheUVGeometry
 
 
 
@@ -151,4 +292,4 @@ function random( min, max, digits=2 ) {
 }
 
 
-export { RoundedShape, cm, slope, defaultMaterial, map, mapExp, round, random };
+export { AUTO, RoundedShape, LatheUVGeometry, cm, slope, defaultMaterial, map, mapExp, round, random };

@@ -18,7 +18,7 @@ class Mug extends THREE.Group {
 		mugSize: 8, // cm
 		mugShape: 0, // degrees
 		mugWidth: 0.4, // cm
-		mugComplexity: 70,
+		mugComplexity: 50,
 
 		handlePosition: 20, // %
 		handleHeight: 6, // cm
@@ -26,9 +26,9 @@ class Mug extends THREE.Group {
 		handleShape: 20, // degrees
 		handleWidth: 1.5, // cm
 		handleThickness: 0.6, // cm
-		handleComplexity: 70,
+		handleComplexity: 30,
 
-		edges: true,
+		simple: false,
 		flat: false,
 	};
 
@@ -72,13 +72,12 @@ class Mug extends THREE.Group {
 
 
 		// complexities
-		var mC = Math.floor( ASSETS.mapExp( params.mugComplexity, 6, 100 ) ),
-			hC = Math.floor( ASSETS.mapExp( params.handleComplexity, 3, 100 ) ),
-			hC2 = Math.floor( ASSETS.mapExp( params.handleComplexity, 2, 12 ) );
+		var mC = Math.floor( params.mugComplexity ), // mug
+			hC = Math.floor( params.handleComplexity ); // handle
 
 		// edgess
-		var mG = params.edges ? THREE.MathUtils.clamp( 0.01, 0, 0.48*mW ) : 0,
-			hG = params.edges ? 0.48*Math.min( hW, hT ) : 0;
+		var mG = params.simple ? 0 : THREE.MathUtils.clamp( 0.01, 0, 0.48*mW ),
+			hG = params.simple ? 0 : 0.48*Math.min( hW, hT );
 
 
 		// material
@@ -87,64 +86,39 @@ class Mug extends THREE.Group {
 
 		// body
 
-		var points = [];
+		var points;
 
-		if ( params.edges )
-			points.push(
-				[ 0, mW/4 ], // 0a
-				[ mBotS-2*mW, mW/4, mG ], // 1, concave bottom
-				[ mBotS-mW, 0, mG ], // 2
-			);
+		if ( params.simple )
+			points = [
+				// x,y,		   rad tex
+				[ 0, 0 					], // 1 bottom
+				[ mBotS*0.9, 0			], // 2
+				[ mBotS, 0,		0, 0.1	], // 3
+				[ mTopS, mH,	0, 0.5	], // 4 rim
+				[ mTopS-mW, mH			], // 5
+				[ mBotS-mW, mW,	0, 0.9	], // 6
+				[ mBotS-mW*1.1, mW,	0	], // 6
+				[ 0, mW 				], // 7 top
+			];
 		else
-			points.push([ 0, 0 ]); // 0b, flat bottom
+			points = [
+				// x,y,				rad	  tex
+				[ 0, mW/4 						], // 1
+				[ mBotS-2*mW, mW/4,	mG 			], // 2
+				[ mBotS-mW, 0, 		mG 			], // 3
+				[ mBotS, 0, 		2*mG, 0.1 	], // 4
+				[ mTopS, mH, 		mG, 0.5 	], // 5
+				[ mTopS-mW, mH, 	mG 			], // 6
+				[ mBotS-mW, mW, 	2*mG, 0.9 	], // 7
+				[ 0, mW 						], // 8
+			];
 
-		points.push(
-			[ mBotS, 0, 2*mG ], // 3
-			[ mTopS, mH, mG ], // 4
-			[ mTopS-mW, mH, mG ], // 5
-			[ mBotS-mW, mW, 2*mG ], // 6
-			[ 0, mW ], // 7
-		);
+		var bodyGeometry = new ASSETS.LatheUVGeometry( points, mC );
 
-
-		var bodyShape = new ASSETS.RoundedShape( points );
-
-		const POINTS = 6;
-		var bodyGeometry = new THREE.LatheGeometry( bodyShape.getPoints( POINTS-1 ), mC );
-
-		// set body uv
-		var pos = bodyGeometry.getAttribute( 'position' ),
-			uv = bodyGeometry.getAttribute( 'uv' );
-
-		var v = new THREE.Vector3(); // temp
-		var maxDist = mTopS+mH; // 7 to 5
-
-		var outterRim = params.edges ? 3.5*POINTS+1 : 3;
-
-		for ( var i=0; i<pos.count; i++ ) {
-
-			var j = i % ( pos.count/( mC+1 ) ); // point index along the curve [0,6*POINTS+2)
-
-			v.fromBufferAttribute( pos, i );
-
-			var dist = ( v.x**2+v.z**2 )**0.5 + Math.abs( v.y ) + mW/6; // mW.6 is experimentally found
-
-			var u = uv.getX( i )+0.5/mC;
-
-			if ( j < outterRim ) {
-
-				// outside the mug
-				uv.setXY( i, u, 0.5-0.5*( 1-dist/maxDist ) );
-
-			} else {
-
-				// inside the mug
-				uv.setXY( i, u, 0.5+0.5*( 1-dist/maxDist ) );
-
-			}
-
-		}
-
+		// rotate UVs to compensate body rotation
+		var uv = bodyGeometry.getAttribute( 'uv' );
+		for ( var i=0; i<uv.count; i++ )
+			uv.setX( i, uv.getX( i )+1/mC/2 );
 		this.body = new THREE.Mesh( bodyGeometry, material );
 		this.body.rotation.y = Math.PI/2 + Math.PI/mC;
 		this.body.name = 'body';
@@ -154,13 +128,15 @@ class Mug extends THREE.Group {
 
 		// handle
 
+		var v = new THREE.Vector3();
+
 		var handleProfileShape = new ASSETS.RoundedShape([
 			[ 0, hT ],
 			[ -hW, hT, hG ],
 			[ -hW, -hT, hG ],
 			[ hW, -hT, hG ],
 			[ hW, hT, hG ],
-			[ 0, hT ],
+			[ 0, hT-0.001 ], // fake vertex, later it will match the first vertex
 		]);
 
 		var apotem = Math.cos( Math.PI/mC ); // low-poly reduces size
@@ -177,7 +153,7 @@ class Mug extends THREE.Group {
 		 );
 
 		var handleGeometry = new THREE.ExtrudeGeometry( handleProfileShape, {
-			curveSegments: 1+0*hC2,
+			curveSegments: 1,
 			steps: hC,
 			bevelEnabled: false,
 			extrudePath: handleCurve
@@ -186,20 +162,13 @@ class Mug extends THREE.Group {
 		// the handle has caps, remove them
 		var capsCount = handleGeometry.groups[ 1 ].start; // number of vectors to remove
 
-		var attr;
 		handleGeometry.clearGroups();
 
-		attr = handleGeometry.attributes.position;
-		attr.array = attr.array.slice( 3*capsCount );
-		attr.count -= capsCount;
+		var pos = handleGeometry.attributes.position;
+		pos.array = pos.array.slice( 3*capsCount );
+		pos.count -= capsCount;
 
-		attr = handleGeometry.attributes.normal;
-		attr.array = attr.array.slice( 3*capsCount );
-		attr.count -= capsCount;
-
-		attr = handleGeometry.attributes.uv;
-		attr.array = attr.array.slice( 2*capsCount );
-		attr.count -= capsCount;
+		// smooth the handle
 
 		handleGeometry.deleteAttribute( 'uv' );
 		handleGeometry.deleteAttribute( 'normal' );
@@ -208,46 +177,23 @@ class Mug extends THREE.Group {
 
 
 		var rows = hC+1;
-		var perRow = handleGeometry.attributes.position.count/rows; // 9
+		var perRow = handleGeometry.attributes.position.count/rows; // 10
 
-		if ( params.edges ) {
+		if ( !params.simple ) {
 
-			var k = 0.1*2/3;
-			var uMap = [ 0.0, k, 2*k, 3*k, 0.5, 0.5+k, 0.5+2*k, 0.5+3*k, 1.0 ];
+			var k = 0.3/2,
+				s = ( 1-2*k*2 )/6;
+			var uMap = [ 0, k, k+s, k+2*s, k+3*s, 3*k+3*s, 3*k+4*s, 3*k+5*s, 3*k+6*s, 4*k+6*s, 4*k+6*s ];
 
 		} else {
 
-			var uMap = [ 0.0, 0.2, 0.5, 0.7, 1.0 ];
+			var uMap = [ 0.0, 0.15, 0.35, 0.65, 0.85, 1.0 ];
 
 		}
 
-		// remove the last stripe
-		handleGeometry.index.count -= 6*hC;
-		handleGeometry.index.array = handleGeometry.index.array.slice( 0, handleGeometry.index.count );
-		handleGeometry = mergeVertices( handleGeometry );
-
-		// update position to close the shape
-		var pos = handleGeometry.getAttribute( 'position' );
-		for ( var i=0; i<rows; i++ ) {
-
-			v.fromBufferAttribute( pos, 2*i );
-			pos.setXYZ( ( perRow-1 )*rows+i, v.x, v.y, v.z );
-
-		}
 
 		handleGeometry.computeVertexNormals();
 
-		var nor = handleGeometry.getAttribute( 'normal' );
-		for ( var i=0; i<rows; i++ ) {
-
-			v.fromBufferAttribute( nor, ( perRow-2 )*rows+i );
-			nor.setXYZ( ( perRow-1 )*rows+i, v.x, v.y, -v.z );
-			nor.setXYZ( 2*i, v.x, v.y, -v.z );
-
-		}
-
-
-		// attr is uv
 		var uv = [];
 
 		// first two lines
@@ -260,20 +206,35 @@ class Mug extends THREE.Group {
 
 		// next lines
 		for ( var j=2; j<perRow; j++ )
-			for ( var i=0; i<rows; i++ ) {
-
+			for ( var i=0; i<rows; i++ )
 				uv.push( uMap[ j ], i/( rows-1 ) );
 
-			}
 
 		handleGeometry.setAttribute( 'uv', new THREE.Float32BufferAttribute( uv, 2 ) );
+
+		// fix the last column of vertices
+		var pos = handleGeometry.getAttribute( 'position' );
+		var nor = handleGeometry.getAttribute( 'normal' );
+		for ( var i=0; i<rows; i++ ) {
+
+			var j = rows*( perRow-1 )+i;
+
+			v.fromBufferAttribute( pos, 2*i );
+			pos.setXYZ( j, v.x, v.y, v.z );
+
+			v.fromBufferAttribute( nor, 2*i );
+			nor.setXYZ( j, v.x, v.y, v.z );
+
+		}
 
 		this.handle = new THREE.Mesh( handleGeometry, material );
 		this.handle.name = 'handle';
 
+		this.add( this.handle );
+
+
 		this.position.y = -mH/2;
 
-		this.add( this.handle );
 
 	} // Mug.constructor
 

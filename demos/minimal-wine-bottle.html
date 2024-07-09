@@ -31,7 +31,7 @@
 	<script type="module">
 	
 		import * as THREE from "three";
-		import { DrinkCan } from "3d-assets/drink-can.js";
+		import { WineBottle } from "3d-assets/wine-bottle.js";
 
 		var renderer = new THREE.WebGLRenderer( { antialias: true } );
 		renderer.setSize( innerWidth, innerHeight );
@@ -41,14 +41,14 @@
 		scene.background = new THREE.Color('white');
 
 		var camera = new THREE.PerspectiveCamera( 30, innerWidth / innerHeight );
-		camera.position.set( 0.1, 0.2, 0.4 );
+		camera.position.set( 0.2, 0.3, 0.6 );
 		camera.lookAt( scene.position );
 
 		var light = new THREE.DirectionalLight( "white", 3 );
 		light.position.set( 1, 1, 1 );
 		scene.add( light );
 
-		var object = new DrinkCan( DrinkCan.defaults );
+		var object = new WineBottle( WineBottle.defaults );
 		scene.add( object );
 
 		renderer.setAnimationLoop( ()=>renderer.render( scene, camera ) );

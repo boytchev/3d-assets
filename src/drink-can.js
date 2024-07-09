@@ -46,6 +46,8 @@ class DrinkCan extends THREE.Group {
 
 		super( );
 
+		this.isDrinkCan = true;
+
 		this.generate( params );
 
 	}

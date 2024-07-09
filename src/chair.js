@@ -30,6 +30,8 @@ class Chair extends THREE.Group {
 
 		super();
 
+		this.isChair = true;
+
 		this.generate( params );
 
 	}
@@ -189,6 +191,8 @@ class Chair extends THREE.Group {
 			this.add( backrest );
 
 		}
+
+		this.position.y = -( seatHeight+backrestHeight )/2;
 
 	} // Chair.constructor
 

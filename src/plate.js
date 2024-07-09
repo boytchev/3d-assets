@@ -30,6 +30,8 @@ class Plate extends THREE.Group {
 
 		super( );
 
+		this.isPlate = true;
+
 		this.generate( params );
 
 	}

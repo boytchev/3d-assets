@@ -30,9 +30,12 @@ class RoundedShape extends Shape {
 
 		for ( var i=0; i< path.length; i++ ) {
 
-			var [ x, y, radius, texture ] = path[ i ];
+			var [ x, y, radius, texture, active, divisions ] = path[ i ];
 
 			if ( texture == undefined ) texture = AUTO;
+			if ( divisions == undefined ) divisions = 4;
+
+			console.assert( active === true || active === undefined );
 
 			if ( radius == 0 || radius == undefined ) {
 
@@ -84,6 +87,7 @@ class RoundedShape extends Shape {
 				calc();
 				this.quadraticCurveTo( u.x, u.y, v.x, v.y );
 				this.curves[ this.curves.length-1 ].v2.t = texture;
+				this.curves[ this.curves.length-1 ].divisions = divisions;
 
 			}
 
@@ -107,7 +111,7 @@ class RoundedShape extends Shape {
 
 			} else {
 
-				var pts = curve.getPoints( divisions );
+				var pts = curve.getPoints( curve.divisions ?? divisions );
 
 				var midJ = Math.floor( pts.length/2 );
 
@@ -218,6 +222,14 @@ function cm( x ) {
 } // cm
 
 
+// converts percentages to units
+function percent( x ) {
+
+	return x/100;
+
+} // percent
+
+
 // converts degrees to slope
 function slope( x ) {
 
@@ -292,4 +304,4 @@ function random( min, max, digits=2 ) {
 }
 
 
-export { AUTO, RoundedShape, LatheUVGeometry, cm, slope, defaultMaterial, map, mapExp, round, random };
+export { AUTO, RoundedShape, LatheUVGeometry, cm, percent, slope, defaultMaterial, map, mapExp, round, random };

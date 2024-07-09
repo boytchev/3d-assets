@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+
+
+<html>
+
+
+<head>
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<link rel="shortcut icon" type="image/png" href="../assets/logo/logo.png"/>
+	<link rel="stylesheet" href="styles.css">
+
+	<script type="importmap">
+	  {
+		"imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@0.166.0/build/three.module.js",
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166.0/examples/jsm/",
+			"assets/": "../src/"
+		}
+	  }
+	</script>
+</head>
+
+
+<body>
+	<div class="footnote bottomfixed">
+		<a href="../">Home</a>
+	</div>
+	
+	<script type="module">
+
+		import * as THREE from "three";
+		import { install, params } from "./online.js";
+		import { WineBottle } from "assets/wine-bottle.js";
+
+
+
+		var gui = install( WineBottle );
+		
+		
+		
+		var guiB = gui.addFolder( '<big>Bottle</big>' )
+
+		guiB.add( params, 'bottleHeight' )
+			.min( 15 ).max( 35 ).step(0.01)
+			.name( 'Height<right>cm</right>' )
+			.$input.classList.add( 'top' );
+
+		guiB.add( params, 'bottleSize' )
+			.min( 5 ).max( 15 ).step(0.01)
+			.name( 'Size<right>cm</right>' );
+
+		guiB.add( params, 'bottleBulge' )
+			.min( 0 ).max( 100 ).step(1)
+			.name( 'Bulge<right>%</right>' );
+			
+		guiB.add( params, 'puntHeight' )
+			.min( 0 ).max( 3 ).step(0.01)
+			.name( 'Punt<right>cm</right>' )
+			.$input.classList.add( 'bottom' );
+
+		var guiN = gui.addFolder( '<big>Neck</big>' )
+
+		guiN.add( params, 'neckHeight' )
+			.min( 2 ).max( 15 ).step(0.01)
+			.name( 'Height<right>cm</right>' );
+
+		guiN.add( params, 'neckSize' )
+			.min( 1 ).max( 3 ).step(0.01)
+			.name( 'Size<right>cm</right>' );
+
+		guiN.add( params, 'neckSmooth' )
+			.min( 0.5 ).max( 15 ).step(0.01)
+			.name( 'Smooth<right>cm</right>' );
+
+		var guiT = gui.addFolder( '<big>Top</big>' )
+
+		guiT.add( params, 'topHeight' )
+			.min( 0.3 ).max( 3 ).step(0.01)
+			.name( 'Height<right>cm</right>' );
+
+		guiT.add( params, 'topSize' )
+			.min( 0 ).max( 0.5 ).step(0.01)
+			.name( 'Size<right>cm</right>' );
+
+		guiT.add( params, 'topOffset' )
+			.min( 0 ).max( 1 ).step(0.01)
+			.name( 'Offset<right>cm</right>' );
+
+
+
+		var guiT = gui.addFolder( '<big>Complexity</big><right id="model-statistics"></right>' )
+
+		guiT.add( params, 'bottleComplexity' )
+			.min( 8 ).max( 120 ).step( 1 )
+			.name( 'Plate<right>n</right>' );
+		
+		guiT.add( params, 'opened' )
+			.name( 'Opened' );
+		
+		guiT.add( params, 'simple' )
+			.name( 'Simple' );
+		
+		guiT.add( params, 'flat' )
+			.name( 'Flat' );
+		
+	</script>
+</body>
+</html>

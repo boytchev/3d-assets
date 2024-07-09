@@ -4,7 +4,7 @@
 //	secret keystrokes:
 //		[d]+[t]	toggle debug texture
 //		[d]+[g]	toggle wireframe
-
+//		[d]+[p]	toggle profile
 
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -323,20 +323,27 @@ function createAssetClone( ) {
 
 } // createAssetClone
 
+
+
+// center and zoom camera depending on asset's size
+
 function centerCamera( asset, firstTime ) {
 
 	const aabb = new THREE.Box3();
 	aabb.setFromObject( asset );
-	const center = new THREE.Vector3();
+	//	const center = new THREE.Vector3();
 	const size = new THREE.Vector3();
-	aabb.getCenter( center );
+	//	aabb.getCenter( center );
 	aabb.getSize( size );
 
-	controls.target.set( center.x, center.y, center.z );
-	if ( firstTime )
-		camera.position.set( size.x * 2, size.y * 2, size.z * 2 );
+	//	controls.target.set( center.x, center.y, center.z );
+	if ( firstTime ) {
 
-}
+		camera.position.set( 0, 0, Math.max( size.x, size.y, size.z ) * 2.7 );
+
+	}
+
+} // centerCamera
 
 
 // remove the clone created by createAssetClone
@@ -346,8 +353,6 @@ function removeAssetClone( ) {
 	assetClone = undefined;
 
 } // removeAssetClone
-
-
 
 
 

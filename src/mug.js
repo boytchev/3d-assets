@@ -37,6 +37,8 @@ class Mug extends THREE.Group {
 
 		super( );
 
+		this.isMug = true;
+
 		this.generate( params );
 
 	}

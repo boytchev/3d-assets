@@ -323,6 +323,20 @@ function createAssetClone( ) {
 
 } // createAssetClone
 
+function centerCamera( asset, firstTime ) {
+
+	const aabb = new THREE.Box3();
+	aabb.setFromObject( asset );
+	const center = new THREE.Vector3();
+	const size = new THREE.Vector3();
+	aabb.getCenter( center );
+	aabb.getSize( size );
+
+	controls.target.set( center.x, center.y, center.z );
+	if ( firstTime )
+		camera.position.set( size.x * 2, size.y * 2, size.z * 2 );
+
+}
 
 
 // remove the clone created by createAssetClone
@@ -438,6 +452,8 @@ function exportAsGLTF( event ) {
 
 function regenerateAsset( ) {
 
+	const firstTime = asset == null;
+
 	scene.remove( asset );
 	asset?.dispose( );
 
@@ -465,6 +481,7 @@ function regenerateAsset( ) {
 	}
 
 	updateModelStatistics();
+	centerCamera( asset, firstTime );
 
 } // regenerateAsset
 

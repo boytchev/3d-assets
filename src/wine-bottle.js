@@ -11,7 +11,7 @@ import * as ASSETS from './assets-utils.js';
 
 class WineBottle extends THREE.Group {
 
-	static name = 'WineBottle';
+	static name = 'Wine Bottle';
 
 	static defaults = {
 

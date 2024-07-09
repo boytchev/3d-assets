@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+
+<html>
+
+
+<head>
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<link rel="shortcut icon" type="image/png" href="../assets/logo/logo.png"/>
+	<link rel="stylesheet" href="styles.css">
+
+	<script type="importmap">
+	  {
+		"imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.0/examples/jsm/",
+			"three/nodes": "https://cdn.jsdelivr.net/npm/three@0.164.0/examples/jsm/nodes/Nodes.js",
+			"tsl-textures/": "https://cdn.jsdelivr.net/npm/tsl-textures@latest/src/",
+			"assets/": "../src/"
+		}
+	  }
+	</script>
+</head>
+
+
+<body>
+	<div class="footnote bottomfixed">
+		<a href="../">Home</a> &middot;
+		<a id="info" href="">Info</a>
+	</div>
+	
+	<script type="module">
+
+		import * as THREE from "three";
+		import { install, params } from "./online.js";
+		import { Chair } from "assets/chair.js";
+		
+		const gui = install( Chair );
+		
+		const guiS = gui.addFolder( "Seat" );
+
+		guiS.add( params, "seatWidth" )
+			.min( 20 ).max( 100 ).step( .01 )
+			.name( "Width<right>cm</right>" );
+
+		guiS.add( params, "seatDepth" )
+			.min( 20 ).max( 100 ).step( .01 )
+			.name( "Depth<right>cm</right>" );
+
+		guiS.add( params, "seatHeight" )
+			.min( 20 ).max( 100 ).step( .01 )
+			.name( "Height<right>cm</right>" );
+
+		guiS.add( params, "seatThickness" )
+			.min( 2 ).max( 10 ).step( .01 )
+			.name( "Thickness<right>cm</right>" );
+
+		const guiB = gui.addFolder( "Backrest" );
+
+		guiB.add( params, "backrestHeight" )
+			.min( 5 ).max( 100 ).step( .01 )
+			.name( "Height<right>cm</right>" );
+
+		guiB.add( params, "backrestSidesThickness" )
+			.min( 2 ).max( 10 ).step( .01 )
+			.name( "Thickness<right>cm</right>" );
+
+		guiB.add( params, "backrestAngle" )
+			.min( 0 ).max( 45 ).step( .01 )
+			.name( "Angle<right>deg</right>" );
+
+		const guiC = gui.addFolder( "Cussions" );
+		
+		guiC.add( params, "cussionThickness" )
+			.min( 2 ).max( 15 ).step( .01 )
+			.name( "Thickness<right>cm</right>" );
+
+		guiC.add( params, "cussionOffset" )
+			.min( 2 ).max( 15 ).step( .01 )
+			.name( "Offset<right>cm</right>" );
+
+		guiC.add( params, "cussionRoundness" )
+			.min( 0 ).max( 0.2 ).step( .01 )
+			.name( "Roundness<right>cm</right>" );
+		
+		const guiL = gui.addFolder( "Legs" );
+
+		guiL.add( params, "legThickness" )
+			.min( 1 ).max( 10 ).step( .01 )
+			.name( "Thickness<right>cm</right>" );
+
+		var guiT = gui.addFolder( '<big>Complexity</big><right id="model-statistics"></right>' )
+
+		guiT.add( params, 'cussionDetail' )
+			.min( 1 ).max( 10 ).step(1)
+			.name( 'Cussions<right>n</right>' );
+		
+		guiT.add( params, 'simple' )
+			.name( 'Simple' );
+
+		guiT.add( params, 'flat' )
+			.name( 'Flat' );
+
+		</script>
+	</body>
+</html>

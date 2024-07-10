@@ -87,8 +87,8 @@ var model = new WineBottle ({
 	
 ### Internal structure
 
-An instance of `Mug` is a `THREE.Group` with two submeshes
-called `body` and `handle`. 
+An instance of `WineBottle` is a `THREE.Group` with a submeshe
+called `body`. 
 
 <img src="images/wine-bottle-scheme.png">
 

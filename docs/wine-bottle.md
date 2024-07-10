@@ -6,86 +6,81 @@
 
 ## Wine bottle
 
-TODO
 
-<!--
-
-This generator creates a 3D mug with a handle. A set of
-parameters control the size and the shape of the mug and its
-handle. It is possible to generale low-poly mug by reducing
-the complexity, removing edges and using flat shading. Click
-on a snapshot to open it online.
+This generator creates a wine bottle. A set of parameters
+control the size and the shape of the bottle. The common
+bottle shales (like alsace, bordeaux, champagne or burgundy)
+and other shapes can be recreated. It is possible to generale
+low-poly mug by reducing the complexity, removing edges and
+using flat shading. Click on a snapshot to open it online.
 
 <p class="gallery">
 
-	<a class="style-block nocaption" href="../online/mug.html?mugHeight=10&mugSize=8&mugShape=0&mugWidth=0.4&handlePosition=20&handleHeight=6&handleSize=7&handleShape=20&handleWidth=1.5&handleThickness=0.6&mugComplexity=50&handleComplexity=30&simple=false&flat=false">
-		<img src="images/mug-1.png">
+	<a class="style-block nocaption" href="../online/wine-bottle.html?bottleHeight=25&bottleSize=6&bottleBulge=0&bottleComplexity=50&puntHeight=1&neckHeight=5.5&neckSize=2&neckSmooth=3.5&topHeight=0.4&topSize=0.2&topOffset=0.2&opened=true&simple=false&flat=false">
+		<img src="images/wine-bottle-1.png">
 	</a>
 
-	<a class="style-block nocaption" href="../online/mug.html?mugHeight=9.86&mugSize=8.46&mugShape=-13.5&mugWidth=0.699&handlePosition=56&handleHeight=6.9&handleSize=5.66&handleShape=40&handleWidth=1.04&handleThickness=0.76&mugComplexity=80&handleComplexity=40&simple=false&flat=false">
-		<img src="images/mug-2.png">
+	<a class="style-block nocaption" href="../online/wine-bottle.html?bottleHeight=20.8&bottleSize=6&bottleBulge=14&bottleComplexity=50&puntHeight=1&neckHeight=5.5&neckSize=2&neckSmooth=1.81&topHeight=2.7&topSize=0.18&topOffset=0&opened=true&simple=false&flat=false">
+		<img src="images/wine-bottle-2.png">
 	</a>
 
-	<a class="style-block nocaption" href="../online/mug.html?mugHeight=10.12&mugSize=6.37&mugShape=9.4&mugWidth=0.3&handlePosition=-100&handleHeight=4.8&handleSize=5.17&handleShape=-40&handleWidth=1.15&handleThickness=0.91&mugComplexity=10&handleComplexity=4&simple=true&flat=true">
-		<img src="images/mug-3.png">
+	<a class="style-block nocaption" href="../online/wine-bottle.html?bottleHeight=20.8&bottleSize=5.8&bottleBulge=100&bottleComplexity=50&puntHeight=1&neckHeight=7.07&neckSize=1.84&neckSmooth=5&topHeight=1.57&topSize=0.15&topOffset=0&opened=true&simple=false&flat=false">
+		<img src="images/wine-bottle-3.png">
 	</a>
 
 </p>
--->
+
 
 ### Code example
 
-TODO
 
-<!--
 ```js
-import { Mug } from "3d-assets/mug.js";
+import { WineBottle } from "3d-assets/wine-bottle.js";
 
-var model = new Mug ({
-	mugHeight: 19.8,
-	mugSize: 8.64,
-	mugShape: 3.2,
-	mugWidth: 0.329,
-	mugComplexity: 50,
-	handlePosition: 95,
-	handleHeight: 7.3,
-	handleSize: 6.07,
-	handleShape: -34.9,
-	handleWidth: 1.42,
-	handleThickness: 0.74,
-	handleComplexity: 30,
+var model = new WineBottle ({
+	bottleHeight: 25,
+	bottleSize: 6,
+	bottleBulge: 0,
+	bottleComplexity: 50,
+	puntHeight: 1,
+	neckHeight: 5.5,
+	neckSize: 2,
+	neckSmooth: 3.5,
+	topHeight: 0.4,
+	topSize: 0.2,
+	topOffset: 0.2,
+	opened: true,
 	simple: false,
 	flat: false
 });
 ```
--->
+
 
 ### Parameters
 
-TODO
+#### Bottle parameters
 
-<!--
-
-#### Mug parameters
-
-* `mugHeight` &ndash; height of the mug, in cm, [7, 20]
-* `mugSize` &ndash; diameter of the mug, in cm, [6, 12]
-* `mugShape` &ndash; slope of the walls, in degrees, [-15, 15]
-* `mugWidth` &ndash; width of the walls, in cm, [0.3, 1]
+* `bottleHeight` &ndash; height of the bottle, in cm, [15, 35]
+* `bottleSize` &ndash; diameter of the bottom of the bottle, in cm, [5, 15]
+* `bottleBulge` &ndash; additional bulge of the bottle midsection, percentage, [0, 10]
+* `puntHeight` &ndash; height of punt at the bottle bottom, in cm, [0, 3]
 	
-#### Handle parameters
+#### Neck parameters
 
-* `handlePosition` &ndash; vertical position of the handle, as percentage, [-100, 100]
-* `handleHeight` &ndash; desired height of the handle, in cm, [3, 18]
-* `handleSize` &ndash; desired extension size of the handle, in cm, [3, 10]
-* `handleShape` &ndash; slope of handle control points, in degrees, [-80, 80]
-* `handleWidth` &ndash; width of the handle cross-section, in cm, [1, 2]
-* `handleThickness` &ndash; thickness of the handle cross-section, in cm, [0.3, 1]
+* `neckHeight` &ndash; desired height of the neck, in cm, [2, 15]
+* `neckSize` &ndash; diameter of the neck, in cm, [1, 3]
+* `neckSmooth` &ndash; curvature of the neck, in cm, [0.5, 15]
+	
+#### Top parameters
+
+* `topHeight` &ndash; desired height of the top, in cm, [0.3, 3]
+* `topSize` &ndash; size of the top in addition to the neck, in cm, [0, 0.5]
+* `topOffset` &ndash; distance from the top of the bottle, in cm, [0, 1]
 
 #### Complexity parameters
 
-* `mugComplexity` &ndash; number of faces along the mug perimeter, [4, 120]
-* `handleComplexity` &ndash; number of faces along the handle, [3, 80]
+* `bottleComplexity` &ndash; number of faces along the bottle perimeter, [8, 120]
+* `opened` &ndash; if *true* the bottle is open and the interior wall is generated, boolean
 * `simple` &ndash; if *true* the complexity of the profile is reduced, boolean
 * `flat` &ndash; if *true* flat shading is used, boolean
 	
@@ -97,7 +92,6 @@ called `body` and `handle`.
 
 <img src="images/mug-scheme.png">
 
--->
 
 ### Minimal example
 

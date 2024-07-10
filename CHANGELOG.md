@@ -1,6 +1,9 @@
 # 3D Assets
 
 
+## 0.6.0
+* Added "Wine bottle" in *wine-bottle.js*
+
 ## 0.5.0
 * Existing assets converted to use *LatheUVGeometry*
 

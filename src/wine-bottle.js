@@ -94,49 +94,49 @@ class WineBottle extends THREE.Group {
 
 		if ( params.simple )
 			points = [
-				// x, y,			rad	tex act div
-				[ 0, 0, 					], // 0 bottom
-				[ bS*0.9, 0,		0, 0.1			], // 1 bottom rim
-				[ bS, 0,		0, 0.1			], // 1 bottom rim
-				[ bB, bH-nH-nSm,	nSm, AUTO, true, 3			], // 3
-				[ nS, bH-nH,	0			], // 3
-				[ nS, bH,		0, params.opened?AUTO:0.9 			], // 3
+				// x, y,			rad	 tex   act  div
+				[ 0, 0, 											], // 0 bottom
+				[ bS*0.9, 0,										], // 1
+				[ bS, 0,			0, 0.1							], // 2 bottom rim
+				[ bB, bH-nH-nSm,	nSm, AUTO, true, 3				], // 3
+				[ nS, bH-nH,										], // 4
+				[ nS, bH,			0, params.opened?AUTO:0.9 		], // 5
 
-				[ nS-bW, bH,		0, AUTO, params.opened 			], // 3
-				[ nS-bW, bH-nH,	0, AUTO, params.opened			], // 3
-				[ bB-bW, bH-nH-nSm,	nSm, AUTO, params.opened, 3			], // 3
-				[ bS-bW, bW,		0,	0.9, params.opened		], // 1 bottom rim
-				[ bS*0.9-bW, bW,		0,	0.9, params.opened		], // 1 bottom rim
-				[ 0, bW,		0,	AUTO, params.opened		], // 1 bottom rim
+				[ nS-bW, bH,		0, AUTO, params.opened			], // 6
+				[ nS-bW, bH-nH,		0, AUTO, params.opened			], // 7
+				[ bB-bW, bH-nH-nSm,	nSm, AUTO, params.opened, 3		], // 8
+				[ bS-bW, bW,		0, 	 0.9, params.opened			], // 9
+				[ bS*0.9-bW, bW,	0, 	 0.9, params.opened			], // 10
+				[ 0, bW,			0,	 AUTO, params.opened		], // 11
 
 
-				[ nS*0.9, bH, 0, 1, !params.opened			 		], // 4
-				[ 0, bH, 0, 1, !params.opened			 		], // 4
+				[ nS*0.9, bH, 		0, AUTO, !params.opened			], // 12
+				[ 0, bH, 			0, 	1, !params.opened			], // 13
 			];
 		else
 			points = [
-				// x, y,			rad	tex act div
-				[ 0, pH, 						], // 0 bottom
-				[ 1*bS/5, pH, 		pH			], // 1
-				[ 3*bS/5, 0, 		pH			], // 2
-				[ bS, 0,			pG, 0.1			], // 3 bttom rim
-				[ bB, bH-nH-nSm,	nSm, AUTO, true, 12	], // 3
-				[ nS, bH-nH,		pG/2,	], // 3
-				[ nS, bH-tO-tH,		pG/2,	], // 3
-				[ nS+tS, bH-tO-tH,		pG/2,	], // 3
-				[ nS+tS, bH-tO,		pG/2,	], // 3
-				[ nS, bH-tO,		pG/2,	], // 3
-				[ nS, bH,			0, params.opened?AUTO:0.9 			], // 3
+				// x, y,			rad	 tex   act  div
+				[ 0, pH, 											], // 0 bottom
+				[ 1*bS/5, pH, 		pH								], // 1
+				[ 3*bS/5, 0, 		pH								], // 2
+				[ bS, 0,			pG, 0.1							], // 3 bttom rim
+				[ bB, bH-nH-nSm,	nSm, AUTO, true, 12				], // 4
+				[ nS, bH-nH,		pG/2,							], // 5
+				[ nS, bH-tO-tH,		pG/2,							], // 6
+				[ nS+tS, bH-tO-tH,	pG/2,							], // 7
+				[ nS+tS, bH-tO,		pG/2,							], // 8
+				[ nS, bH-tO,		pG/2,							], // 9
+				[ nS, bH,			0, params.opened?AUTO:0.9 		], // 10
 
-				[ nS-bW, bH,		0, AUTO, params.opened	 		], // 4
-				[ nS-bW, bH-nH,		0, AUTO, params.opened	 		], // 4
-				[ bB-bW, bH-nH-nSm,	nSm, AUTO, params.opened, 12	], // 3
-				[ bS-bW, bW,			pG, 0.9, params.opened			], // 3 bttom rim
-				[ 3*bS/5+bW, bW, 		pH, AUTO, params.opened			], // 2
-				[ 1*bS/5, pH+bW, 		pH, AUTO, params.opened			], // 1
-				[ 0, pH+bW,				0, AUTO, params.opened		], // 3 bttom rim
+				[ nS-bW, bH,		0, AUTO, params.opened	 		], // 11
+				[ nS-bW, bH-nH,		0, AUTO, params.opened	 		], // 12
+				[ bB-bW, bH-nH-nSm,	nSm, AUTO, params.opened, 12	], // 13
+				[ bS-bW, bW,		pG, 0.9, params.opened			], // 14
+				[ 3*bS/5+bW, bW, 	pH, AUTO, params.opened			], // 15
+				[ 1*bS/5, pH+bW, 	pH, AUTO, params.opened			], // 16
+				[ 0, pH+bW,				0, AUTO, params.opened		], // 17
 
-				[ 0, bH,			0, 1, !params.opened	 		], // 4
+				[ 0, bH,			0, 1, !params.opened	 		], // 18
 
 			];
 

@@ -90,7 +90,7 @@ var model = new WineBottle ({
 An instance of `Mug` is a `THREE.Group` with two submeshes
 called `body` and `handle`. 
 
-<img src="images/mug-scheme.png">
+<img src="images/wine-bottle-scheme.png">
 
 
 ### Minimal example

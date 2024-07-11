@@ -4,7 +4,7 @@
 
 
 
-import { LatheGeometry, MathUtils, MeshPhysicalMaterial, Shape, Vector2 } from 'three';
+import { BufferAttribute, BufferGeometry, LatheGeometry, MathUtils, MeshPhysicalMaterial, Shape, Vector2, Vector3 } from 'three';
 //import { MeshPhysicalNodeMaterial } from 'three/nodes';
 //import { marble } from "tsl-textures/marble.js";
 
@@ -212,6 +212,132 @@ class LatheUVGeometry extends LatheGeometry {
 
 } // LatheUVGeometry
 
+// Generates a box with rounded corners.
+// Built to replace the RoundedBoxGeometry three.js plugin
+// but uses an index buffer
+//
+class RoundedBoxGeometry extends BufferGeometry {
+
+	constructor( x, y, z, segments, roundness ) {
+
+		super();
+
+		const detail = segments * 2 + 1;
+		const size = [ x, y, z ];
+
+		const minSize = Math.min( x, Math.min( y, z ) );
+		const maxSize = Math.max( x, Math.max( y, z ) );
+		const radius = Math.min( roundness * maxSize / 2, minSize / 2 );
+
+		const vertexCount =
+		6 * ( detail + 1 ) * ( detail + 1 );
+
+		const vertices = new Float32Array( vertexCount * 3 );
+		const normals = new Float32Array( vertexCount * 3 );
+		const uvs	 = new Float32Array( vertexCount * 2 );
+
+		const faceCount = 6 * detail * detail;
+
+		const indices = new Uint16Array( faceCount * 6 );
+
+		// count offset for writing
+		let vertexOffset = 0;
+		let indexOffset = 0;
+		for ( let axis0 = 0; axis0 < 3; ++axis0 ) {
+
+			// calculate replacements for x,y,z
+			const axis1 = ( axis0 + 1 ) % 3;
+			const axis2 = ( axis0 + 2 ) % 3;
+
+			// vertex count for current face
+			const faceVertices = ( detail + 1 ) * ( detail + 1 );
+			for ( let i = 0; i < detail + 1; ++i ) {
+
+				for ( let j = 0; j < detail + 1; ++j ) {
+
+					let k = i * ( detail + 1 ) + j + vertexOffset;
+					for ( let u = 0; u < 2; ++u, k += faceVertices ) {
+
+						const vertex = new Vector3();
+						const r = radius * 2;
+
+						if ( i < detail / 2 )
+							vertex.x = i * r / detail - size[ axis0 ] / 2;
+						else
+							vertex.x = size[ axis0 ] - r + i * r / detail - size[ axis0 ] / 2;
+
+						if ( j < detail / 2 )
+							vertex.y = j * r / detail - size[ axis1 ] / 2;
+						else
+							vertex.y = size[ axis1 ] - r + j * r / detail - size[ axis1 ] / 2;
+
+						vertex.z = u * size[ axis2 ] - size[ axis2 ] / 2;
+
+						const center = new Vector3(
+							clamp( vertex.x, -size[ axis0 ]/2 + radius, size[ axis0 ]/2 - radius ),
+							clamp( vertex.y, -size[ axis1 ]/2 + radius, size[ axis1 ]/2 - radius ),
+							clamp( vertex.z, -size[ axis2 ]/2 + radius, size[ axis2 ]/2 - radius ),
+						);
+
+						const normal = new Vector3().subVectors( vertex, center ).normalize();
+
+						normals[ k * 3 + axis0 ] = normal.x;
+						normals[ k * 3 + axis1 ] = normal.y;
+						normals[ k * 3 + axis2 ] = normal.z;
+
+						vertex.addVectors( center, normal.multiplyScalar( radius ) );
+						vertices[ k * 3 + axis0 ] = vertex.x;
+						vertices[ k * 3 + axis1 ] = vertex.y;
+						vertices[ k * 3 + axis2 ] = vertex.z;
+
+						uvs[ k * 2 ] = ( 1 - u ) + ( u * 2. - 1. ) * i / detail;
+						uvs[ k * 2 + 1 ] = j / detail;
+
+					}
+
+				}
+
+			}
+
+			const faceIndices = detail * detail;
+			for ( let i = 0; i < detail; ++i ) {
+
+				for ( let j = 0; j < detail; ++j ) {
+
+					let ki = i * detail + j + indexOffset;
+					let kv = i * ( detail + 1 ) + j + vertexOffset;
+
+					for ( let u = 0; u < 2; ++u, ki += faceIndices, kv += faceVertices ) {
+
+						const norm = ( -u * 2 + 1 );
+						indices[ ki * 6 + 5 * u + 0 * norm ] = kv;
+						indices[ ki * 6 + 5 * u + 1 * norm ] = kv + 1;
+						indices[ ki * 6 + 5 * u + 2 * norm ] = kv + detail + 1;
+						indices[ ki * 6 + 5 * u + 3 * norm ] = kv + detail + 1;
+						indices[ ki * 6 + 5 * u + 4 * norm ] = kv + 1;
+						indices[ ki * 6 + 5 * u + 5 * norm ] = kv + detail + 2;
+
+					}
+
+				}
+
+			}
+
+			// add to the offset
+			vertexOffset += faceVertices * 2;
+			indexOffset += faceIndices * 2;
+
+		}
+
+		this.setAttribute( 'position', new BufferAttribute( vertices, 3 ) );
+		this.setAttribute( 'normal', new BufferAttribute( normals, 3 ) );
+		this.setAttribute( 'uv', new BufferAttribute( uvs, 2 ) );
+
+		this.setIndex( new BufferAttribute( indices, 1 ) );
+
+	}
+
+}
 
 
 // converts centimeters to meters
@@ -303,5 +429,11 @@ function random( min, max, digits=2 ) {
 
 }
 
+function clamp( x, min, max ) {
 
-export { AUTO, RoundedShape, LatheUVGeometry, cm, percent, slope, defaultMaterial, map, mapExp, round, random };
+	return MathUtils.clamp( x, min, max );
+
+}
+
+
+export { RoundedBoxGeometry, AUTO, RoundedShape, LatheUVGeometry, cm, clamp, percent, slope, defaultMaterial, map, mapExp, round, random };

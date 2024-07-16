@@ -183,6 +183,7 @@ function onKeyDown( event ) {
 		case 'dt': toggleDebugTexture(); break;
 		case 'dg': toggleDebugGeometry(); break;
 		case 'dp': toggleDebugProfile(); break;
+		case 'dx': toggleDebugUVMode(); break;
 
 	}
 
@@ -197,13 +198,19 @@ function onKeyDown( event ) {
 var debugTexture;
 var debugTextureMode = false;
 
+function loadDebugTexture() {
+
+	debugTexture = new THREE.TextureLoader().load( '../assets/textures/uv_grid_opengl.jpg' );
+	debugTexture.wrapS = debugTexture.wrapT = THREE.RepeatWrapping;
+
+}
+
 function toggleDebugTexture( ) {
 
 	// load debug texture if not loaded
 	if ( !debugTexture ) {
 
-		debugTexture = new THREE.TextureLoader().load( '../assets/textures/uv_grid_opengl.jpg' );
-		debugTexture.wrapS = debugTexture.wrapT = THREE.RepeatWrapping;
+		loadDebugTexture();
 
 	}
 
@@ -299,7 +306,69 @@ function toggleDebugProfile( ) {
 
 } // toggleDebugProfile
 
+var debugUVMode = false;
+var debugUVModeTexturePlane = null;
 
+function toggleDebugUVMode() {
+
+	debugUVMode = !debugUVMode;
+
+	if ( !debugUVModeTexturePlane ) {
+
+		if ( !debugTexture ) loadDebugTexture();
+		if ( !debugUVModeTexturePlane ) {
+
+			debugUVModeTexturePlane = new THREE.Mesh(
+				new THREE.PlaneGeometry( 1, 1 ),
+				new THREE.MeshBasicMaterial( { color: 0xffffff, map: debugTexture } )
+			);
+			debugUVModeTexturePlane.position.x = 0.0;
+			debugUVModeTexturePlane.position.y = 0.0;
+			debugUVModeTexturePlane.position.z = -0.001;
+
+			scene.add( debugUVModeTexturePlane );
+
+		}
+
+	}
+
+	debugUVModeTexturePlane.visible = debugUVMode;
+	asset.visible = !debugUVMode;
+
+	removeAssetClone();
+	if ( debugUVMode ) {
+
+		createAssetClone( ASSETS.defaultMaterial );
+
+		assetClone.traverse( child => {
+
+			let geo = child.geometry;
+			if ( !geo ) {
+
+				child.position.set( 0, 0, 0 );
+				child.rotation.set( 0, 0, 0 );
+				child.scale.set( 1, 1, 1 );
+				return;
+
+			}
+
+			let pos = geo.getAttribute( 'position' );
+			let uv = geo.getAttribute( 'uv' );
+
+			geo.setAttribute( 'uv', pos );
+			geo.setAttribute( 'position', uv );
+
+			child.rotation.set( 0, 0, 0 );
+			child.position.set( -0.5, -0.5, 0 );
+			child.scale.set( 1, 1, 1 );
+			child.material.color.set( 'black' );
+			child.material.wireframe = debugUVMode;
+
+		} );
+
+	}
+
+}
 
 // create a clone of the asset with flat color
 // and inverse sides
@@ -482,6 +551,13 @@ function regenerateAsset( ) {
 
 		removeAssetClone();
 		createAssetClone();
+
+	}
+
+	if ( debugUVMode ) {
+
+		toggleDebugUVMode();
+		toggleDebugUVMode();
 
 	}
 

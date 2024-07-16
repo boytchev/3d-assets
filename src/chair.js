@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import * as ASSETS from './assets-utils.js';
-import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
 class Chair extends THREE.Group {
 
@@ -51,6 +50,9 @@ class Chair extends THREE.Group {
 		const backrestHeight = ASSETS.cm( params.backrestHeight );
 		const backrestSidesThickness = ASSETS.cm( params.backrestSidesThickness );
 		const backrestAngle = params.backrestAngle / 180 * Math.PI;
+		const seatCussionWidth = seatWidth - cussionOffset;
+		const seatCussionDepth = seatDepth - cussionOffset / 2;
+		const backrestCussionWidth = seatWidth - 2 * backrestSidesThickness;
 
 		const cussionRoundness = params.cussionRoundness;
 		const cussionDetail = params.cussionDetail;
@@ -59,12 +61,49 @@ class Chair extends THREE.Group {
 		const material = ASSETS.defaultMaterial.clone();
 		material.flatShading = params.flat;
 
-		this.box = new THREE.BoxGeometry( 1, 1, 1 );
+
+		const uvRemap = ( tx = 0, ty = 0, s = 1, r = 0 ) => {
+
+			return new THREE.Matrix3().rotate( r / 180 * Math.PI ).translate( tx, ty ).scale( s, s );
+
+		};
+
+		const uvEmpty = 0.03;
+		const uvX1 = 2*uvEmpty + seatCussionWidth + cussionThickness * 2;
+		const uvX2 = 2*uvEmpty + Math.max( seatWidth * 2 + seatThickness * 2, uvX1 + 8 * backrestSidesThickness );
+		const uvY1 = 2*uvEmpty + seatDepth + seatThickness * 2;
+		const uvY2 = 2*uvEmpty + Math.max(
+			uvY1 + seatCussionDepth + cussionThickness * 2,
+			Math.max(
+				uvY1 + backrestSidesThickness * 2 + backrestHeight,
+				cussionThickness * 2 + backrestHeight * 2
+			) );
+
+
+		const uvBoundX = uvEmpty + Math.max(
+			uvX2 + 2 * cussionThickness + backrestCussionWidth,
+			uvEmpty + 2 * legThickness
+		);
+		const uvBoundY = uvEmpty + uvY2 + 4 * legThickness;
+
+		const uvScale = 1 / Math.max( uvBoundX, uvBoundY );
+		const uvMatrices = [
+			uvRemap( uvEmpty, uvEmpty, uvScale ),
+			uvRemap( uvEmpty, uvY1, uvScale ),
+			uvRemap( uvEmpty, uvY2 + legThickness * 4, uvScale, 90 ),
+			uvRemap( uvX1, uvY1, uvScale ),
+			uvRemap( uvX1 + backrestSidesThickness * 4, uvY1, uvScale ),
+			uvRemap( uvX2 + backrestCussionWidth + 2 * cussionThickness, uvEmpty, uvScale, -90 ),
+		];
+
 		{
 
 			const scale = new THREE.Vector3( seatWidth, seatThickness, seatDepth );
-			this.seat = new THREE.BoxGeometry( scale.x, scale.y, scale.z );
-			fixUV( this.seat, scale );
+			this.seat = new ASSETS.RoundedBoxGeometry(
+				scale.x, scale.y, scale.z,
+				undefined, undefined, undefined,
+				uvMatrices[ 0 ]
+			);
 			const seat = new THREE.Mesh(
 				this.seat,
 				material
@@ -79,20 +118,19 @@ class Chair extends THREE.Group {
 		{ // seat cussion
 
 			const scale = new THREE.Vector3(
-				seatWidth - cussionOffset,
+				seatCussionWidth,
 				cussionThickness,
-				seatDepth - cussionOffset / 2 );
-			if ( !simple )
-				this.cussion1 = new ASSETS.RoundedBoxGeometry(
-					scale.x, scale.y, scale.z,
-					cussionDetail, cussionRoundness
-				);
-			else
-				this.cussion1 = new THREE.BoxGeometry( scale.x, scale.y, scale.z );
-			fixUV( this.cussion1, scale );
+				seatCussionDepth );
+			this.cussion1 = new ASSETS.RoundedBoxGeometry(
+				scale.x, scale.y, scale.z,
+				simple ? undefined : cussionDetail,
+				simple ? undefined : cussionRoundness,
+				[ 1, 1, 1, 1, 0, 1 ],
+				uvMatrices[ 1 ]
+			);
 
 			const cussion1 = new THREE.Mesh(
-				this.cussion1 ? this.cussion1 : this.box,
+				this.cussion1,
 				material
 			);
 
@@ -106,8 +144,7 @@ class Chair extends THREE.Group {
 		{
 
 			const scale = new THREE.Vector3( legThickness, seatHeight - seatThickness, legThickness );
-			this.leg = new THREE.BoxGeometry( scale.x, scale.y, scale.z );
-			fixUV( this.leg, scale );
+			this.legs = [];
 			const legPositions = [
 				new THREE.Vector2( seatWidth / 2 - legThickness / 2, seatDepth / 2 - legThickness / 2 ),
 				new THREE.Vector2( -seatWidth / 2 + legThickness / 2, seatDepth / 2 - legThickness / 2 ),
@@ -116,8 +153,14 @@ class Chair extends THREE.Group {
 			];
 			for ( let i = 0; i < 4; ++i ) {
 
+				this.legs[ i ] = new ASSETS.RoundedBoxGeometry(
+					scale.x, scale.y, scale.z,
+					undefined, undefined, undefined,
+					uvMatrices[ 2 ]
+				);
+
 				const leg = new THREE.Mesh(
-					this.leg,
+					this.legs[ i ],
 					material
 				);
 				leg.position.set( legPositions[ i ].x, seatHeight / 2 - seatThickness / 2, legPositions[ i ].y );
@@ -140,13 +183,16 @@ class Chair extends THREE.Group {
 			backrest.rotateX( -backrestAngle );
 
 			const backrestScale = new THREE.Vector3( backrestSidesThickness, backrestHeight, backrestSidesThickness );
-			this.backrestSide = new THREE.BoxGeometry( backrestScale.x, backrestScale.y, backrestScale.z );
-			fixUV( this.backrestSide, backrestScale );
 
 			{ // left
 
+				this.backrestSideL = new ASSETS.RoundedBoxGeometry(
+					backrestScale.x, backrestScale.y, backrestScale.z,
+					undefined, undefined, undefined,
+					uvMatrices[ 3 ]
+				);
 				const backrestL = new THREE.Mesh(
-					this.backrestSide,
+					this.backrestSideL,
 					material
 				);
 				backrestL.position.set( seatWidth / 2 - backrestSidesThickness / 2 - 0.001, backrestHeight / 2, 0 );
@@ -158,8 +204,13 @@ class Chair extends THREE.Group {
 
 			{ // right
 
+				this.backrestSideR = new ASSETS.RoundedBoxGeometry(
+					backrestScale.x, backrestScale.y, backrestScale.z,
+					undefined, undefined, undefined,
+					uvMatrices[ 4 ]
+				);
 				const backrestR = new THREE.Mesh(
-					this.backrestSide,
+					this.backrestSideR,
 					material
 				);
 				backrestR.position.set( -seatWidth / 2 + backrestSidesThickness / 2 + 0.001, backrestHeight / 2, 0 );
@@ -172,24 +223,21 @@ class Chair extends THREE.Group {
 			{ // backrest cussion
 
 				const scale = new THREE.Vector3(
-					seatWidth - 2 * backrestSidesThickness,
+					backrestCussionWidth,
 					backrestHeight,
 					cussionThickness
 				);
 
-				if ( !simple )
-					this.cussion2 = new ASSETS.RoundedBoxGeometry(
-						scale.x, scale.y, scale.z,
-						cussionDetail,
-						cussionRoundness
-					);
-				else
-					this.cussion2 = new THREE.BoxGeometry( scale.x, scale.y, scale.z );
+				this.cussion2 = new ASSETS.RoundedBoxGeometry(
+					scale.x, scale.y, scale.z,
+					simple ? undefined : cussionDetail,
+					simple ? undefined : cussionRoundness,
+					[ 1, 1, 1, 1, 0, 1 ],
+					uvMatrices[ 5 ]
+				);
 
-
-				fixUV( this.cussion2, scale );
 				const backrestCussion = new THREE.Mesh(
-					this.cussion2 ? this.cussion2 : this.box,
+					this.cussion2,
 					material
 				);
 
@@ -212,8 +260,11 @@ class Chair extends THREE.Group {
 	dispose() {
 
 		this.seat?.dispose();
-		this.backrestSide?.dispose();
-		this.leg?.dispose();
+		this.backrestSideL?.dispose();
+		this.backrestSideR?.dispose();
+		if ( this.legs )
+			for ( let i = 0; i < 4; ++i )
+				this.legs[ i ]?.dispose();
 		this.cussion1?.dispose();
 		this.cussion2?.dispose();
 		this.clear();
@@ -237,7 +288,7 @@ class Chair extends THREE.Group {
 			backrestAngle: ASSETS.random( 0, 45 ),
 
 			cussionRoundness: ASSETS.random( 0, 0.2 ),
-			cussionDetail: ASSETS.random( 1, 10 ),
+			cussionDetail: ASSETS.round( ASSETS.random( 1, 10 ), 0 ),
 
 			flat: ASSETS.random( 0, 100 ) < 30,
 			simple: ASSETS.random( 0, 100 ) < 30,
@@ -247,48 +298,5 @@ class Chair extends THREE.Group {
 
 
 } // Chair
-
-// TODO: this is a hack and not a full solution. Will be replaced later
-function fixUV( geom, size = new THREE.Vector3( 1, 1, 1 ) ) {
-
-	let uv = geom.getAttribute( "uv" );
-	let pos = geom.getAttribute( "position" );
-	let norm = geom.getAttribute( "normal" );
-	let scale = Math.max( size.x, Math.max( size.y, size.z ) );
-
-	for ( var i=0; i<uv.count; i++ ) {
-
-		const n = new THREE.Vector3(
-			norm.getX( i ),
-			norm.getY( i ),
-			norm.getZ( i ) );
-
-		const na = new THREE.Vector3(
-			Math.abs( n.x ),
-			Math.abs( n.y ),
-			Math.abs( n.z ),
-		);
-
-		if ( na.x >= na.y && na.x >= na.z ) {
-
-			uv.setX( i, pos.getY( i ) / scale + .5 );
-			uv.setY( i, pos.getZ( i ) / scale + .5 );
-
-		} else if ( na.y >= na.x && na.y >= na.z ) {
-
-			uv.setX( i, pos.getX( i ) / scale + .5 );
-			uv.setY( i, pos.getZ( i ) / scale + .5 );
-
-		} else {
-
-			uv.setX( i, pos.getX( i ) / scale + .5 );
-			uv.setY( i, pos.getY( i ) / scale + .5 );
-
-		}
-
-
-	}
-
-}
 
 export { Chair };

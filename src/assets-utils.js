@@ -4,7 +4,7 @@
 
 
 
-import { BufferAttribute, BufferGeometry, LatheGeometry, MathUtils, MeshPhysicalMaterial, Shape, Vector2, Vector3 } from 'three';
+import { BufferAttribute, BufferGeometry, LatheGeometry, MathUtils, Matrix3, MeshPhysicalMaterial, Shape, Vector2, Vector3 } from 'three';
 //import { MeshPhysicalNodeMaterial } from 'three/nodes';
 //import { marble } from "tsl-textures/marble.js";
 
@@ -218,27 +218,48 @@ class LatheUVGeometry extends LatheGeometry {
 //
 class RoundedBoxGeometry extends BufferGeometry {
 
-	constructor( x, y, z, segments, roundness ) {
+	constructor( x, y, z, segments = 2, roundness = 0, faces = [ 1, 1, 1, 1, 1, 1 ], uvMatrix = new Matrix3() ) {
 
 		super();
+		const seg = roundness > 0 ? segments : 0;
+		const detail = seg * 2 + 1;
+		let planeCount = faces.reduce( ( a, b ) => a+b );
+		const vertexCount = planeCount * ( detail + 1 ) * ( detail + 1 );
+		const faceCount = planeCount * detail * detail;
+		let perm;
+		if ( x <= y && x <= z ) perm = [ 2, 0, 1 ];
+		else if ( y <= x && y <= z ) perm = [ 0, 1, 2 ];
+		else if ( z <= x && z <= y ) perm = [ 1, 2, 0 ];
 
-		const detail = segments * 2 + 1;
-		const size = [ x, y, z ];
+		let size = [ x, y, z ];
+		size = [ size[ perm[ 0 ] ], size[ perm[ 1 ] ], size[ perm[ 2 ] ] ];
+		x = size[ 0 ];
+		y = size[ 1 ];
+		z = size[ 2 ];
 
 		const minSize = Math.min( x, Math.min( y, z ) );
 		const maxSize = Math.max( x, Math.max( y, z ) );
 		const radius = Math.min( roundness * maxSize / 2, minSize / 2 );
 
-		const vertexCount =
-		6 * ( detail + 1 ) * ( detail + 1 );
-
 		const vertices = new Float32Array( vertexCount * 3 );
 		const normals = new Float32Array( vertexCount * 3 );
-		const uvs	 = new Float32Array( vertexCount * 2 );
-
-		const faceCount = 6 * detail * detail;
+		const uvs = new Float32Array( vertexCount * 2 );
 
 		const indices = new Uint16Array( faceCount * 6 );
+
+		const uvRemapMatrix = ( tx, ty, sx, sy, r = 0 ) =>
+			new Matrix3().scale( sx, sy ).rotate( r / 180 * Math.PI ).translate( tx, ty );
+
+		let m = [
+			uvRemapMatrix( y+x, 0, -x, y ).premultiply( uvMatrix ),
+			uvRemapMatrix( y+x, y+z+y, -x, -y ).premultiply( uvMatrix ),
+
+			uvRemapMatrix( y+x+y, y, -y, z ).premultiply( uvMatrix ),
+			uvRemapMatrix( 0, y, y, z ).premultiply( uvMatrix ),
+
+			uvRemapMatrix( 2*y + x, y, -z, x, 90 ).premultiply( uvMatrix ),
+			uvRemapMatrix( y + x, y, -z, -x, 90 ).premultiply( uvMatrix ),
+		];
 
 		// count offset for writing
 		let vertexOffset = 0;
@@ -251,12 +272,16 @@ class RoundedBoxGeometry extends BufferGeometry {
 
 			// vertex count for current face
 			const faceVertices = ( detail + 1 ) * ( detail + 1 );
-			for ( let i = 0; i < detail + 1; ++i ) {
+			const faceIndices = detail * detail;
+			for ( let u = 0; u < 2; ++u ) {
 
-				for ( let j = 0; j < detail + 1; ++j ) {
+				if ( !faces[ perm[ axis0 ] * 2 + u ]) continue;
 
-					let k = i * ( detail + 1 ) + j + vertexOffset;
-					for ( let u = 0; u < 2; ++u, k += faceVertices ) {
+				for ( let i = 0; i < detail + 1; ++i ) {
+
+					for ( let j = 0; j < detail + 1; ++j ) {
+
+						let k = i * ( detail + 1 ) + j + vertexOffset;
 
 						const vertex = new Vector3();
 						const r = radius * 2;
@@ -279,35 +304,48 @@ class RoundedBoxGeometry extends BufferGeometry {
 							clamp( vertex.z, -size[ axis2 ]/2 + radius, size[ axis2 ]/2 - radius ),
 						);
 
-						const normal = new Vector3().subVectors( vertex, center ).normalize();
+						if ( roundness != 0 ) {
 
-						normals[ k * 3 + axis0 ] = normal.x;
-						normals[ k * 3 + axis1 ] = normal.y;
-						normals[ k * 3 + axis2 ] = normal.z;
+							const normal = new Vector3().subVectors( vertex, center ).normalize();
 
-						vertex.addVectors( center, normal.multiplyScalar( radius ) );
-						vertices[ k * 3 + axis0 ] = vertex.x;
-						vertices[ k * 3 + axis1 ] = vertex.y;
-						vertices[ k * 3 + axis2 ] = vertex.z;
+							normals[ k * 3 + perm[ axis0 ] ] = normal.x;
+							normals[ k * 3 + perm[ axis1 ] ] = normal.y;
+							normals[ k * 3 + perm[ axis2 ] ] = normal.z;
 
-						uvs[ k * 2 ] = ( 1 - u ) + ( u * 2. - 1. ) * i / detail;
-						uvs[ k * 2 + 1 ] = j / detail;
+							vertex.addVectors( center, normal.multiplyScalar( radius ) );
+
+						} else {
+
+							normals[ k * 3 + perm[ axis0 ] ] = 0;
+							normals[ k * 3 + perm[ axis1 ] ] = 0;
+							normals[ k * 3 + perm[ axis2 ] ] = 1;
+
+						}
+
+						vertices[ k * 3 + perm[ axis0 ] ] = vertex.x;
+						vertices[ k * 3 + perm[ axis1 ] ] = vertex.y;
+						vertices[ k * 3 + perm[ axis2 ] ] = vertex.z;
+
+						let uv = new Vector2(
+							( vertex.x + size[ axis0 ] / 2 ) / size[ axis0 ],
+							( vertex.y + size[ axis1 ] / 2 ) / size[ axis1 ]
+						);
+
+						uv.applyMatrix3( m[ axis0 * 2 + u ]);
+
+						uvs[ k * 2 ] = uv.x;
+						uvs[ k * 2 + 1 ] = uv.y;
 
 					}
 
 				}
 
-			}
+				for ( let i = 0; i < detail; ++i ) {
 
-			const faceIndices = detail * detail;
-			for ( let i = 0; i < detail; ++i ) {
+					for ( let j = 0; j < detail; ++j ) {
 
-				for ( let j = 0; j < detail; ++j ) {
-
-					let ki = i * detail + j + indexOffset;
-					let kv = i * ( detail + 1 ) + j + vertexOffset;
-
-					for ( let u = 0; u < 2; ++u, ki += faceIndices, kv += faceVertices ) {
+						let ki = i * detail + j + indexOffset;
+						let kv = i * ( detail + 1 ) + j + vertexOffset;
 
 						const norm = ( -u * 2 + 1 );
 						indices[ ki * 6 + 5 * u + 0 * norm ] = kv;
@@ -321,11 +359,11 @@ class RoundedBoxGeometry extends BufferGeometry {
 
 				}
 
-			}
+				// add to the offset
+				vertexOffset += faceVertices;
+				indexOffset += faceIndices;
 
-			// add to the offset
-			vertexOffset += faceVertices * 2;
-			indexOffset += faceIndices * 2;
+			}
 
 		}
 

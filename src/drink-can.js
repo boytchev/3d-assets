@@ -123,6 +123,7 @@ class DrinkCan extends THREE.Group {
 
 		this.body = new THREE.Mesh( bodyGeometry, material );
 		this.body.name = 'body';
+		this.body.geometry.uvIndex = 0;
 
 		this.add( this.body );
 
@@ -139,6 +140,7 @@ class DrinkCan extends THREE.Group {
 			lidMaterial
 		);
 		this.lid.name = 'lid';
+		this.lid.geometry.uvIndex = 1;
 		this.lid.rotation.set( -Math.PI/2, -Math.PI/2-0*Math.PI/cC, 0, 'YXZ' );
 
 		this.lid.position.y = params.simple ? cH : cH-nL;
@@ -186,6 +188,7 @@ class DrinkCan extends THREE.Group {
 					ASSETS.map( pos.getY( i ), 0, 1, tMinY, tMaxY )
 				);
 
+			tagGeometry.uvIndex = 2;
 
 			this.tag = new THREE.Mesh( tagGeometry, material.clone() );
 			this.tag.name = 'tag';

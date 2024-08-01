@@ -69,31 +69,27 @@ class Chair extends THREE.Group {
 		};
 
 		const uvEmpty = 0.03;
-		const uvX1 = 2*uvEmpty + seatCussionWidth + cussionThickness * 2;
-		const uvX2 = 2*uvEmpty + Math.max( seatWidth * 2 + seatThickness * 2, uvX1 + 8 * backrestSidesThickness );
+		const uvX1 = 2*uvEmpty + legThickness * 4;
 		const uvY1 = 2*uvEmpty + seatDepth + seatThickness * 2;
-		const uvY2 = 2*uvEmpty + Math.max(
-			uvY1 + seatCussionDepth + cussionThickness * 2,
-			Math.max(
-				uvY1 + backrestSidesThickness * 2 + backrestHeight,
-				cussionThickness * 2 + backrestHeight * 2
-			) );
 
+		const uvY2 = 2 * uvEmpty + 2 * cussionThickness + backrestCussionWidth;
 
-		const uvBoundX = uvEmpty + Math.max(
-			uvX2 + 2 * cussionThickness + backrestCussionWidth,
-			uvEmpty + 2 * legThickness
-		);
-		const uvBoundY = uvEmpty + uvY2 + 4 * legThickness;
+		const uvBoundX0 = 2*uvEmpty + 2 * seatWidth + 2 * seatThickness;
+		const uvBoundY0 = uvEmpty + uvY1 + Math.max( backrestHeight + 2 * backrestSidesThickness, seatHeight + 2 * legThickness );
 
-		const uvScale = 1 / Math.max( uvBoundX, uvBoundY );
+		const uvBoundX1 = 2 * uvEmpty + Math.max( 2 * backrestHeight + 2 * cussionThickness, 2 * seatCussionWidth + 2 * cussionThickness );
+		const uvBoundY1 = 2 * uvEmpty + backrestCussionWidth + seatCussionDepth + 4 * cussionThickness;
+
+		const uvScale0 = 1 / Math.max( uvBoundX0, uvBoundY0 );
+		const uvScale1 = 1 / Math.max( uvBoundX1, uvBoundY1 );
+
 		const uvMatrices = [
-			uvRemap( uvEmpty, uvEmpty, uvScale ),
-			uvRemap( uvEmpty, uvY1, uvScale ),
-			uvRemap( uvEmpty, uvY2 + legThickness * 4, uvScale, 90 ),
-			uvRemap( uvX1, uvY1, uvScale ),
-			uvRemap( uvX1 + backrestSidesThickness * 4, uvY1, uvScale ),
-			uvRemap( uvX2 + backrestCussionWidth + 2 * cussionThickness, uvEmpty, uvScale, -90 ),
+			uvRemap( uvEmpty, uvEmpty, uvScale0 ), // seat
+			uvRemap( uvEmpty, uvY2, uvScale1 ), // cussion1
+			uvRemap( uvEmpty, uvY1, uvScale0 ), // legs
+			uvRemap( uvX1, uvY1, uvScale0 ), // backrestL
+			uvRemap( uvX1 + backrestSidesThickness * 4, uvY1, uvScale0 ), // backrestR
+			uvRemap( uvEmpty, uvEmpty, uvScale1 ), // cussion2
 		];
 
 		{
@@ -128,6 +124,7 @@ class Chair extends THREE.Group {
 				[ 1, 1, 1, 1, 0, 1 ],
 				uvMatrices[ 1 ]
 			);
+			this.cussion1.uvIndex = 1;
 
 			const cussion1 = new THREE.Mesh(
 				this.cussion1,
@@ -235,6 +232,7 @@ class Chair extends THREE.Group {
 					[ 1, 1, 1, 1, 0, 1 ],
 					uvMatrices[ 5 ]
 				);
+				this.cussion2.uvIndex = 1;
 
 				const backrestCussion = new THREE.Mesh(
 					this.cussion2,

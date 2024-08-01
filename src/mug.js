@@ -116,6 +116,7 @@ class Mug extends THREE.Group {
 			];
 
 		var bodyGeometry = new ASSETS.LatheUVGeometry( points, mC );
+		bodyGeometry.uvIndex = 0;
 
 		// rotate UVs to compensate body rotation
 		var uv = bodyGeometry.getAttribute( 'uv' );
@@ -177,6 +178,7 @@ class Mug extends THREE.Group {
 
 		handleGeometry = mergeVertices( handleGeometry );
 
+		handleGeometry.uvIndex = 1;
 
 		var rows = hC+1;
 		var perRow = handleGeometry.attributes.position.count/rows; // 10

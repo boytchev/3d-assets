@@ -313,28 +313,7 @@ function toggleDebugUVMode() {
 
 	debugUVMode = !debugUVMode;
 
-	if ( !debugUVModeTexturePlane ) {
-
-		if ( !debugTexture ) loadDebugTexture();
-		if ( !debugUVModeTexturePlane ) {
-
-			debugUVModeTexturePlane = new THREE.Mesh(
-				new THREE.PlaneGeometry( 1, 1 ),
-				new THREE.MeshBasicMaterial( { color: 0xffffff, map: debugTexture } )
-			);
-			debugUVModeTexturePlane.position.x = 0.0;
-			debugUVModeTexturePlane.position.y = 0.0;
-			debugUVModeTexturePlane.position.z = -0.001;
-
-			scene.add( debugUVModeTexturePlane );
-
-		}
-
-	}
-
-	debugUVModeTexturePlane.visible = debugUVMode;
-	asset.visible = !debugUVMode;
-
+	let maxOffset = 0;
 	removeAssetClone();
 	if ( debugUVMode ) {
 
@@ -355,18 +334,50 @@ function toggleDebugUVMode() {
 			let pos = geo.getAttribute( 'position' );
 			let uv = geo.getAttribute( 'uv' );
 
+			let offset = geo.uvIndex ? geo.uvIndex : 0;
+			maxOffset = Math.max( maxOffset, offset );
+
 			geo.setAttribute( 'uv', pos );
 			geo.setAttribute( 'position', uv );
+			geo.applyMatrix4( new THREE.Matrix4().makeTranslation( offset, 0, 0 ) );
 
 			child.rotation.set( 0, 0, 0 );
 			child.position.set( -0.5, -0.5, 0 );
 			child.scale.set( 1, 1, 1 );
 			child.material.color.set( 'black' );
 			child.material.wireframe = debugUVMode;
+			child.material.depthTest = false;
+			child.material.depthWrite = false;
+			child.material.transparent = true;
 
 		} );
 
+		assetClone.position.x = -( maxOffset ) / 2;
+
 	}
+
+	if ( !debugUVModeTexturePlane ) {
+
+		if ( !debugTexture ) loadDebugTexture();
+		if ( !debugUVModeTexturePlane ) {
+
+			debugUVModeTexturePlane = new THREE.Mesh(
+				new THREE.PlaneGeometry( maxOffset + 1, 1 ),
+				new THREE.MeshBasicMaterial( { color: 0xffffff, map: debugTexture, side: THREE.DoubleSide } )
+			);
+			debugUVModeTexturePlane.position.x = 0.0;
+			debugUVModeTexturePlane.position.y = 0.0;
+			debugUVModeTexturePlane.position.z = 0.0;
+
+			scene.add( debugUVModeTexturePlane );
+
+		}
+
+	}
+
+	debugTexture.repeat.x = debugUVMode ? maxOffset + 1 : 1;
+	debugUVModeTexturePlane.visible = debugUVMode;
+	asset.visible = !debugUVMode;
 
 }
 

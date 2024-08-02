@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import * as ASSETS from './assets-utils.js';
+import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 
 class Chair extends THREE.Group {
 
@@ -92,179 +93,120 @@ class Chair extends THREE.Group {
 			uvRemap( uvEmpty, uvEmpty, uvScale1 ), // cussion2
 		];
 
-		{
+		const seat = new ASSETS.RoundedBoxGeometry(
+				 seatWidth, seatThickness, seatDepth,
+			undefined, undefined, undefined,
+			uvMatrices[ 0 ]
+		).translate(
+			0, seatHeight - seatThickness / 2, 0
+		);
 
-			const scale = new THREE.Vector3( seatWidth, seatThickness, seatDepth );
-			this.seat = new ASSETS.RoundedBoxGeometry(
-				scale.x, scale.y, scale.z,
+		const cussion1 = new ASSETS.RoundedBoxGeometry(
+			seatCussionWidth, cussionThickness, seatCussionDepth,
+			simple ? undefined : cussionDetail,
+			simple ? undefined : cussionRoundness,
+			[ 1, 1, 1, 1, 0, 1 ],
+			uvMatrices[ 1 ]
+		).translate(
+			0, seatHeight + cussionThickness / 3, -cussionOffset / 4
+		);
+
+
+		const legs = [];
+		const legPositions = [
+			new THREE.Vector2( seatWidth / 2 - legThickness / 2, seatDepth / 2 - legThickness / 2 ),
+			new THREE.Vector2( -seatWidth / 2 + legThickness / 2, seatDepth / 2 - legThickness / 2 ),
+			new THREE.Vector2( seatWidth / 2 - legThickness / 2, -seatDepth / 2 + legThickness / 2 ),
+			new THREE.Vector2( -seatWidth / 2 + legThickness / 2, -seatDepth / 2 + legThickness / 2 ),
+		];
+		for ( let i = 0; i < 4; ++i ) {
+
+			legs[ i ] = new ASSETS.RoundedBoxGeometry(
+				legThickness, seatHeight - seatThickness, legThickness,
 				undefined, undefined, undefined,
-				uvMatrices[ 0 ]
+				uvMatrices[ 2 ]
+			).translate(
+				legPositions[ i ].x, seatHeight / 2 - seatThickness / 2, legPositions[ i ].y
 			);
-			const seat = new THREE.Mesh(
-				this.seat,
-				material
-			);
-			seat.position.y += seatHeight - seatThickness / 2;
-			seat.castShadow = true;
-			seat.receiveShadow = true;
-			this.add( seat );
 
 		}
 
-		{ // seat cussion
-
-			const scale = new THREE.Vector3(
-				seatCussionWidth,
-				cussionThickness,
-				seatCussionDepth );
-			this.cussion1 = new ASSETS.RoundedBoxGeometry(
-				scale.x, scale.y, scale.z,
-				simple ? undefined : cussionDetail,
-				simple ? undefined : cussionRoundness,
-				[ 1, 1, 1, 1, 0, 1 ],
-				uvMatrices[ 1 ]
-			);
-			this.cussion1.uvIndex = 1;
-
-			const cussion1 = new THREE.Mesh(
-				this.cussion1,
-				material
-			);
-
-			cussion1.position.set( 0, seatHeight + cussionThickness / 3, -cussionOffset / 4 );
-			cussion1.castShadow = true;
-			cussion1.receiveShadow = true;
-			this.add( cussion1 );
-
-		}
-
-		{
-
-			const scale = new THREE.Vector3( legThickness, seatHeight - seatThickness, legThickness );
-			this.legs = [];
-			const legPositions = [
-				new THREE.Vector2( seatWidth / 2 - legThickness / 2, seatDepth / 2 - legThickness / 2 ),
-				new THREE.Vector2( -seatWidth / 2 + legThickness / 2, seatDepth / 2 - legThickness / 2 ),
-				new THREE.Vector2( seatWidth / 2 - legThickness / 2, -seatDepth / 2 + legThickness / 2 ),
-				new THREE.Vector2( -seatWidth / 2 + legThickness / 2, -seatDepth / 2 + legThickness / 2 ),
-			];
-			for ( let i = 0; i < 4; ++i ) {
-
-				this.legs[ i ] = new ASSETS.RoundedBoxGeometry(
-					scale.x, scale.y, scale.z,
-					undefined, undefined, undefined,
-					uvMatrices[ 2 ]
+		// backrest
+		const backrestMatrix =
+				new THREE.Matrix4().makeTranslation(
+					0,
+					seatHeight - Math.sin( backrestAngle ) * backrestSidesThickness / 2,
+					-seatDepth / 2 + backrestSidesThickness / 2
+				).multiply(
+					new THREE.Matrix4().makeRotationX( -backrestAngle )
 				);
 
-				const leg = new THREE.Mesh(
-					this.legs[ i ],
-					material
-				);
-				leg.position.set( legPositions[ i ].x, seatHeight / 2 - seatThickness / 2, legPositions[ i ].y );
-				leg.castShadow = true;
-				leg.receiveShadow = true;
-				this.add( leg );
+		const backrestScale = new THREE.Vector3( backrestSidesThickness, backrestHeight, backrestSidesThickness );
 
-			}
+		const backrestSideL = new ASSETS.RoundedBoxGeometry(
+			backrestScale.x, backrestScale.y, backrestScale.z,
+			undefined, undefined, undefined,
+			uvMatrices[ 3 ]
+		).translate(
+			seatWidth / 2 - backrestSidesThickness / 2 - 0.001, backrestHeight / 2, 0
+		).applyMatrix4( backrestMatrix );
 
-		}
 
-		{ // backrest
+		const backrestSideR = new ASSETS.RoundedBoxGeometry(
+			backrestScale.x, backrestScale.y, backrestScale.z,
+			undefined, undefined, undefined,
+			uvMatrices[ 4 ]
+		).translate(
+			-seatWidth / 2 + backrestSidesThickness / 2 + 0.001, backrestHeight / 2, 0
+		).applyMatrix4( backrestMatrix );
 
-			const backrest = new THREE.Group();
-			backrest.position.set(
-				0,
-				seatHeight - Math.sin( backrestAngle ) * backrestSidesThickness / 2,
-				-seatDepth / 2 + backrestSidesThickness / 2
-			);
-			backrest.rotateX( -backrestAngle );
 
-			const backrestScale = new THREE.Vector3( backrestSidesThickness, backrestHeight, backrestSidesThickness );
+		const cussion2 = new ASSETS.RoundedBoxGeometry(
+			backrestCussionWidth, backrestHeight, cussionThickness,
+			simple ? undefined : cussionDetail,
+			simple ? undefined : cussionRoundness,
+			[ 1, 1, 1, 1, 0, 1 ],
+			uvMatrices[ 5 ]
+		).translate(
+			0, backrestHeight / 2, 0
+		).applyMatrix4( backrestMatrix );
 
-			{ // left
+		// merge and create meshes
+		this.frame = BufferGeometryUtils.mergeGeometries(
+			[
+				seat,
+				backrestSideL,
+				backrestSideR,
+			].concat( legs )
+		);
+		this.frame.uvIndex = 0;
 
-				this.backrestSideL = new ASSETS.RoundedBoxGeometry(
-					backrestScale.x, backrestScale.y, backrestScale.z,
-					undefined, undefined, undefined,
-					uvMatrices[ 3 ]
-				);
-				const backrestL = new THREE.Mesh(
-					this.backrestSideL,
-					material
-				);
-				backrestL.position.set( seatWidth / 2 - backrestSidesThickness / 2 - 0.001, backrestHeight / 2, 0 );
-				backrestL.castShadow = true;
-				backrestL.receiveShadow = true;
-				backrest.add( backrestL );
+		this.cussions = BufferGeometryUtils.mergeGeometries([
+			cussion1,
+			cussion2
+		]);
+		this.cussions.uvIndex = 1;
 
-			}
-
-			{ // right
-
-				this.backrestSideR = new ASSETS.RoundedBoxGeometry(
-					backrestScale.x, backrestScale.y, backrestScale.z,
-					undefined, undefined, undefined,
-					uvMatrices[ 4 ]
-				);
-				const backrestR = new THREE.Mesh(
-					this.backrestSideR,
-					material
-				);
-				backrestR.position.set( -seatWidth / 2 + backrestSidesThickness / 2 + 0.001, backrestHeight / 2, 0 );
-				backrestR.castShadow = true;
-				backrestR.receiveShadow = true;
-				backrest.add( backrestR );
-
-			}
-
-			{ // backrest cussion
-
-				const scale = new THREE.Vector3(
-					backrestCussionWidth,
-					backrestHeight,
-					cussionThickness
-				);
-
-				this.cussion2 = new ASSETS.RoundedBoxGeometry(
-					scale.x, scale.y, scale.z,
-					simple ? undefined : cussionDetail,
-					simple ? undefined : cussionRoundness,
-					[ 1, 1, 1, 1, 0, 1 ],
-					uvMatrices[ 5 ]
-				);
-				this.cussion2.uvIndex = 1;
-
-				const backrestCussion = new THREE.Mesh(
-					this.cussion2,
-					material
-				);
-
-				backrestCussion.position.set( 0, backrestHeight / 2, 0 );
-				backrestCussion.castShadow = true;
-				backrestCussion.receiveShadow = true;
-				backrest.add( backrestCussion );
-
-			}
-
-			this.add( backrest );
-
-		}
+		this.add( new THREE.Mesh( this.frame, material ) );
+		this.add( new THREE.Mesh( this.cussions, material ) );
 
 		this.position.y = -( seatHeight+backrestHeight )/2;
+
+		seat.dispose();
+		backrestSideL.dispose();
+		backrestSideL.dispose();
+		for ( let i = 0; i < 4; ++i )
+			legs[ i ].dispose();
+		cussion1.dispose();
+		cussion2.dispose();
 
 	} // Chair.constructor
 
 
 	dispose() {
 
-		this.seat?.dispose();
-		this.backrestSideL?.dispose();
-		this.backrestSideR?.dispose();
-		if ( this.legs )
-			for ( let i = 0; i < 4; ++i )
-				this.legs[ i ]?.dispose();
-		this.cussion1?.dispose();
-		this.cussion2?.dispose();
+		this.frame?.dispose();
+		this.cussions?.dispose();
 		this.clear();
 
 	} // Chair.dispose

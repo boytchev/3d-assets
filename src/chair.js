@@ -101,6 +101,10 @@ class Chair extends THREE.Group {
 			0, seatHeight - seatThickness / 2, 0
 		);
 
+		const r = ASSETS.RoundedBoxGeometry.computeCurveRadius(
+			seatCussionWidth, cussionThickness, seatCussionDepth,
+			simple ? undefined : cussionRoundness
+		);
 		const cussion1 = new ASSETS.RoundedBoxGeometry(
 			seatCussionWidth, cussionThickness, seatCussionDepth,
 			simple ? undefined : cussionDetail,
@@ -108,7 +112,9 @@ class Chair extends THREE.Group {
 			[ 1, 1, 1, 1, 0, 1 ],
 			uvMatrices[ 1 ]
 		).translate(
-			0, seatHeight + cussionThickness / 3, -cussionOffset / 4
+			0,
+			seatHeight + cussionThickness * .5 - r + r / Math.sqrt( 3 ),
+			-cussionOffset / 4
 		);
 
 
@@ -168,7 +174,7 @@ class Chair extends THREE.Group {
 			[ 1, 1, 1, 1, 0, 1 ],
 			uvMatrices[ 5 ]
 		).translate(
-			0, backrestHeight / 2, 0
+			0, backrestHeight / 2, Math.max( 0, cussionThickness / 2 - backrestSidesThickness / 2 )
 		).applyMatrix4( backrestMatrix );
 
 		// merge and create meshes

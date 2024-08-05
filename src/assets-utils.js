@@ -218,6 +218,14 @@ class LatheUVGeometry extends LatheGeometry {
 //
 class RoundedBoxGeometry extends BufferGeometry {
 
+	static computeCurveRadius( x, y, z, roundness = 0 ) {
+
+		const minSize = Math.min( x, Math.min( y, z ) );
+		const maxSize = Math.max( x, Math.max( y, z ) );
+		return Math.min( roundness * maxSize * .5, minSize * .5 );
+
+	}
+
 	constructor( x, y, z, segments = 2, roundness = 0, faces = [ 1, 1, 1, 1, 1, 1 ], uvMatrix = new Matrix3() ) {
 
 		super();
@@ -237,9 +245,7 @@ class RoundedBoxGeometry extends BufferGeometry {
 		y = size[ 1 ];
 		z = size[ 2 ];
 
-		const minSize = Math.min( x, Math.min( y, z ) );
-		const maxSize = Math.max( x, Math.max( y, z ) );
-		const radius = Math.min( roundness * maxSize * .5, minSize * .5 );
+		const radius = RoundedBoxGeometry.computeCurveRadius( x, y, z, roundness );
 
 		const vertices = new Float32Array( vertexCount * 3 );
 		const normals = new Float32Array( vertexCount * 3 );

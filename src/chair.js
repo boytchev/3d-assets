@@ -187,8 +187,13 @@ class Chair extends THREE.Group {
 		]);
 		this.cussions.uvIndex = 1;
 
-		this.add( new THREE.Mesh( this.frame, material ) );
-		this.add( new THREE.Mesh( this.cussions, material ) );
+		const frame = new THREE.Mesh( this.frame, material );
+		frame.name = "frame";
+		const cussions = new THREE.Mesh( this.cussions, material );
+		cussions.name = "cussions";
+
+		this.add( frame );
+		this.add( cussions );
 
 		this.position.y = -( seatHeight+backrestHeight )/2;
 

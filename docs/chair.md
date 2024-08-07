@@ -101,6 +101,7 @@ var model = new Chair ({
 * `cussionThickness` &ndash; thickness of the cussions in cm, [ 2, 15 ],
 * `cussionOffset` &ndash; offset of the cussion to the end of the seat frame in cm, [ 2, 5 ],
 * `cussionRoundness` &ndash; roundness of the cussions relative to their size, [ 0, 0.2 ],
+* `upholstery` &ndash; if *true* the pillows are replaced with upholstery on the chair and `cussionThickness` has no effect, boolean
 
 #### Legs parameters
 

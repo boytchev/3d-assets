@@ -1,6 +1,10 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.5 Chrome/126.0.6478.185 Electron/31.3.1 Safari/537.36" version="24.7.5">
   <diagram name="Page-1" id="lzAnwQ9YrP5W5K1LVLBt">
+<<<<<<< HEAD
     <mxGraphModel dx="1114" dy="842" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+=======
+    <mxGraphModel dx="1195" dy="729" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+>>>>>>> 21397fc (Chair docs)
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -223,7 +227,11 @@
             <mxPoint x="400.00336292916825" y="306.7822055837129" as="targetPoint" />
           </mxGeometry>
         </mxCell>
+<<<<<<< HEAD
         <mxCell id="vVVl5WXH9BjHpitWjrun-67" value="backrest height" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=Helvetica;fontSize=12;fontColor=#007FFF;labelBackgroundColor=none;" parent="1" vertex="1">
+=======
+        <mxCell id="vVVl5WXH9BjHpitWjrun-67" value="backrest height" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+>>>>>>> 21397fc (Chair docs)
           <mxGeometry x="340" y="400" width="60" height="30" as="geometry" />
         </mxCell>
         <mxCell id="vVVl5WXH9BjHpitWjrun-68" value="" style="endArrow=none;html=1;rounded=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;strokeColor=#007FFF;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=#007FFF;labelBackgroundColor=default;startArrow=none;fillColor=none;gradientColor=none;endFill=0;startFill=0;" parent="1" source="vVVl5WXH9BjHpitWjrun-51" edge="1">

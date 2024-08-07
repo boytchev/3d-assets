@@ -218,6 +218,14 @@ class LatheUVGeometry extends LatheGeometry {
 //
 class RoundedBoxGeometry extends BufferGeometry {
 
+	static computeCurveRadius( x, y, z, roundness = 0 ) {
+
+		const minSize = Math.min( x, Math.min( y, z ) );
+		const maxSize = Math.max( x, Math.max( y, z ) );
+		return Math.min( roundness * maxSize * .5, minSize * .5 );
+
+	}
+
 	constructor( x, y, z, segments = 2, roundness = 0, faces = [ 1, 1, 1, 1, 1, 1 ], uvMatrix = new Matrix3() ) {
 
 		super();
@@ -237,9 +245,7 @@ class RoundedBoxGeometry extends BufferGeometry {
 		y = size[ 1 ];
 		z = size[ 2 ];
 
-		const minSize = Math.min( x, Math.min( y, z ) );
-		const maxSize = Math.max( x, Math.max( y, z ) );
-		const radius = Math.min( roundness * maxSize / 2, minSize / 2 );
+		const radius = RoundedBoxGeometry.computeCurveRadius( x, y, z, roundness );
 
 		const vertices = new Float32Array( vertexCount * 3 );
 		const normals = new Float32Array( vertexCount * 3 );
@@ -284,19 +290,19 @@ class RoundedBoxGeometry extends BufferGeometry {
 						let k = i * ( detail + 1 ) + j + vertexOffset;
 
 						const vertex = new Vector3();
-						const r = radius * 2;
+						const d = Math.max( 1, seg );
 
 						if ( i < detail / 2 )
-							vertex.x = i * r / detail - size[ axis0 ] / 2;
+							vertex.x = i * radius / d - size[ axis0 ] / 2;
 						else
-							vertex.x = size[ axis0 ] - r + i * r / detail - size[ axis0 ] / 2;
+							vertex.x = size[ axis0 ] / 2 - radius + ( i-d-1 ) * radius / d;
 
 						if ( j < detail / 2 )
-							vertex.y = j * r / detail - size[ axis1 ] / 2;
+							vertex.y = j * radius / d - size[ axis1 ] / 2;
 						else
-							vertex.y = size[ axis1 ] - r + j * r / detail - size[ axis1 ] / 2;
+							vertex.y = size[ axis1 ] / 2 - radius + ( j-d-1 ) * radius / d;
 
-						vertex.z = u * size[ axis2 ] - size[ axis2 ] / 2;
+						vertex.z = ( u - 0.5 ) * size[ axis2 ];
 
 						const center = new Vector3(
 							clamp( vertex.x, -size[ axis0 ]/2 + radius, size[ axis0 ]/2 - radius ),

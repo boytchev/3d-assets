@@ -20,6 +20,7 @@ class Chair extends THREE.Group {
 
 		cussionRoundness: 0.2,
 		cussionDetail: 2,
+		upholstery: false,
 
 		flat: false,
 		simple: false,
@@ -54,6 +55,7 @@ class Chair extends THREE.Group {
 		const seatCussionWidth = seatWidth - cussionOffset;
 		const seatCussionDepth = seatDepth - cussionOffset / 2;
 		const backrestCussionWidth = seatWidth - 2 * backrestSidesThickness;
+		const upholstery = params.upholstery ? true : false;
 
 		const cussionRoundness = params.cussionRoundness;
 		const cussionDetail = params.cussionDetail;
@@ -104,21 +106,31 @@ class Chair extends THREE.Group {
 			0, seatHeight - seatThickness / 2, 0
 		);
 
-		const r = ASSETS.RoundedBoxGeometry.computeCurveRadius(
-			seatCussionWidth, cussionThickness, seatCussionDepth,
+		const r1 = ASSETS.RoundedBoxGeometry.computeCurveRadius(
+			seatCussionWidth, upholstery ? 1 : cussionThickness, seatCussionDepth,
 			simple ? undefined : cussionRoundness
 		);
 		const cussion1 = new ASSETS.RoundedBoxGeometry(
-			seatCussionWidth, cussionThickness, seatCussionDepth,
+			seatCussionWidth + ( upholstery ? r1 / Math.sqrt( 3 ) : 0 ),
+			upholstery ? 1. : cussionThickness,
+			seatCussionDepth + ( upholstery ? r1 / Math.sqrt( 3 ) : 0 ),
 			simple ? undefined : cussionDetail,
 			simple ? undefined : cussionRoundness,
-			[ 1, 1, 1, 1, 0, 1 ],
+			[ !upholstery, !upholstery, !upholstery, !upholstery, 0, 1 ],
 			uvMatrices[ 1 ]
-		).translate(
-			0,
-			seatHeight + cussionThickness * .5 - r + r / Math.sqrt( 3 ),
-			-cussionOffset / 4
 		);
+		if ( upholstery )
+			cussion1.translate(
+				0,
+				seatHeight - 0.5 + r1 * ( 1 - 1/Math.sqrt( 2 ) ),
+				-cussionOffset / 4,
+			);
+		else
+			cussion1.translate(
+				0,
+				seatHeight + cussionThickness * .5 - r1 + r1 / Math.sqrt( 3 ),
+				-cussionOffset / 4
+			);
 
 
 		const legs = [];
@@ -151,61 +163,100 @@ class Chair extends THREE.Group {
 					new THREE.Matrix4().makeRotationX( -backrestAngle )
 				);
 
-		const backrestScale = new THREE.Vector3( backrestSidesThickness, backrestHeight, backrestSidesThickness );
-
-		const backrestSideL = new ASSETS.RoundedBoxGeometry(
-			backrestScale.x, backrestScale.y, backrestScale.z,
-			undefined, undefined,
-			[ 1, 1, 1, 1, 0, 1 ],
-			uvMatrices[ 3 ]
-		).translate(
-			seatWidth / 2 - backrestSidesThickness / 2 - 0.001, backrestHeight / 2, 0
-		).applyMatrix4( backrestMatrix );
 
 
-		const backrestSideR = new ASSETS.RoundedBoxGeometry(
-			backrestScale.x, backrestScale.y, backrestScale.z,
-			undefined, undefined,
-			[ 1, 1, 1, 1, 0, 1 ],
-			uvMatrices[ 4 ]
-		).translate(
-			-seatWidth / 2 + backrestSidesThickness / 2 + 0.001, backrestHeight / 2, 0
-		).applyMatrix4( backrestMatrix );
+		let backrestSideL = null;
+		let backrestSideR = null;
 
+		if ( upholstery ) {
 
+			backrestSideL = new ASSETS.RoundedBoxGeometry(
+				seatWidth - 0.001, backrestHeight, backrestSidesThickness,
+				undefined, undefined,
+				[ 1, 1, 1, 1, 0, 1 ],
+				uvMatrices[ 3 ]
+			).translate( 0, backrestHeight / 2, 0 ).applyMatrix4( backrestMatrix );
+
+		} else {
+
+			const backrestScale = new THREE.Vector3( backrestSidesThickness, backrestHeight, backrestSidesThickness );
+			backrestSideL = new ASSETS.RoundedBoxGeometry(
+				backrestScale.x, backrestScale.y, backrestScale.z,
+				undefined, undefined,
+				[ 1, 1, 1, 1, 0, 1 ],
+				uvMatrices[ 3 ]
+			).translate(
+				seatWidth / 2 - backrestSidesThickness / 2 - 0.001, backrestHeight / 2, 0
+			).applyMatrix4( backrestMatrix );
+
+			backrestSideR = new ASSETS.RoundedBoxGeometry(
+				backrestScale.x, backrestScale.y, backrestScale.z,
+				undefined, undefined,
+				[ 1, 1, 1, 1, 0, 1 ],
+				uvMatrices[ 4 ]
+			).translate(
+				-seatWidth / 2 + backrestSidesThickness / 2 + 0.001, backrestHeight / 2, 0
+			).applyMatrix4( backrestMatrix );
+
+		}
+
+		const r2 = ASSETS.RoundedBoxGeometry.computeCurveRadius(
+			upholstery ? seatWidth : backrestCussionWidth,
+			backrestHeight,
+			upholstery ? 1 : cussionThickness,
+			simple ? undefined : cussionRoundness
+		);
 		const cussion2 = new ASSETS.RoundedBoxGeometry(
-			backrestCussionWidth, backrestHeight, cussionThickness,
+			( upholstery ? seatWidth : backrestCussionWidth ) + ( upholstery ? r2 / Math.sqrt( 3 ) : 0 ),
+			backrestHeight + ( upholstery ? r2 / Math.sqrt( 3 ) : 0 ),
+			upholstery ? 1 : cussionThickness,
 			simple ? undefined : cussionDetail,
 			simple ? undefined : cussionRoundness,
-			[ 1, 1, 1, 1, 0, 1 ],
+			[ !upholstery, 1, !upholstery, !upholstery, 0, !upholstery ],
 			uvMatrices[ 5 ]
-		).translate(
-			0, backrestHeight / 2, Math.max( 0, cussionThickness / 2 - backrestSidesThickness / 2 )
-		).applyMatrix4( backrestMatrix );
+		);
+		if ( upholstery )
+			cussion2.translate(
+				0,
+				backrestHeight / 2,
+				-.5 + backrestSidesThickness / 2 + r2 * ( 1 - 1/Math.sqrt( 2 ) )
+			).applyMatrix4( backrestMatrix );
+		else
+			cussion2.translate(
+				0,
+				backrestHeight / 2,
+				Math.max( 0, cussionThickness / 2 - backrestSidesThickness / 2 )
+			).applyMatrix4( backrestMatrix );
 
 		// merge geometries and create meshes
 		this.frame = BufferGeometryUtils.mergeGeometries(
-			[
-				seat,
-				backrestSideL,
-				backrestSideR,
-			].concat( legs )
+			[ seat, backrestSideL, backrestSideR ]
+				.concat( legs ).filter( x => !!x )
 		);
 		this.frame.uvIndex = 0;
 
-		this.cussions = BufferGeometryUtils.mergeGeometries([
-			cussion1,
-			cussion2
-		]);
-		this.cussions.uvIndex = 1;
+		const hasCussions = !upholstery || !simple;
+
+		if ( hasCussions ) {
+
+			this.cussions = BufferGeometryUtils.mergeGeometries([
+				cussion1,
+				cussion2
+			]);
+			this.cussions.uvIndex = 1;
+
+		}
 
 		const frame = new THREE.Mesh( this.frame, material );
 		frame.name = "frame";
-		const cussions = new THREE.Mesh( this.cussions, material );
-		cussions.name = "cussions";
-
 		this.add( frame );
-		this.add( cussions );
+		if ( hasCussions ) {
+
+			const cussions = new THREE.Mesh( this.cussions, material );
+			cussions.name = "cussions";
+			this.add( cussions );
+
+		}
 
 		this.position.y = -( seatHeight+backrestHeight )/2;
 
@@ -246,6 +297,7 @@ class Chair extends THREE.Group {
 
 			cussionRoundness: ASSETS.random( 0, 0.2 ),
 			cussionDetail: ASSETS.round( ASSETS.random( 1, 10 ), 0 ),
+			upholstery: ASSETS.random( 0, 100 ) < 50,
 
 			flat: ASSETS.random( 0, 100 ) < 30,
 			simple: ASSETS.random( 0, 100 ) < 30,

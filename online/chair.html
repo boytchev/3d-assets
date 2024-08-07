@@ -81,6 +81,9 @@
 			.min( 0 ).max( 0.2 ).step( .01 )
 			.name( "Roundness<right>cm</right>" );
 		
+		guiC.add( params, "upholstery" )
+			.name( "upholstery" );
+
 		const guiL = gui.addFolder( "Legs" );
 
 		guiL.add( params, "legThickness" )

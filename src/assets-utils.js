@@ -324,7 +324,7 @@ class RoundedBoxGeometry extends BufferGeometry {
 
 							normals[ k * 3 + perm[ axis0 ] ] = 0;
 							normals[ k * 3 + perm[ axis1 ] ] = 0;
-							normals[ k * 3 + perm[ axis2 ] ] = 1;
+							normals[ k * 3 + perm[ axis2 ] ] = u * 2 - 1;
 
 						}
 

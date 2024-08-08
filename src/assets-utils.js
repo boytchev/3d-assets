@@ -4,7 +4,7 @@
 
 
 
-import { BufferAttribute, BufferGeometry, LatheGeometry, MathUtils, Matrix3, MeshPhysicalMaterial, Shape, Vector2, Vector3 } from 'three';
+import { BufferAttribute, BufferGeometry, LatheGeometry, MathUtils, Matrix3, Matrix4, MeshPhysicalMaterial, Shape, Vector2, Vector3 } from 'three';
 //import { MeshPhysicalNodeMaterial } from 'three/nodes';
 //import { marble } from "tsl-textures/marble.js";
 
@@ -383,6 +383,84 @@ class RoundedBoxGeometry extends BufferGeometry {
 
 }
 
+class SmoothExtrudeGeometry extends BufferGeometry {
+
+	constructor( shape, properties ) {
+
+		super();
+
+		const steps = properties.steps;
+		const extrudePath = properties.extrudePath;
+
+		const shapePoints = shape.getPoints();
+		//console.log( shapePoints );
+		const data = extrudePath.computeFrenetFrames( steps, false );
+		//console.log( data );
+		const pos = extrudePath.getPoints( steps );
+		const vertexCount = ( steps+1 ) * shapePoints.length;
+
+		const vertices = new Float32Array( vertexCount * 3 );
+		const normals = new Float32Array( vertexCount * 3 );
+		const uvs = new Float32Array( vertexCount * 2 );
+
+		const faceCount = steps * shapePoints.length;
+		const indices = new Uint16Array( faceCount * 6 );
+
+		let offset = 0;
+		for ( let i = 0; i < steps+1; ++i ) {
+
+			const matrix = new Matrix4()
+				.makeBasis( data.normals[ i ], data.binormals[ i ], data.tangents[ i ])
+				.setPosition( pos[ i ]);
+
+			for ( let j = 0; j < shapePoints.length; ++j ) {
+
+				const p = new Vector3( shapePoints[ j ].x, shapePoints[ j ].y, shapePoints[ j ].z )
+					.applyMatrix4( matrix );
+				vertices[ 3 * offset + 0 ] = p.x;
+				vertices[ 3 * offset + 1 ] = p.y;
+				vertices[ 3 * offset + 2 ] = p.z;
+
+				uvs[ 2 * offset + 0 ] = i / steps;
+				uvs[ 2 * offset + 1 ] = j / ( shapePoints.length - 1 );
+
+				++offset;
+
+			}
+
+
+		}
+
+		offset = 0;
+		let i = 0;
+		for ( let i = 0; i < steps; ++i ) {
+
+			for ( let j = 0; j < shapePoints.length - 1; ++j ) {
+
+				const kv = i * shapePoints.length + j;
+				indices[ 6 * offset + 0 ] = kv;
+				indices[ 6 * offset + 1 ] = kv + 1;
+				indices[ 6 * offset + 2 ] = kv + shapePoints.length;
+				indices[ 6 * offset + 3 ] = kv + shapePoints.length;
+				indices[ 6 * offset + 4 ] = kv + 1;
+				indices[ 6 * offset + 5 ] = kv + shapePoints.length + 1;
+				++offset;
+
+			}
+
+		}
+
+
+		this.setAttribute( 'position', new BufferAttribute( vertices, 3 ) );
+		this.setAttribute( 'uv', new BufferAttribute( uvs, 2 ) );
+
+		this.setIndex( new BufferAttribute( indices, 1 ) );
+		this.computeVertexNormals();
+
+	}
+
+}
+
 
 // converts centimeters to meters
 function cm( x ) {
@@ -480,4 +558,4 @@ function clamp( x, min, max ) {
 }
 
 
-export { RoundedBoxGeometry, AUTO, RoundedShape, LatheUVGeometry, cm, clamp, percent, slope, defaultMaterial, map, mapExp, round, random };
+export { RoundedBoxGeometry, AUTO, SmoothExtrudeGeometry, RoundedShape, LatheUVGeometry, cm, clamp, percent, slope, defaultMaterial, map, mapExp, round, random };

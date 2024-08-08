@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+
+<html>
+
+
+<head>
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<link rel="shortcut icon" type="image/png" href="../assets/logo/logo.png"/>
+	<link rel="stylesheet" href="styles.css">
+
+	<script type="importmap">
+	  {
+		"imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@0.166.0/build/three.module.js",
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166.0/examples/jsm/",
+			"assets/": "../src/"
+		}
+	  }
+	</script>
+</head>
+
+
+<body>
+	<div class="footnote bottomfixed">
+		<a href="../">Home</a>
+	</div>
+	
+	<script type="module">
+
+		import * as THREE from "three";
+		import { install, params } from "./online.js";
+		import { Stool } from "assets/stool.js";
+		
+		const gui = install( Stool );
+		
+		gui.add( params, "legWidth" )
+			.min( 2 ).max( 30 ).step( 0.1 )
+			.name( "legWidth<right>cm</right>" );
+		gui.add( params, "legThickness" )
+			.min( 2 ).max( 30 ).step( 0.1 )
+			.name( "legThickness<right>cm</right>" );
+		gui.add( params, "legRoundness" )
+			.min( 0 ).max( .1 ).step( 0.001 )
+			.name( "legRoundness<right>cm</right>" );
+		gui.add( params, "legCount" )
+			.min( 3 ).max( 6 ).step( 1 )
+			.name( "legCount<right>cm</right>" );
+		gui.add( params, "legOffset" )
+			.min( 0 ).max( 100 ).step( 0.1 )
+			.name( "legOffset<right>cm</right>" );
+		gui.add( params, "legSpread" )
+			.min( 0 ).max( 100 ).step( 0.1 )
+			.name( "legSpread <right>cm</right>" );
+		gui.add( params, "legAngle" )
+			.min( 0 ).max( 150 ).step( 0.1 )
+			.name( "legAngle<right>cm</right>" );
+		gui.add( params, "legShape" )
+			.min( 0 ).max( 1 ).step( 0.01 )
+			.name( "legShape<right>cm</right>" );
+		gui.add( params, "size" )
+			.min( 10 ).max( 100 ).step( 0.1 )
+			.name( "size <right>cm</right>" );
+		gui.add( params, "height" )
+			.min( 10 ).max( 100 ).step( 0.1 )
+			.name( "height<right>cm</right>" );
+		gui.add( params, "thickness" )
+			.min( 10 ).max( 100 ).step( 0.1 )
+			.name( "thickness <right>cm</right>" );
+
+
+		</script>
+	</body>
+</html>

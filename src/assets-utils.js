@@ -4,11 +4,7 @@
 
 
 
-<<<<<<< HEAD
 import { BufferAttribute, BufferGeometry, Group, LatheGeometry, MathUtils, Matrix3, Matrix4, MeshPhysicalMaterial, Shape, ShapeGeometry, Vector2, Vector3 } from 'three';
-=======
-import { BufferAttribute, BufferGeometry, LatheGeometry, MathUtils, Matrix3, Matrix4, MeshPhysicalMaterial, Shape, Vector2, Vector3 } from 'three';
->>>>>>> ae1b1ff (First version of Stool.)
 //import { MeshPhysicalNodeMaterial } from 'three/nodes';
 //import { marble } from "tsl-textures/marble.js";
 
@@ -465,7 +461,6 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 
 		const steps = properties.steps;
 		const extrudePath = properties.extrudePath;
-<<<<<<< HEAD
 		const caps = properties.caps ?? [ 1, 1 ];
 		const uvMatrix = properties.uvMatrix ?? new Matrix3();
 		const topUVMatrix = properties.topUVMatrix ?? new Matrix3();
@@ -499,21 +494,11 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 		const vertexCount =
 			( steps+1 ) * shapePoints.length +
 			( caps[ 0 ] + caps[ 1 ]) * cap.getAttribute( "position" ).count;
-=======
-
-		const shapePoints = shape.getPoints();
-		//console.log( shapePoints );
-		const data = extrudePath.computeFrenetFrames( steps, false );
-		//console.log( data );
-		const pos = extrudePath.getPoints( steps );
-		const vertexCount = ( steps+1 ) * shapePoints.length;
->>>>>>> ae1b1ff (First version of Stool.)
 
 		const vertices = new Float32Array( vertexCount * 3 );
 		const normals = new Float32Array( vertexCount * 3 );
 		const uvs = new Float32Array( vertexCount * 2 );
 
-<<<<<<< HEAD
 		const indexCount =
 			steps * ( shapePoints.length-1 ) * 6 +
 			( caps[ 0 ] + caps[ 1 ]) * cap.getIndex().count;
@@ -529,21 +514,10 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 
 			matrix
 				.makeBasis( frames.normals[ i ], frames.binormals[ i ], frames.tangents[ i ])
-=======
-		const faceCount = steps * shapePoints.length;
-		const indices = new Uint16Array( faceCount * 6 );
-
-		let offset = 0;
-		for ( let i = 0; i < steps+1; ++i ) {
-
-			const matrix = new Matrix4()
-				.makeBasis( data.normals[ i ], data.binormals[ i ], data.tangents[ i ])
->>>>>>> ae1b1ff (First version of Stool.)
 				.setPosition( pos[ i ]);
 
 			for ( let j = 0; j < shapePoints.length; ++j ) {
 
-<<<<<<< HEAD
 				p.set( shapePoints[ j ].x, shapePoints[ j ].y, 0 ).applyMatrix4( matrix );
 				vertices[ 3 * vOffset + 0 ] = p.x;
 				vertices[ 3 * vOffset + 1 ] = p.y;
@@ -593,44 +567,11 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 				indices[ fOffset + 4 ] = kv + ( j + 1 );
 				indices[ fOffset + 5 ] = kv + ( j + 1 ) + len;
 				fOffset += 6;
-=======
-				const p = new Vector3( shapePoints[ j ].x, shapePoints[ j ].y, shapePoints[ j ].z )
-					.applyMatrix4( matrix );
-				vertices[ 3 * offset + 0 ] = p.x;
-				vertices[ 3 * offset + 1 ] = p.y;
-				vertices[ 3 * offset + 2 ] = p.z;
-
-				uvs[ 2 * offset + 0 ] = i / steps;
-				uvs[ 2 * offset + 1 ] = j / ( shapePoints.length - 1 );
-
-				++offset;
-
-			}
-
-
-		}
-
-		offset = 0;
-		let i = 0;
-		for ( let i = 0; i < steps; ++i ) {
-
-			for ( let j = 0; j < shapePoints.length - 1; ++j ) {
-
-				const kv = i * shapePoints.length + j;
-				indices[ 6 * offset + 0 ] = kv;
-				indices[ 6 * offset + 1 ] = kv + 1;
-				indices[ 6 * offset + 2 ] = kv + shapePoints.length;
-				indices[ 6 * offset + 3 ] = kv + shapePoints.length;
-				indices[ 6 * offset + 4 ] = kv + 1;
-				indices[ 6 * offset + 5 ] = kv + shapePoints.length + 1;
-				++offset;
->>>>>>> ae1b1ff (First version of Stool.)
 
 			}
 
 		}
 
-<<<<<<< HEAD
 		const capPos = cap.getAttribute( "position" ).array;
 		const capIndex = cap.getIndex().array;
 		cap.computeBoundingBox();
@@ -841,14 +782,6 @@ class UVCylinderGeometry extends BufferGeometry {
 		this.setAttribute( 'uv', new BufferAttribute( uvs, 2 ) );
 
 		this.setIndex( new BufferAttribute( indices, 1 ) );
-=======
-
-		this.setAttribute( 'position', new BufferAttribute( vertices, 3 ) );
-		this.setAttribute( 'uv', new BufferAttribute( uvs, 2 ) );
-
-		this.setIndex( new BufferAttribute( indices, 1 ) );
-		this.computeVertexNormals();
->>>>>>> ae1b1ff (First version of Stool.)
 
 	}
 
@@ -951,8 +884,4 @@ function clamp( x, min, max ) {
 }
 
 
-<<<<<<< HEAD
 export { Asset, RoundedBoxGeometry, AUTO, SmoothExtrudeGeometry, UVCylinderGeometry, RoundedShape, LatheUVGeometry, cm, clamp, percent, slope, defaultMaterial, map, mapExp, round, random };
-=======
-export { RoundedBoxGeometry, AUTO, SmoothExtrudeGeometry, RoundedShape, LatheUVGeometry, cm, clamp, percent, slope, defaultMaterial, map, mapExp, round, random };
->>>>>>> ae1b1ff (First version of Stool.)

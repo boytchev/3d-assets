@@ -1,5 +1,10 @@
 import * as THREE from 'three';
 import * as ASSETS from './assets-utils.js';
+<<<<<<< HEAD
+=======
+import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
+import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
+>>>>>>> ea61773 (Better SmoothExtrudeGeometry)
 
 class Stool extends ASSETS.Asset {
 
@@ -27,6 +32,15 @@ class Stool extends ASSETS.Asset {
 		flat:	{ default: false, type: Boolean, chance: .3, folder: "Complexity", name: "Flat"   },
 		simple: { default: false, type: Boolean, chance: .3, folder: "Complexity", name: "Simple" },
 
+<<<<<<< HEAD
+=======
+		legDetail: 10,
+		seatDetail: 30,
+		legRoundDetail: 3,
+
+		flat: false,
+		simple: false,
+>>>>>>> ea61773 (Better SmoothExtrudeGeometry)
 	};
 	/* eslint-enable */
 
@@ -56,7 +70,11 @@ class Stool extends ASSETS.Asset {
 
 		const legWidth = ASSETS.cm( params.legWidth );
 		const legThickness = ASSETS.cm( params.legThickness );
+<<<<<<< HEAD
 		const legRoundness = simple ? 0 : params.legRoundness;
+=======
+		const legRoundness = params.simple ? 0 : params.legRoundness;
+>>>>>>> ea61773 (Better SmoothExtrudeGeometry)
 		const legCount = params.legCount;
 		const legOffset = Math.min( size - legThickness, ASSETS.cm( params.legOffset ) );
 		const legSpread = ASSETS.cm( params.legSpread );
@@ -65,10 +83,17 @@ class Stool extends ASSETS.Asset {
 
 		const legProfileShape = new ASSETS.RoundedShape([
 			[ 0, legThickness ],
+<<<<<<< HEAD
 			[ -legWidth, legThickness, legRoundness, .2,, params.legRoundDetail ],
 			[ -legWidth, -legThickness, legRoundness, .4,, params.legRoundDetail ],
 			[ legWidth, -legThickness, legRoundness, .6,, params.legRoundDetail ],
 			[ legWidth, legThickness, legRoundness, .8,, params.legRoundDetail ],
+=======
+			[ -legWidth, legThickness, legRoundness,,, params.legRoundDetail ],
+			[ -legWidth, -legThickness, legRoundness,,, params.legRoundDetail ],
+			[ legWidth, -legThickness, legRoundness,,, params.legRoundDetail ],
+			[ legWidth, legThickness, legRoundness,,, params.legRoundDetail ],
+>>>>>>> ea61773 (Better SmoothExtrudeGeometry)
 			[ 0, legThickness ], // fake vertex, later it will match the first vertex
 		]);
 
@@ -102,6 +127,7 @@ class Stool extends ASSETS.Asset {
 				steps: params.legDetail,
 				bevelEnabled: false,
 				extrudePath: curve,
+<<<<<<< HEAD
 				caps: [ 1, 1 ],
 				uvMatrix: new THREE.Matrix3().makeScale( 0.79, 0.79 ).translate( 0.01, 0.01 ),
 				topUVMatrix: new THREE.Matrix3().makeScale( 0.18, 0.18 ).translate( 0.81, 0.01 ),
@@ -112,15 +138,27 @@ class Stool extends ASSETS.Asset {
 			const mesh = new THREE.Mesh( geom, material );
 			mesh.name = "leg_" + i;
 			mesh.rotation.y = i * 2 * Math.PI / legCount;
+=======
+				caps: [ 0, 1 ],
+			} );
+
+			geom.uvIndex = 0;
+
+			const mesh = new THREE.Mesh( geom, material );
+>>>>>>> ea61773 (Better SmoothExtrudeGeometry)
 			this.add( mesh );
 
 		}
 
+<<<<<<< HEAD
 		const seatGeom = new ASSETS.UVCylinderGeometry( size, size, thickness, params.seatDetail, 1, false, {
 			bodyUVMatrix: new THREE.Matrix3().makeScale( 0.98, 0.28 ).translate( .01, .01 ),
 			topUVMatrix: new THREE.Matrix3().makeScale( 0.48, 0.48 ).translate( 0.01, 0.31 ),
 			bottomUVMatrix: new THREE.Matrix3().makeScale( 0.48, 0.48 ).translate( 0.51, 0.31 ),
 		} );
+=======
+		const seatGeom = new THREE.CylinderGeometry( size, size, thickness, params.seatDetail );
+>>>>>>> ea61773 (Better SmoothExtrudeGeometry)
 		seatGeom.uvIndex = 1;
 
 		const seat = new THREE.Mesh(

@@ -69,7 +69,25 @@
 			.min( 10 ).max( 100 ).step( 0.1 )
 			.name( "thickness <right>cm</right>" );
 
+		var guiT = gui.addFolder( '<big>Complexity</big><right id="model-statistics"></right>' )
 
+		guiT.add( params, "legDetail" )
+			.min( 5 ).max( 30 ).step( 1 )
+			.name( "legs" )
+
+		guiT.add( params, "legRoundDetail" )
+			.min( 1 ).max( 10 ).step( 1 )
+			.name( "legs bevel<right>n</right>" )
+
+		guiT.add( params, "seatDetail" )
+			.min( 5 ).max( 50 ).step( 1 )
+			.name( "seat<right>n</right>" )
+
+		guiT.add( params, 'simple' )
+			.name( 'Simple' );
+
+		guiT.add( params, 'flat' )
+			.name( 'Flat' );
 		</script>
 	</body>
 </html>

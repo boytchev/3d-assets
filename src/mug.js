@@ -139,7 +139,7 @@ class Mug extends THREE.Group {
 			[ -hW, -hT, hG ],
 			[ hW, -hT, hG ],
 			[ hW, hT, hG ],
-			[ 0, hT-0.001 ], // fake vertex, later it will match the first vertex
+			[ 0, hT ], // fake vertex, later it will match the first vertex
 		]);
 
 		var apotem = Math.cos( Math.PI/mC ); // low-poly reduces size
@@ -155,81 +155,15 @@ class Mug extends THREE.Group {
 			new THREE.Vector3( hTopX, hTopH, 0 ),
 		 );
 
-		var handleGeometry = new THREE.ExtrudeGeometry( handleProfileShape, {
+		var handleGeometry = new ASSETS.SmoothExtrudeGeometry( handleProfileShape, {
 			curveSegments: 1,
 			steps: hC,
 			bevelEnabled: false,
-			extrudePath: handleCurve
+			extrudePath: handleCurve,
+			caps: [ 0, 0 ]
 		} );
-
-		// the handle has caps, remove them
-		var capsCount = handleGeometry.groups[ 1 ].start; // number of vectors to remove
-
-		handleGeometry.clearGroups();
-
-		var pos = handleGeometry.attributes.position;
-		pos.array = pos.array.slice( 3*capsCount );
-		pos.count -= capsCount;
-
-		// smooth the handle
-
-		handleGeometry.deleteAttribute( 'uv' );
-		handleGeometry.deleteAttribute( 'normal' );
-
-		handleGeometry = mergeVertices( handleGeometry );
-
 		handleGeometry.uvIndex = 1;
 
-		var rows = hC+1;
-		var perRow = handleGeometry.attributes.position.count/rows; // 10
-
-		if ( !params.simple ) {
-
-			var k = 0.3/2,
-				s = ( 1-2*k*2 )/6;
-			var uMap = [ 0, k, k+s, k+2*s, k+3*s, 3*k+3*s, 3*k+4*s, 3*k+5*s, 3*k+6*s, 4*k+6*s, 4*k+6*s ];
-
-		} else {
-
-			var uMap = [ 0.0, 0.15, 0.35, 0.65, 0.85, 1.0 ];
-
-		}
-
-
-		handleGeometry.computeVertexNormals();
-
-		var uv = [];
-
-		// first two lines
-		for ( var i=0; i<rows; i++ ) {
-
-			uv.push( uMap[ 0 ], i/( rows-1 ) );
-			uv.push( uMap[ 1 ], i/( rows-1 ) );
-
-		}
-
-		// next lines
-		for ( var j=2; j<perRow; j++ )
-			for ( var i=0; i<rows; i++ )
-				uv.push( uMap[ j ], i/( rows-1 ) );
-
-
-		handleGeometry.setAttribute( 'uv', new THREE.Float32BufferAttribute( uv, 2 ) );
-
-		// fix the last column of vertices
-		var pos = handleGeometry.getAttribute( 'position' );
-		var nor = handleGeometry.getAttribute( 'normal' );
-		for ( var i=0; i<rows; i++ ) {
-
-			var j = rows*( perRow-1 )+i;
-
-			v.fromBufferAttribute( pos, 2*i );
-			pos.setXYZ( j, v.x, v.y, v.z );
-
-			v.fromBufferAttribute( nor, 2*i );
-			nor.setXYZ( j, v.x, v.y, v.z );
-
-		}
 
 		this.handle = new THREE.Mesh( handleGeometry, material );
 		this.handle.name = 'handle';

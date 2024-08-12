@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import * as ASSETS from './assets-utils.js';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
+import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 
 class Stool extends THREE.Group {
 
@@ -18,6 +19,10 @@ class Stool extends THREE.Group {
 		size: 50,
 		height: 100,
 		thickness: 10,
+
+		legDetail: 10,
+		seatDetail: 30,
+		legRoundDetail: 3,
 
 		flat: false,
 		simple: false,
@@ -46,7 +51,7 @@ class Stool extends THREE.Group {
 
 		const legWidth = ASSETS.cm( params.legWidth );
 		const legThickness = ASSETS.cm( params.legThickness );
-		const legRoundness = params.legRoundness;
+		const legRoundness = params.simple ? 0 : params.legRoundness;
 		const legCount = params.legCount;
 		const legOffset = ASSETS.cm( params.legOffset );
 		const legSpread = ASSETS.cm( params.legSpread );
@@ -58,10 +63,10 @@ class Stool extends THREE.Group {
 
 		const legProfileShape = new ASSETS.RoundedShape([
 			[ 0, legThickness ],
-			[ -legWidth, legThickness, legRoundness ],
-			[ -legWidth, -legThickness, legRoundness ],
-			[ legWidth, -legThickness, legRoundness ],
-			[ legWidth, legThickness, legRoundness ],
+			[ -legWidth, legThickness, legRoundness,,, params.legRoundDetail ],
+			[ -legWidth, -legThickness, legRoundness,,, params.legRoundDetail ],
+			[ legWidth, -legThickness, legRoundness,,, params.legRoundDetail ],
+			[ legWidth, legThickness, legRoundness,,, params.legRoundDetail ],
 			[ 0, legThickness ], // fake vertex, later it will match the first vertex
 		]);
 
@@ -93,22 +98,20 @@ class Stool extends THREE.Group {
 
 			let geom = new ASSETS.SmoothExtrudeGeometry( legProfileShape, {
 				curveSegments: 1,
-				steps: 10,
+				steps: params.legDetail,
 				bevelEnabled: false,
-				extrudePath: curve
+				extrudePath: curve,
+				caps: [ 0, 1 ],
 			} );
 
-			//geom.deleteAttribute( 'uv' );
-			//geom.deleteAttribute( 'normal' );
-			//geom = BufferGeometryUtils.mergeVertices( geom );
-			//geom.computeVertexNormals();
 			geom.uvIndex = 0;
 
-			this.add( new THREE.Mesh( geom, material ) );
+			const mesh = new THREE.Mesh( geom, material );
+			this.add( mesh );
 
 		}
 
-		const seatGeom = new THREE.CylinderGeometry( size, size, thickness, 30 );
+		const seatGeom = new THREE.CylinderGeometry( size, size, thickness, params.seatDetail );
 		seatGeom.uvIndex = 1;
 		const seat = new THREE.Mesh(
 			seatGeom,

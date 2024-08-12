@@ -4,7 +4,7 @@
 
 
 
-import { BufferAttribute, BufferGeometry, LatheGeometry, MathUtils, Matrix3, Matrix4, MeshPhysicalMaterial, Shape, Vector2, Vector3 } from 'three';
+import { BufferAttribute, BufferGeometry, LatheGeometry, MathUtils, Matrix3, Matrix4, MeshPhysicalMaterial, Shape, ShapeGeometry, Vector2, Vector3 } from 'three';
 //import { MeshPhysicalNodeMaterial } from 'three/nodes';
 //import { marble } from "tsl-textures/marble.js";
 
@@ -107,7 +107,10 @@ class RoundedShape extends Shape {
 
 			if ( curve.isLineCurve ) {
 
-				points.push( curve.v1, curve.v2 );
+				points.push(
+					curve.v1,
+					curve.v2
+				);
 
 			} else {
 
@@ -115,7 +118,7 @@ class RoundedShape extends Shape {
 
 				var midJ = Math.floor( pts.length/2 );
 
-				for ( var j = 0; j < pts.length; j++ ) {
+				for ( var j = 1; j < pts.length-1; j++ ) {
 
 					const point = pts[ j ];
 
@@ -391,71 +394,167 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 
 		const steps = properties.steps;
 		const extrudePath = properties.extrudePath;
+		const caps = properties.caps ?? [ 1, 1 ];
 
 		const shapePoints = shape.getPoints();
-		//console.log( shapePoints );
-		const data = extrudePath.computeFrenetFrames( steps, false );
-		//console.log( data );
+		const shapeNormals = new Float32Array( shapePoints.length * 2 );
+
+		const n0 = new Vector2(), n1 = new Vector2();
+		for ( let i = 0; i < shapePoints.length; ++i ) {
+
+			const v0 = shapePoints[ i-1 ], v1 = shapePoints[ i ], v2 = shapePoints[ i+1 ];
+			if ( v0 ) n0.set( ( v1.y - v0.y ), -( v1.x - v0.x ) );
+			if ( v2 ) n1.set( ( v2.y - v1.y ), -( v2.x - v1.x ) );
+
+			if ( i == 0 )
+				n0.set( n1.x, n1.y );
+			else if ( i < shapePoints.length - 1 )
+				n0.add( n1 );
+
+			n0.normalize();
+
+			shapeNormals[ 2 * i + 0 ] = n0.x;
+			shapeNormals[ 2 * i + 1 ] = n0.y;
+
+		}
+
 		const pos = extrudePath.getPoints( steps );
-		const vertexCount = ( steps+1 ) * shapePoints.length;
+		const frames = extrudePath.computeFrenetFrames( steps, false );
+		const cap = new ShapeGeometry( shape );
+		const vertexCount =
+			( steps+1 ) * shapePoints.length +
+			( caps[ 0 ] + caps[ 1 ]) * cap.getAttribute( "position" ).count;
 
 		const vertices = new Float32Array( vertexCount * 3 );
 		const normals = new Float32Array( vertexCount * 3 );
 		const uvs = new Float32Array( vertexCount * 2 );
 
-		const faceCount = steps * shapePoints.length;
-		const indices = new Uint16Array( faceCount * 6 );
+		const indexCount =
+			steps * ( shapePoints.length-1 ) * 6 +
+			( caps[ 0 ] + caps[ 1 ]) * cap.getIndex().count;
+		const indices = new Uint16Array( indexCount );
 
-		let offset = 0;
+		let vOffset = 0;
+		const p = new Vector3();
+		const n = new Vector3();
+		const matrix = new Matrix4();
+
 		for ( let i = 0; i < steps+1; ++i ) {
 
-			const matrix = new Matrix4()
-				.makeBasis( data.normals[ i ], data.binormals[ i ], data.tangents[ i ])
+			matrix
+				.makeBasis( frames.normals[ i ], frames.binormals[ i ], frames.tangents[ i ])
 				.setPosition( pos[ i ]);
 
 			for ( let j = 0; j < shapePoints.length; ++j ) {
 
-				const p = new Vector3( shapePoints[ j ].x, shapePoints[ j ].y, shapePoints[ j ].z )
-					.applyMatrix4( matrix );
-				vertices[ 3 * offset + 0 ] = p.x;
-				vertices[ 3 * offset + 1 ] = p.y;
-				vertices[ 3 * offset + 2 ] = p.z;
+				p.set( shapePoints[ j ].x, shapePoints[ j ].y, 0 ).applyMatrix4( matrix );
+				vertices[ 3 * vOffset + 0 ] = p.x;
+				vertices[ 3 * vOffset + 1 ] = p.y;
+				vertices[ 3 * vOffset + 2 ] = p.z;
 
-				uvs[ 2 * offset + 0 ] = i / steps;
-				uvs[ 2 * offset + 1 ] = j / ( shapePoints.length - 1 );
+				uvs[ 2 * vOffset + 0 ] = i / steps;
+				uvs[ 2 * vOffset + 1 ] = j / ( shapePoints.length - 1 );
 
-				++offset;
+				n.set(
+					shapeNormals[ 2 * j ],
+					shapeNormals[ 2 * j + 1 ],
+					0,
+				).transformDirection( matrix );
+				normals[ 3 * vOffset + 0 ] = n.x;
+				normals[ 3 * vOffset + 1 ] = n.y;
+				normals[ 3 * vOffset + 2 ] = n.z;
+				++vOffset;
 
 			}
 
-
 		}
 
-		offset = 0;
-		let i = 0;
+		let fOffset = 0;
+		const l = shapePoints.length;
+		const len = shapePoints.length;
+		const diff = new Vector2();
 		for ( let i = 0; i < steps; ++i ) {
 
-			for ( let j = 0; j < shapePoints.length - 1; ++j ) {
+			for ( let j = 0; j < l-1; ++j ) {
 
-				const kv = i * shapePoints.length + j;
-				indices[ 6 * offset + 0 ] = kv;
-				indices[ 6 * offset + 1 ] = kv + 1;
-				indices[ 6 * offset + 2 ] = kv + shapePoints.length;
-				indices[ 6 * offset + 3 ] = kv + shapePoints.length;
-				indices[ 6 * offset + 4 ] = kv + 1;
-				indices[ 6 * offset + 5 ] = kv + shapePoints.length + 1;
-				++offset;
+				diff.set(
+					Math.abs( shapePoints[ j ].x - shapePoints[ j+1 ].x ),
+					Math.abs( shapePoints[ j ].y - shapePoints[ j+1 ].y )
+				);
+
+				if ( diff.x < Number.EPSILON && diff.y < Number.EPSILON )
+					continue;
+
+				const kv = i * len;
+				indices[ fOffset + 0 ] = kv + j;
+				indices[ fOffset + 1 ] = kv + ( j + 1 );
+				indices[ fOffset + 2 ] = kv + j + len;
+				indices[ fOffset + 3 ] = kv + j + len;
+				indices[ fOffset + 4 ] = kv + ( j + 1 );
+				indices[ fOffset + 5 ] = kv + ( j + 1 ) + len;
+				fOffset += 6;
 
 			}
 
 		}
 
+		const capPos = cap.getAttribute( "position" ).array;
+		const capIndex = cap.getIndex().array;
+
+		const addCap = ( mat ) => {
+
+			n.set( 0, 0, 1 ).transformDirection( mat );
+			const capOffset = vOffset;
+			for ( let i = 0; i < capPos.length; i += 3 ) {
+
+				p.set( capPos[ i ], capPos[ i+1 ], capPos[ i+2 ]).applyMatrix4( mat );
+				vertices[ 3 * vOffset + 0 ] = p.x;
+				vertices[ 3 * vOffset + 1 ] = p.y;
+				vertices[ 3 * vOffset + 2 ] = p.z;
+
+				normals[ 3 * vOffset + 0 ] = n.x;
+				normals[ 3 * vOffset + 1 ] = n.y;
+				normals[ 3 * vOffset + 2 ] = n.z;
+				++vOffset;
+
+			}
+
+			for ( let i = 0; i < capIndex.length; ++i ) {
+
+				indices[ fOffset ] = capIndex[ i ] + capOffset;
+				++fOffset;
+
+			}
+
+		};
+
+		if ( caps[ 0 ]) {
+
+			matrix
+				.makeBasis(
+					frames.normals[ 0 ].multiplyScalar( -1 ),
+					frames.binormals[ 0 ],
+					frames.tangents[ 0 ].multiplyScalar( -1 )
+				)
+				.setPosition( pos[ 0 ]);
+			addCap( matrix );
+
+		}
+
+		if ( caps[ 1 ]) {
+
+			matrix
+				.makeBasis( frames.normals[ steps ], frames.binormals[ steps ], frames.tangents[ steps ])
+				.setPosition( pos[ steps ]);
+			addCap( matrix );
+
+		}
 
 		this.setAttribute( 'position', new BufferAttribute( vertices, 3 ) );
+		this.setAttribute( 'normal', new BufferAttribute( normals, 3 ) );
 		this.setAttribute( 'uv', new BufferAttribute( uvs, 2 ) );
 
 		this.setIndex( new BufferAttribute( indices, 1 ) );
-		this.computeVertexNormals();
 
 	}
 

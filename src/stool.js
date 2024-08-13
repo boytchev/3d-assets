@@ -51,7 +51,7 @@ class Stool extends THREE.Group {
 
 		const legWidth = ASSETS.cm( params.legWidth );
 		const legThickness = ASSETS.cm( params.legThickness );
-		const legRoundness = params.simple ? 0 : params.legRoundness;
+		const legRoundness = simple ? 0 : params.legRoundness;
 		const legCount = params.legCount;
 		const legOffset = ASSETS.cm( params.legOffset );
 		const legSpread = ASSETS.cm( params.legSpread );
@@ -63,56 +63,61 @@ class Stool extends THREE.Group {
 
 		const legProfileShape = new ASSETS.RoundedShape([
 			[ 0, legThickness ],
-			[ -legWidth, legThickness, legRoundness,,, params.legRoundDetail ],
-			[ -legWidth, -legThickness, legRoundness,,, params.legRoundDetail ],
-			[ legWidth, -legThickness, legRoundness,,, params.legRoundDetail ],
-			[ legWidth, legThickness, legRoundness,,, params.legRoundDetail ],
+			[ -legWidth, legThickness, legRoundness, .2,, params.legRoundDetail ],
+			[ -legWidth, -legThickness, legRoundness, .4,, params.legRoundDetail ],
+			[ legWidth, -legThickness, legRoundness, .6,, params.legRoundDetail ],
+			[ legWidth, legThickness, legRoundness, .8,, params.legRoundDetail ],
 			[ 0, legThickness ], // fake vertex, later it will match the first vertex
 		]);
 
+		const a = Math.cos( legAngle ) * legShape, b = Math.sin( legAngle ) * legShape;
+		const top = height - thickness / 2 - legThickness * Math.sin( legAngle );
+
+		const curve = new THREE.CubicBezierCurve3(
+			new THREE.Vector3(
+				-legOffset,
+				top * 1.0,
+				0 ),
+			new THREE.Vector3(
+				-( legOffset + b ),
+				top * ( 1. - a ),
+				0 ),
+			new THREE.Vector3(
+				-legSpread,
+				top * legShape,
+				0 ),
+			new THREE.Vector3(
+				-legSpread,
+				0,
+			)
+		);
+
+
 		for ( let i = 0; i < legCount; ++i ) {
-
-			const angle = i * 2 * Math.PI / legCount;
-			const x = Math.cos( angle ), y = Math.sin( angle );
-			const a = Math.cos( legAngle ) * legShape, b = Math.sin( legAngle ) * legShape;
-
-			const top = height - thickness / 2 - legThickness * Math.sin( legAngle );
-			const curve = new THREE.CubicBezierCurve3(
-				new THREE.Vector3(
-					x * legOffset,
-					top * 1.0,
-					y * legOffset ),
-				new THREE.Vector3(
-					x * ( legOffset + b ),
-					top * ( 1. - a ),
-					y * ( legOffset + b ) ),
-				new THREE.Vector3(
-					x * legSpread,
-					top * legShape,
-					y * legSpread ),
-				new THREE.Vector3(
-					x * legSpread,
-					0,
-					y * legSpread )
-			);
 
 			let geom = new ASSETS.SmoothExtrudeGeometry( legProfileShape, {
 				curveSegments: 1,
 				steps: params.legDetail,
 				bevelEnabled: false,
 				extrudePath: curve,
-				caps: [ 0, 1 ],
+				caps: [ 1, 1 ],
+				uvMatrix: new THREE.Matrix3().makeScale( 0.48, 0.48 ).translate( Math.floor( i / 2 ) * 0.5 + 0.01, ( i % 2 ) * 0.5 + 0.01 )
 			} );
-
 			geom.uvIndex = 0;
 
 			const mesh = new THREE.Mesh( geom, material );
+			mesh.rotation.y = i * 2 * Math.PI / legCount;
 			this.add( mesh );
 
 		}
 
-		const seatGeom = new THREE.CylinderGeometry( size, size, thickness, params.seatDetail );
+		const seatGeom = new ASSETS.UVCylinderGeometry( size, size, thickness, params.seatDetail, 1, false, {
+			bodyUVMatrix: new THREE.Matrix3().makeScale( 0.98, 0.48 ).translate( .01, .01 ),
+			topUVMatrix: new THREE.Matrix3().makeScale( 0.48, 0.48 ).translate( 0.01, 0.51 ),
+			bottomUVMatrix: new THREE.Matrix3().makeScale( 0.48, 0.48 ).translate( 0.51, 0.51 ),
+		} );
 		seatGeom.uvIndex = 1;
+
 		const seat = new THREE.Mesh(
 			seatGeom,
 			material

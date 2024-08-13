@@ -132,35 +132,8 @@ class RoundedShape extends Shape {
 
 		} // for i
 
-		return points;
-
-	} // RoundedShape.getPoints
-
-} // class RoundedShape
-
-
-
-// Lathe geometry with input = array of 2D points
-// each point is [x, y, radius, uv, active], where
-//		- x,y - 2D coordinates of point along the profile
-//		- uv - texture coordinates (usually v)
-//		- radius - curvature at this points
-
-class LatheUVGeometry extends LatheGeometry {
-
-	constructor( path, segments = 12, phiStart = 0, phiLength = Math.PI * 2 ) {
-
-		path = path.filter( ( e ) => e.length<5 || e[ 4 ]===true );
-
-		if ( path[ 0 ][ 3 ] == undefined ) path[ 0 ][ 3 ] = 0; // texture v=0
-		if ( path[ path.length-1 ][ 3 ] == undefined ) path[ path.length-1 ][ 3 ] = 1; // texture v=1
-
-		//console.table(path)
-
-		// get all points (includes duplicates)
-		var points = new RoundedShape( path ).getPoints( 4 );
-
-		//console.table(points)
+		points[ 0 ].t = 0;
+		points[ points.length - 1 ].t = 1;
 
 		// calculate lengths from beginning to each point
 		var lengths = [ 0 ];
@@ -189,6 +162,34 @@ class LatheUVGeometry extends LatheGeometry {
 			}
 
 		}
+
+		return points;
+
+	} // RoundedShape.getPoints
+
+} // class RoundedShape
+
+
+
+// Lathe geometry with input = array of 2D points
+// each point is [x, y, radius, uv, active], where
+//		- x,y - 2D coordinates of point along the profile
+//		- uv - texture coordinates (usually v)
+//		- radius - curvature at this points
+
+class LatheUVGeometry extends LatheGeometry {
+
+	constructor( path, segments = 12, phiStart = 0, phiLength = Math.PI * 2 ) {
+
+		path = path.filter( ( e ) => e.length<5 || e[ 4 ]===true );
+
+		if ( path[ 0 ][ 3 ] == undefined ) path[ 0 ][ 3 ] = 0; // texture v=0
+		if ( path[ path.length-1 ][ 3 ] == undefined ) path[ path.length-1 ][ 3 ] = 1; // texture v=1
+
+		//console.table(path)
+
+		// get all points (includes duplicates)
+		var points = new RoundedShape( path ).getPoints( 4 );
 
 		//console.table(points);
 
@@ -395,6 +396,7 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 		const steps = properties.steps;
 		const extrudePath = properties.extrudePath;
 		const caps = properties.caps ?? [ 1, 1 ];
+		const uvMatrix = properties.uvMatrix ?? new Matrix3();
 
 		const shapePoints = shape.getPoints();
 		const shapeNormals = new Float32Array( shapePoints.length * 2 );
@@ -437,6 +439,7 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 		let vOffset = 0;
 		const p = new Vector3();
 		const n = new Vector3();
+		const uv = new Vector2();
 		const matrix = new Matrix4();
 
 		for ( let i = 0; i < steps+1; ++i ) {
@@ -452,8 +455,11 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 				vertices[ 3 * vOffset + 1 ] = p.y;
 				vertices[ 3 * vOffset + 2 ] = p.z;
 
-				uvs[ 2 * vOffset + 0 ] = i / steps;
-				uvs[ 2 * vOffset + 1 ] = j / ( shapePoints.length - 1 );
+				uv.set(
+					i / steps,
+					shapePoints[ j ].t ?? ( j / ( shapePoints.length - 1 ) ) ).applyMatrix3( uvMatrix );
+				uvs[ 2 * vOffset + 0 ] = uv.x;
+				uvs[ 2 * vOffset + 1 ] = uv.y;
 
 				n.set(
 					shapeNormals[ 2 * j ],
@@ -547,6 +553,149 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 				.makeBasis( frames.normals[ steps ], frames.binormals[ steps ], frames.tangents[ steps ])
 				.setPosition( pos[ steps ]);
 			addCap( matrix );
+
+		}
+
+		this.setAttribute( 'position', new BufferAttribute( vertices, 3 ) );
+		this.setAttribute( 'normal', new BufferAttribute( normals, 3 ) );
+		this.setAttribute( 'uv', new BufferAttribute( uvs, 2 ) );
+
+		this.setIndex( new BufferAttribute( indices, 1 ) );
+
+	}
+
+}
+
+class UVCylinderGeometry extends BufferGeometry {
+
+
+	constructor( radiusTop = 1, radiusBottom = 1, height = 1, radialSegments = 32, heightSegments = 1, openEnded = false, properties = {} ) {
+
+		super();
+
+		const bodyUVMatrix = properties.bodyUVMatrix ?? new Matrix3();
+		const capsUVMatrix = [
+			properties.topUVMatrix ?? new Matrix3(),
+			properties.bottomUVMatrix ?? new Matrix3()
+		];
+
+
+		const vertexCount = ( heightSegments+1 ) * ( radialSegments+1 ) + !openEnded * 2 * ( radialSegments+2 );
+		const triangleCount = 2 * heightSegments * radialSegments + !openEnded * 2 * radialSegments;
+
+		const vertices = new Float32Array( vertexCount * 3 );
+		const normals = new Float32Array( vertexCount * 3 );
+		const uvs = new Float32Array( vertexCount * 2 );
+
+		const indices = new Uint16Array( triangleCount * 3 );
+
+		const uv = new Vector2();
+
+		let vIndex = 0;
+		// body
+		for ( let i = 0; i < heightSegments + 1; ++i ) {
+
+			const w = i / heightSegments;
+			const r = w * radiusTop + ( 1-w ) * radiusBottom;
+
+			for ( let j = 0; j < radialSegments + 1; ++j ) {
+
+				const angle = j / radialSegments * 2 * Math.PI;
+				const c = Math.cos( angle );
+				const s = Math.sin( angle );
+
+				vertices[ 3 * vIndex + 0 ] = s * r;
+				vertices[ 3 * vIndex + 1 ] = ( w - 0.5 ) * height;
+				vertices[ 3 * vIndex + 2 ] = c * r;
+
+				normals[ 3 * vIndex + 0 ] = s;
+				normals[ 3 * vIndex + 1 ] = 0;
+				normals[ 3 * vIndex + 2 ] = c;
+
+				uv.set( j / radialSegments, i / heightSegments ).applyMatrix3( bodyUVMatrix );
+				uvs[ 2 * vIndex + 0 ] = uv.x;
+				uvs[ 2 * vIndex + 1 ] = uv.y;
+
+				++vIndex;
+
+			}
+
+		}
+
+		// caps
+		let capsVertexIndex = [ 0, 0 ];
+		for ( let i = 0; i < 2; ++i ) {
+
+			capsVertexIndex[ i ] = vIndex;
+			const r = i ? radiusTop : radiusBottom;
+
+			vertices[ 3 * vIndex + 0 ] = 0;
+			vertices[ 3 * vIndex + 1 ] = ( i - 0.5 ) * height;
+			vertices[ 3 * vIndex + 2 ] = 0;
+
+			normals[ 3 * vIndex + 0 ] = 0;
+			normals[ 3 * vIndex + 1 ] = 2*i - 1;
+			normals[ 3 * vIndex + 2 ] = 0;
+
+			uv.set( 0.5, 0.5 ).applyMatrix3( capsUVMatrix[ i ]);
+			uvs[ 2 * vIndex + 0 ] = uv.x;
+			uvs[ 2 * vIndex + 1 ] = uv.y;
+			++vIndex;
+
+			for ( let j = 0; j < radialSegments + 1; ++j ) {
+
+				const angle = j / radialSegments * 2 * Math.PI;
+				const c = Math.cos( angle );
+				const s = Math.sin( angle );
+
+				vertices[ 3 * vIndex + 0 ] = s * r;
+				vertices[ 3 * vIndex + 1 ] = ( i - 0.5 ) * height;
+				vertices[ 3 * vIndex + 2 ] = c * r;
+
+				normals[ 3 * vIndex + 0 ] = 0;
+				normals[ 3 * vIndex + 1 ] = 2*i - 1;
+				normals[ 3 * vIndex + 2 ] = 0;
+
+				uv.set( .5 * s + .5, .5 * c + .5 ).applyMatrix3( capsUVMatrix[ i ]);
+				uvs[ 2 * vIndex + 0 ] = uv.x;
+				uvs[ 2 * vIndex + 1 ] = uv.y;
+				++vIndex;
+
+			}
+
+		}
+
+		let fIndex = 0;
+		// body
+		for ( let i = 0; i < heightSegments; ++i ) {
+
+			for ( let j = 0; j < radialSegments; ++j ) {
+
+				let kv = i * ( radialSegments + 1 ) + j;
+
+				indices[ fIndex + 0 ] = kv;
+				indices[ fIndex + 1 ] = kv + 1;
+				indices[ fIndex + 2 ] = kv + radialSegments + 1;
+				indices[ fIndex + 3 ] = kv + radialSegments + 1;
+				indices[ fIndex + 4 ] = kv + 1;
+				indices[ fIndex + 5 ] = kv + radialSegments + 2;
+				fIndex += 6;
+
+			}
+
+		}
+
+		// caps
+		for ( let i = 0; i < 2; ++i ) {
+
+			for ( let j = 0; j < radialSegments; ++j ) {
+
+				indices[ fIndex + 0 ] = capsVertexIndex[ i ];
+				indices[ fIndex + 1 ] = capsVertexIndex[ i ] + 1 + j + ( 1-i );
+				indices[ fIndex + 2 ] = capsVertexIndex[ i ] + 1 + j + i;
+				fIndex += 3;
+
+			}
 
 		}
 
@@ -657,4 +806,4 @@ function clamp( x, min, max ) {
 }
 
 
-export { RoundedBoxGeometry, AUTO, SmoothExtrudeGeometry, RoundedShape, LatheUVGeometry, cm, clamp, percent, slope, defaultMaterial, map, mapExp, round, random };
+export { RoundedBoxGeometry, AUTO, SmoothExtrudeGeometry, UVCylinderGeometry, RoundedShape, LatheUVGeometry, cm, clamp, percent, slope, defaultMaterial, map, mapExp, round, random };

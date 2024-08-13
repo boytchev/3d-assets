@@ -507,9 +507,9 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 		const capPos = cap.getAttribute( "position" ).array;
 		const capIndex = cap.getIndex().array;
 
-		const addCap = ( mat ) => {
+		const addCap = ( mat, normal_dir = 1, flip = false ) => {
 
-			n.set( 0, 0, 1 ).transformDirection( mat );
+			n.set( 0, 0, normal_dir ).transformDirection( mat );
 			const capOffset = vOffset;
 			for ( let i = 0; i < capPos.length; i += 3 ) {
 
@@ -525,10 +525,13 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 
 			}
 
-			for ( let i = 0; i < capIndex.length; ++i ) {
 
-				indices[ fOffset ] = capIndex[ i ] + capOffset;
-				++fOffset;
+			for ( let i = 0; i < capIndex.length; i += 3 ) {
+
+				indices[ fOffset + 0 ] = capIndex[ i + 0 + flip ] + capOffset;
+				indices[ fOffset + 1 ] = capIndex[ i + 1 - flip ] + capOffset;
+				indices[ fOffset + 2 ] = capIndex[ i + 2 ] + capOffset;
+				fOffset +=3;
 
 			}
 
@@ -538,12 +541,12 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 
 			matrix
 				.makeBasis(
-					frames.normals[ 0 ].multiplyScalar( -1 ),
-					frames.binormals[ 0 ],
-					frames.tangents[ 0 ].multiplyScalar( -1 )
+					frames.normals[ 0 ].multiplyScalar( 1 ),
+					frames.binormals[ 0 ].multiplyScalar( 1 ),
+					frames.tangents[ 0 ].multiplyScalar( 1 ),
 				)
 				.setPosition( pos[ 0 ]);
-			addCap( matrix );
+			addCap( matrix, -1, true );
 
 		}
 

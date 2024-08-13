@@ -184,6 +184,8 @@ class RoundedShape extends Shape {
 
 		points[ 0 ].t = 0;
 		points[ points.length - 1 ].t = 1;
+		points[ 0 ].t = 0;
+		points[ points.length - 1 ].t = 1;
 
 		// calculate lengths from beginning to each point
 		var lengths = [ 0 ];
@@ -786,7 +788,6 @@ class UVCylinderGeometry extends BufferGeometry {
 	}
 
 }
-
 
 // converts centimeters to meters
 function cm( x ) {

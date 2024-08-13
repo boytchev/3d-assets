@@ -16,9 +16,9 @@ class Stool extends THREE.Group {
 		legSpread: 50,
 		legAngle: 0 / 180 * Math.PI,
 		legShape: .6,
-		size: 50,
-		height: 100,
-		thickness: 10,
+		seatSize: 50,
+		seatHeight: 100,
+		seatThickness: 10,
 
 		legDetail: 10,
 		seatDetail: 30,
@@ -57,9 +57,9 @@ class Stool extends THREE.Group {
 		const legSpread = ASSETS.cm( params.legSpread );
 		const legAngle = params.legAngle / 180 * Math.PI;
 		const legShape = params.legShape;
-		const size = ASSETS.cm( params.size );
-		const height = ASSETS.cm( params.height );
-		const thickness = ASSETS.cm( params.thickness );
+		const size = ASSETS.cm( params.seatSize );
+		const height = ASSETS.cm( params.seatHeight );
+		const thickness = ASSETS.cm( params.seatThickness );
 
 		const legProfileShape = new ASSETS.RoundedShape([
 			[ 0, legThickness ],
@@ -71,7 +71,7 @@ class Stool extends THREE.Group {
 		]);
 
 		const a = Math.cos( legAngle ) * legShape, b = Math.sin( legAngle ) * legShape;
-		const top = height - thickness / 2 - legThickness * Math.sin( legAngle );
+		const top = height - thickness - legThickness * Math.sin( legAngle );
 
 		const curve = new THREE.CubicBezierCurve3(
 			new THREE.Vector3(
@@ -106,6 +106,7 @@ class Stool extends THREE.Group {
 			geom.uvIndex = 0;
 
 			const mesh = new THREE.Mesh( geom, material );
+			mesh.name = "leg_" + i;
 			mesh.rotation.y = i * 2 * Math.PI / legCount;
 			this.add( mesh );
 
@@ -122,7 +123,8 @@ class Stool extends THREE.Group {
 			seatGeom,
 			material
 		);
-		seat.position.y = height;
+		seat.name = "seat";
+		seat.position.y = height - thickness / 2;
 
 		this.add( seat );
 
@@ -140,6 +142,22 @@ class Stool extends THREE.Group {
 	static random() {
 
 		return {
+
+			legWidth: ASSETS.random( 2, 30 ),
+			legThickness: ASSETS.random( 2, 30 ),
+			legRoundness: ASSETS.random( 0, .1 ),
+			legCount: ASSETS.random( 3, 6, 0 ),
+			legOffset: ASSETS.random( 0, 100 ),
+			legSpread: ASSETS.random( 0, 100 ),
+			legAngle: ASSETS.random( 0, 150 ),
+			legShape: ASSETS.random( 0, 1 ),
+			seatSize: ASSETS.random( 10, 100 ),
+			seatHeight: ASSETS.random( 10, 100 ),
+			seatThickness: ASSETS.random( 10, 100 ),
+
+			legDetail: ASSETS.random( 5, 30, 0 ),
+			legRoundDetail: ASSETS.random( 1, 10, 0 ),
+			seatDetail: ASSETS.random( 3, 50, 0 ),
 
 			flat: ASSETS.random( 0, 100 ) < 30,
 			simple: ASSETS.random( 0, 100 ) < 30,

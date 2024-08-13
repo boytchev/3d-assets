@@ -59,13 +59,13 @@
 		gui.add( params, "legShape" )
 			.min( 0 ).max( 1 ).step( 0.01 )
 			.name( "legShape<right>cm</right>" );
-		gui.add( params, "size" )
+		gui.add( params, "seatSize" )
 			.min( 10 ).max( 100 ).step( 0.1 )
 			.name( "size <right>cm</right>" );
-		gui.add( params, "height" )
+		gui.add( params, "seatHeight" )
 			.min( 10 ).max( 100 ).step( 0.1 )
 			.name( "height<right>cm</right>" );
-		gui.add( params, "thickness" )
+		gui.add( params, "seatThickness" )
 			.min( 10 ).max( 100 ).step( 0.1 )
 			.name( "thickness <right>cm</right>" );
 
@@ -80,7 +80,7 @@
 			.name( "legs bevel<right>n</right>" )
 
 		guiT.add( params, "seatDetail" )
-			.min( 5 ).max( 50 ).step( 1 )
+			.min( 3 ).max( 50 ).step( 1 )
 			.name( "seat<right>n</right>" )
 
 		guiT.add( params, 'simple' )

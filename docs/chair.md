@@ -58,16 +58,16 @@ var model = new Chair ({
 
 #### Seat parameters
 
-* `seatWidth` &ndash; in cm, [ 20, 100 ],
-* `seatDepth` &ndash; in cm, [ 20, 100 ],
-* `seatHeight` &ndash; in cm, [ 20, 100 ],
-* `seatThickness` &ndash; in cm, [ 2, 10 ],
+* `seatWidth` &ndash; width of the seat in cm, [ 20, 100 ],
+* `seatDepth` &ndash; depth of the seat in cm, [ 20, 100 ],
+* `seatHeight` &ndash; height of the seat in cm, [ 20, 100 ],
+* `seatThickness` &ndash; thickness of seat in cm, [ 2, 10 ],
 
 #### Backrest parameters
 
-* `backrestHeight` &ndash; in cm, [ 10, 100 ],
-* `backrestSidesThickness` &ndash; in cm, [ 1, 10 ],
-* `backrestAngle` &ndash; in cm, [ 0, 45 ],
+* `backrestHeight` &ndash; height of the backrest in cm, [ 10, 100 ],
+* `backrestSidesThickness` &ndash; thickness of the backside supports in cm, [ 1, 10 ],
+* `backrestAngle` &ndash; tilt of the backrest in degrees, [ 0, 45 ],
 
 #### Cussions parameters
 

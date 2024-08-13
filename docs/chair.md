@@ -58,7 +58,6 @@ var model = new Chair ({
 
 #### Seat parameters
 
-<<<<<<< HEAD
 * `seatWidth` &ndash; width of the seat in cm, [20, 100],
 * `seatDepth` &ndash; depth of the seat in cm, [20, 100],
 * `seatHeight` &ndash; height of the seat in cm, [20, 100],
@@ -84,33 +83,6 @@ var model = new Chair ({
 #### Complexity parameters
 
 * `cussionDetail` &ndash; number of faces across the rounded part of the cussions, [1, 10],
-=======
-* `seatWidth` &ndash; in cm, [ 20, 100 ],
-* `seatDepth` &ndash; in cm, [ 20, 100 ],
-* `seatHeight` &ndash; in cm, [ 20, 100 ],
-* `seatThickness` &ndash; in cm, [ 2, 10 ],
-
-#### Backrest parameters
-
-* `backrestHeight` &ndash; in cm, [ 10, 100 ],
-* `backrestSidesThickness` &ndash; in cm, [ 1, 10 ],
-* `backrestAngle` &ndash; in cm, [ 0, 45 ],
-
-#### Cussions parameters
-
-* `cussionThickness` &ndash; thickness of the cussions in cm, [ 2, 15 ],
-* `cussionOffset` &ndash; offset of the cussion to the end of the seat frame in cm, [ 2, 5 ],
-* `cussionRoundness` &ndash; roundness of the cussions relative to their size, [ 0, 0.2 ],
-* `upholstery` &ndash; if *true* the pillows are replaced with upholstery on the chair and `cussionThickness` has no effect, boolean
-
-#### Legs parameters
-
-* `legThickness` &ndash; thickness of the chair's legs in cm, [ 2, 10 ],
-
-#### Complexity parameters
-
-* `cussionDetail` &ndash; number of faces across the rounded part of the cussions, [ 1, 10 ],
->>>>>>> 21397fc (Chair docs)
 * `simple` &ndash; if *true* the complexity of the cussions is reduced, boolean
 * `flat` &ndash; if *true* flat shading is used, boolean
 	
@@ -123,29 +95,17 @@ called `frame` and `cussions`.
 
 ### Minimal example
 
-<<<<<<< HEAD
 [demos/minimal-chair.html](../demos/minimal-chair.html)
-=======
-[demos/minimal-mug.html](../demos/minimal-chair.html)
->>>>>>> 21397fc (Chair docs)
 
 
 ### Online generator
 
-<<<<<<< HEAD
 [online/chair.html](../online/chair.html)
-=======
-[online/mug.html](../online/chair.html)
->>>>>>> 21397fc (Chair docs)
 
 
 ### Source
 
-<<<<<<< HEAD
 [src/chair.js](https://github.com/boytchev/assets/blob/main/src/chair.js)
-=======
-[src/mug.js](https://github.com/boytchev/assets/blob/main/src/chair.js)
->>>>>>> 21397fc (Chair docs)
 
 		
 <div class="footnote">

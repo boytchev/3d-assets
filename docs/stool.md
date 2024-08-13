@@ -90,17 +90,29 @@ An instance of `Stool` is a `THREE.Group` with one submesh called `seat` and `le
 
 ### Minimal example
 
+<<<<<<< HEAD
 [demos/minimal-stool.html](../demos/minimal-stool.html)
+=======
+[demos/minimal-plate.html](../demos/minimal-stool.html)
+>>>>>>> 23c5d74 (Stool bug fixes + docs)
 
 
 ### Online generator
 
+<<<<<<< HEAD
 [online/stool.html](../online/stool.html)
+=======
+[online/plate.html](../online/stool.html)
+>>>>>>> 23c5d74 (Stool bug fixes + docs)
 
 
 ### Source
 
+<<<<<<< HEAD
 [src/stool.js](https://github.com/boytchev/assets/blob/main/src/stool.js)
+=======
+[src/plate.js](https://github.com/boytchev/assets/blob/main/src/stool.js)
+>>>>>>> 23c5d74 (Stool bug fixes + docs)
 
 		
 <div class="footnote">

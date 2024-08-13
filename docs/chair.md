@@ -95,17 +95,17 @@ called `frame` and `cussions`.
 
 ### Minimal example
 
-[demos/minimal-mug.html](../demos/minimal-chair.html)
+[demos/minimal-chair.html](../demos/minimal-chair.html)
 
 
 ### Online generator
 
-[online/mug.html](../online/chair.html)
+[online/chair.html](../online/chair.html)
 
 
 ### Source
 
-[src/mug.js](https://github.com/boytchev/assets/blob/main/src/chair.js)
+[src/chair.js](https://github.com/boytchev/assets/blob/main/src/chair.js)
 
 		
 <div class="footnote">

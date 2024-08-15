@@ -101,7 +101,9 @@ class Stool extends THREE.Group {
 				bevelEnabled: false,
 				extrudePath: curve,
 				caps: [ 1, 1 ],
-				uvMatrix: new THREE.Matrix3().makeScale( 0.48, 0.48 ).translate( Math.floor( i / 2 ) * 0.5 + 0.01, ( i % 2 ) * 0.5 + 0.01 )
+				uvMatrix: new THREE.Matrix3().makeScale( 0.79, 0.79 ).translate( 0.01, 0.01 ),
+				topUVMatrix: new THREE.Matrix3().makeScale( 0.18, 0.18 ).translate( 0.81, 0.01 ),
+				bottomUVMatrix: new THREE.Matrix3().makeScale( 0.18, 0.18 ).translate( 0.81, 0.2 ),
 			} );
 			geom.uvIndex = 0;
 
@@ -113,9 +115,9 @@ class Stool extends THREE.Group {
 		}
 
 		const seatGeom = new ASSETS.UVCylinderGeometry( size, size, thickness, params.seatDetail, 1, false, {
-			bodyUVMatrix: new THREE.Matrix3().makeScale( 0.98, 0.48 ).translate( .01, .01 ),
-			topUVMatrix: new THREE.Matrix3().makeScale( 0.48, 0.48 ).translate( 0.01, 0.51 ),
-			bottomUVMatrix: new THREE.Matrix3().makeScale( 0.48, 0.48 ).translate( 0.51, 0.51 ),
+			bodyUVMatrix: new THREE.Matrix3().makeScale( 0.98, 0.28 ).translate( .01, .01 ),
+			topUVMatrix: new THREE.Matrix3().makeScale( 0.48, 0.48 ).translate( 0.01, 0.31 ),
+			bottomUVMatrix: new THREE.Matrix3().makeScale( 0.48, 0.48 ).translate( 0.51, 0.31 ),
 		} );
 		seatGeom.uvIndex = 1;
 

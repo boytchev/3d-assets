@@ -397,6 +397,8 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 		const extrudePath = properties.extrudePath;
 		const caps = properties.caps ?? [ 1, 1 ];
 		const uvMatrix = properties.uvMatrix ?? new Matrix3();
+		const topUVMatrix = properties.topUVMatrix ?? new Matrix3();
+		const bottomUVMatrix = properties.bottomUVMatrix ?? new Matrix3();
 
 		const shapePoints = shape.getPoints();
 		const shapeNormals = new Float32Array( shapePoints.length * 2 );
@@ -506,8 +508,11 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 
 		const capPos = cap.getAttribute( "position" ).array;
 		const capIndex = cap.getIndex().array;
+		cap.computeBoundingBox();
+		const capSize = new Vector3();
+		cap.boundingBox.getSize( capSize );
 
-		const addCap = ( mat, normal_dir = 1, flip = false ) => {
+		const addCap = ( mat, uvMatrix, normal_dir = 1, flip = false ) => {
 
 			n.set( 0, 0, normal_dir ).transformDirection( mat );
 			const capOffset = vOffset;
@@ -521,6 +526,10 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 				normals[ 3 * vOffset + 0 ] = n.x;
 				normals[ 3 * vOffset + 1 ] = n.y;
 				normals[ 3 * vOffset + 2 ] = n.z;
+
+				uv.set( capPos[ i ] / capSize.x + 0.5, capPos[ i+1 ] / capSize.y + 0.5 ).applyMatrix3( uvMatrix );
+				uvs[ 2 * vOffset + 0 ] = uv.x;
+				uvs[ 2 * vOffset + 1 ] = uv.y;
 				++vOffset;
 
 			}
@@ -546,7 +555,7 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 					frames.tangents[ 0 ].multiplyScalar( 1 ),
 				)
 				.setPosition( pos[ 0 ]);
-			addCap( matrix, -1, true );
+			addCap( matrix, topUVMatrix, -1, true );
 
 		}
 
@@ -555,7 +564,7 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 			matrix
 				.makeBasis( frames.normals[ steps ], frames.binormals[ steps ], frames.tangents[ steps ])
 				.setPosition( pos[ steps ]);
-			addCap( matrix );
+			addCap( matrix, bottomUVMatrix );
 
 		}
 

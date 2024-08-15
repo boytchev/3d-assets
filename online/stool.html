@@ -35,37 +35,42 @@
 		
 		const gui = install( Stool );
 		
-		gui.add( params, "legWidth" )
+		const guiL = gui.addFolder( "Legs" );
+
+		guiL.add( params, "legWidth" )
 			.min( 2 ).max( 30 ).step( 0.1 )
-			.name( "legWidth<right>cm</right>" );
-		gui.add( params, "legThickness" )
+			.name( "Width<right>cm</right>" );
+		guiL.add( params, "legThickness" )
 			.min( 2 ).max( 30 ).step( 0.1 )
-			.name( "legThickness<right>cm</right>" );
-		gui.add( params, "legRoundness" )
+			.name( "Thickness<right>cm</right>" );
+		guiL.add( params, "legRoundness" )
 			.min( 0 ).max( .1 ).step( 0.001 )
-			.name( "legRoundness<right>cm</right>" );
-		gui.add( params, "legCount" )
+			.name( "Roundness<right>cm</right>" );
+		guiL.add( params, "legCount" )
 			.min( 3 ).max( 6 ).step( 1 )
-			.name( "legCount<right>cm</right>" );
-		gui.add( params, "legOffset" )
+			.name( "Count<right>cm</right>" );
+		guiL.add( params, "legOffset" )
 			.min( 0 ).max( 100 ).step( 0.1 )
-			.name( "legOffset<right>cm</right>" );
-		gui.add( params, "legSpread" )
+			.name( "Offset<right>cm</right>" );
+		guiL.add( params, "legSpread" )
 			.min( 0 ).max( 100 ).step( 0.1 )
-			.name( "legSpread <right>cm</right>" );
-		gui.add( params, "legAngle" )
+			.name( "Spread <right>cm</right>" );
+		guiL.add( params, "legAngle" )
 			.min( 0 ).max( 150 ).step( 0.1 )
-			.name( "legAngle<right>cm</right>" );
-		gui.add( params, "legShape" )
+			.name( "Angle<right>cm</right>" );
+		guiL.add( params, "legShape" )
 			.min( 0 ).max( 1 ).step( 0.01 )
-			.name( "legShape<right>cm</right>" );
-		gui.add( params, "seatSize" )
+			.name( "Shape<right>cm</right>" );
+		
+		const guiS = gui.addFolder( "Seat" );
+
+		guiS.add( params, "seatSize" )
 			.min( 10 ).max( 100 ).step( 0.1 )
 			.name( "size <right>cm</right>" );
-		gui.add( params, "seatHeight" )
+		guiS.add( params, "seatHeight" )
 			.min( 10 ).max( 100 ).step( 0.1 )
 			.name( "height<right>cm</right>" );
-		gui.add( params, "seatThickness" )
+		guiS.add( params, "seatThickness" )
 			.min( 10 ).max( 100 ).step( 0.1 )
 			.name( "thickness <right>cm</right>" );
 

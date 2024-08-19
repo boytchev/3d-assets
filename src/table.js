@@ -148,7 +148,7 @@ class Table extends THREE.Group {
 			topGeom,
 			material
 		);
-		seat.name = "seat";
+		seat.name = "top";
 		seat.position.y = height - thickness / 2;
 
 		this.add( seat );

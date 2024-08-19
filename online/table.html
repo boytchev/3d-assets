@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+
+<html>
+
+
+<head>
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<link rel="shortcut icon" type="image/png" href="../assets/logo/logo.png"/>
+	<link rel="stylesheet" href="styles.css">
+
+	<script type="importmap">
+	  {
+		"imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@0.166.0/build/three.module.js",
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166.0/examples/jsm/",
+			"assets/": "../src/"
+		}
+	  }
+	</script>
+</head>
+
+
+<body>
+	<div class="footnote bottomfixed">
+		<a href="../">Home</a>
+	</div>
+	
+	<script type="module">
+
+		import * as THREE from "three";
+		import { install, params } from "./online.js";
+		import { Table } from "assets/table.js";
+		
+		const gui = install( Table );
+		
+		const guiL = gui.addFolder( "Legs" );
+
+		guiL.add( params, "legThickness" )
+			.min( 2 ).max( 15 ).step( 0.1 )
+			.name( "Thickness<right>cm</right>" );
+		guiL.add( params, "legRoundness" )
+			.min( 0 ).max( .1 ).step( 0.001 )
+			.name( "Roundness<right>cm</right>" );
+		guiL.add( params, "legOffset" )
+			.min( 0 ).max( 100 ).step( 0.1 )
+			.name( "Offset<right>cm</right>" );
+		guiL.add( params, "legSpread" )
+			.min( 0 ).max( 100 ).step( 0.1 )
+			.name( "Spread <right>cm</right>" );
+		guiL.add( params, "legAngle" )
+			.min( 0 ).max( 90 ).step( 0.1 )
+			.name( "Curve Angle<right>°</right>" );
+		guiL.add( params, "legFaceAngle" )
+			.min( 0 ).max( 360 ).step( 1 )
+			.name( "Face Angle<right>°</right>" );
+		guiL.add( params, "legShape" )
+			.min( 0 ).max( 1 ).step( 0.01 )
+			.name( "Shape<right>cm</right>" );
+		
+		const guiS = gui.addFolder( "Top" );
+
+		guiS.add( params, "topWidth" )
+			.min( 20 ).max( 200 ).step( 0.1 )
+			.name( "width <right>cm</right>" );
+		guiS.add( params, "topDepth" )
+			.min( 20 ).max( 200 ).step( 0.1 )
+			.name( "depth <right>cm</right>" );
+		guiS.add( params, "topHeight" )
+			.min( 10 ).max( 130 ).step( 0.1 )
+			.name( "height<right>cm</right>" );
+		guiS.add( params, "topThickness" )
+			.min( 1 ).max( 10 ).step( 0.1 )
+			.name( "thickness <right>cm</right>" );
+		guiS.add( params, "topRoundness" )
+			.min( 0 ).max( 0.2 ).step( 0.01 )
+			.name( "roundness <right>cm</right>" );
+
+		var guiT = gui.addFolder( '<big>Complexity</big><right id="model-statistics"></right>' )
+
+		guiT.add( params, "legDetail" )
+			.min( 1 ).max( 30 ).step( 1 )
+			.name( "legs<right>n</right>" )
+
+		guiT.add( params, "legRoundDetail" )
+			.min( 1 ).max( 10 ).step( 1 )
+			.name( "legs bevel<right>n</right>" )
+	
+		guiT.add( params, "topRoundDetail" )
+			.min( 1 ).max( 10 ).step( 1 )
+			.name( "top bevel<right>n</right>" )
+
+		guiT.add( params, 'simple' )
+			.name( 'Simple' );
+
+		guiT.add( params, 'flat' )
+			.name( 'Flat' );
+		</script>
+	</body>
+</html>

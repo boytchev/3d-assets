@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+
+<html>
+
+
+<head>
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<link rel="shortcut icon" type="image/png" href="../assets/logo/logo.png"/>
+
+	<style>
+		body {
+			overflow: hidden;
+			margin: 0;
+		}
+	</style>
+	
+	<script type="importmap">
+	  {
+		"imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@0.166.0/build/three.module.js",
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166.0/examples/jsm/",
+			"3d-assets/": "../src/"
+		}
+	  }
+	</script>
+</head>
+
+
+<body>
+	<script type="module">
+	
+		import * as THREE from "three";
+		import { Table } from "3d-assets/table.js";
+
+		var renderer = new THREE.WebGLRenderer( { antialias: true } );
+		renderer.setSize( innerWidth, innerHeight );
+		document.body.appendChild( renderer.domElement );
+
+		var scene = new THREE.Scene();
+		scene.background = new THREE.Color('white');
+
+		var camera = new THREE.PerspectiveCamera( 30, innerWidth / innerHeight );
+		camera.position.set( 2., 3.0, 4. );
+		camera.lookAt( 0, .5, 0 );
+
+		var light = new THREE.DirectionalLight( "white", 3 );
+		light.position.set( 1, 1.2, 1 );
+		scene.add( light );
+
+		var object = new Table( Table.defaults );
+		scene.add( object );
+
+		renderer.render( scene, camera );
+		
+	</script>
+</body>
+</html>
+

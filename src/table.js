@@ -135,12 +135,14 @@ class Table extends THREE.Group {
 
 		const uvXSize = 2 * width + 2 * thickness;
 		const uvYSize = depth + 2 * thickness;
+		const uvScale = 1 / Math.max( uvXSize, uvYSize );
+
 		const topGeom = new ASSETS.RoundedBoxGeometry(
 			width, thickness, depth,
 			params.topRoundDetail,
 			simple ? 0 : params.topRoundness,
 			undefined,
-			new THREE.Matrix3().makeScale( 1 / Math.max( uvXSize, uvYSize ), 1/ Math.max( uvXSize, uvYSize ) )
+			new THREE.Matrix3().makeScale( uvScale, uvScale )
 		);
 		topGeom.uvIndex = 1;
 

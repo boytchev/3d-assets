@@ -35,22 +35,22 @@ on a snapshot to open it online.
 import { Stool } from "3d-assets/stool.js";
 
 var model = new Stool ({
-		legWidth: 10,
-		legThickness: 10,
-		legRoundness: 0.04,
-		legCount: 4,
-		legOffset: 10,
-		legSpread: 50,
-		legAngle: 0,
-		legShape: 0.6,
-		seatSize: 50,
-		seatHeight: 100,
-		seatThickness: 10,
-		legDetail: 10,
-		seatDetail: 30,
-		legRoundDetail: 3,
-		flat: false,
-		simple: false,
+	legWidth: 10,
+	legThickness: 10,
+	legRoundness: 0.04,
+	legCount: 4,
+	legOffset: 10,
+	legSpread: 50,
+	legAngle: 0,
+	legShape: 0.6,
+	seatSize: 50,
+	seatHeight: 100,
+	seatThickness: 10,
+	legDetail: 10,
+	seatDetail: 30,
+	legRoundDetail: 3,
+	flat: false,
+	simple: false,
 });
 ```
 

@@ -91,6 +91,7 @@ function install( AssetClass ) {
 
 	}
 
+	console.log( Asset.defaults );
 	for ( const [ key, value ] of Object.entries( Asset.defaults ) )
 		if ( key[ 0 ]!='$' ) {
 

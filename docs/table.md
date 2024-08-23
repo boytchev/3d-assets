@@ -14,15 +14,15 @@ on a snapshot to open it online.
 
 <p class="gallery">
 
-	<a class="style-block nocaption" href="../online/table?legWidth=10&legThickness=10&legRoundness=0.04&legCount=4&legOffset=10&legSpread=50&legAngle=0&legShape=0.6&seatSize=50&seatHeight=100&seatThickness=10&legDetail=10&seatDetail=30&legRoundDetail=3&flat=false&simple=false">
+	<a class="style-block nocaption" href="../online/table?legThickness=10&legRoundness=0.02&legOffset=0&legSpread=0&legAngle=0&legFaceAngle=0&legShape=0.6&topWidth=120&topDepth=90&topHeight=100&topThickness=10&topRoundness=0.05&legDetail=10&legRoundDetail=3&topRoundDetail=3&flat=false&simple=false">
 		<img src="images/table-1.png">
 	</a>
 
-	<a class="style-block nocaption" href="../online/table?legWidth=2&legThickness=2&legRoundness=0.016&legCount=4&legOffset=10&legSpread=28.8&legAngle=0&legShape=0&seatSize=23.5&seatHeight=100&seatThickness=10&legDetail=5&seatDetail=30&legRoundDetail=3&flat=false&simple=false">
+	<a class="style-block nocaption" href="http://localhost/online/table?legThickness=4&legRoundness=0.011&legOffset=27&legSpread=34&legAngle=0&legFaceAngle=45&legShape=0.6&topWidth=110&topDepth=80&topHeight=55&topThickness=1&topRoundness=0.02&legDetail=18&legRoundDetail=2&topRoundDetail=1&flat=false&simple=false">
 		<img src="images/table-2.png">
 	</a>
 
-	<a class="style-block nocaption" href="../online/table?legWidth=7.9&legThickness=7.4&legRoundness=0.018&legCount=6&legOffset=63&legSpread=66&legAngle=0&legShape=0.07&seatSize=74.8&seatHeight=51.4&seatThickness=30.5&legDetail=5&seatDetail=40&legRoundDetail=3&flat=false&simple=false">
+	<a class="style-block nocaption" href="http://localhost/online/table?legThickness=10&legRoundness=0.02&legOffset=0&legSpread=0&legAngle=34.7&legFaceAngle=0&legShape=0.6&topWidth=120&topDepth=60&topHeight=100&topThickness=10&topRoundness=0.02&legDetail=10&legRoundDetail=3&topRoundDetail=1&flat=false&simple=false">
 		<img src="images/table-3.png">
 	</a>
 

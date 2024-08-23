@@ -35,7 +35,7 @@ document.body.appendChild( renderer.domElement );
 var scene = new THREE.Scene();
 scene.background = new THREE.Color( 'white' );
 
-var camera = new THREE.PerspectiveCamera( 30, innerWidth/innerHeight, 0.01, 10 );
+var camera = new THREE.PerspectiveCamera( 30, innerWidth/innerHeight, 0.01, 100 );
 camera.position.set( 0, 0, 0.5 );
 camera.lookAt( scene.position );
 

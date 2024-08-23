@@ -35,25 +35,25 @@ on a snapshot to open it online.
 import { Table } from "3d-assets/table.js";
 
 var model = new Table ({
-		legThickness: 10,
-		legRoundness: 0.02,
-		legOffset: 0,
-		legSpread: 0,
-		legAngle: 0,
-		legFaceAngle: 0,
-		legShape: .6,
-		topWidth: 120,
-		topDepth: 90,
-		topHeight: 100,
-		topThickness: 10,
-		topRoundness: 0.05,
+	legThickness: 10,
+	legRoundness: 0.02,
+	legOffset: 0,
+	legSpread: 0,
+	legAngle: 0,
+	legFaceAngle: 0,
+	legShape: .6,
+	topWidth: 120,
+	topDepth: 90,
+	topHeight: 100,
+	topThickness: 10,
+	topRoundness: 0.05,
 
-		legDetail: 10,
-		legRoundDetail: 3,
-		topRoundDetail: 3,
+	legDetail: 10,
+	legRoundDetail: 3,
+	topRoundDetail: 3,
 
-		flat: false,
-		simple: false,
+	flat: false,
+	simple: false,
 });
 ```
 

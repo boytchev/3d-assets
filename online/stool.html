@@ -34,65 +34,6 @@
 		import { Stool } from "assets/stool.js";
 		
 		const gui = install( Stool );
-		
-		const guiL = gui.addFolder( "Legs" );
-
-		guiL.add( params, "legWidth" )
-			.min( 2 ).max( 30 ).step( 0.1 )
-			.name( "Width<right>cm</right>" );
-		guiL.add( params, "legThickness" )
-			.min( 2 ).max( 30 ).step( 0.1 )
-			.name( "Thickness<right>cm</right>" );
-		guiL.add( params, "legRoundness" )
-			.min( 0 ).max( .1 ).step( 0.001 )
-			.name( "Roundness<right>cm</right>" );
-		guiL.add( params, "legCount" )
-			.min( 3 ).max( 6 ).step( 1 )
-			.name( "Count<right>cm</right>" );
-		guiL.add( params, "legOffset" )
-			.min( 0 ).max( 100 ).step( 0.1 )
-			.name( "Offset<right>cm</right>" );
-		guiL.add( params, "legSpread" )
-			.min( 0 ).max( 100 ).step( 0.1 )
-			.name( "Spread <right>cm</right>" );
-		guiL.add( params, "legAngle" )
-			.min( 0 ).max( 150 ).step( 0.1 )
-			.name( "Angle<right>cm</right>" );
-		guiL.add( params, "legShape" )
-			.min( 0 ).max( 1 ).step( 0.01 )
-			.name( "Shape<right>cm</right>" );
-		
-		const guiS = gui.addFolder( "Seat" );
-
-		guiS.add( params, "seatSize" )
-			.min( 10 ).max( 100 ).step( 0.1 )
-			.name( "size <right>cm</right>" );
-		guiS.add( params, "seatHeight" )
-			.min( 10 ).max( 100 ).step( 0.1 )
-			.name( "height<right>cm</right>" );
-		guiS.add( params, "seatThickness" )
-			.min( 10 ).max( 100 ).step( 0.1 )
-			.name( "thickness <right>cm</right>" );
-
-		var guiT = gui.addFolder( '<big>Complexity</big><right id="model-statistics"></right>' )
-
-		guiT.add( params, "legDetail" )
-			.min( 5 ).max( 30 ).step( 1 )
-			.name( "legs" )
-
-		guiT.add( params, "legRoundDetail" )
-			.min( 1 ).max( 10 ).step( 1 )
-			.name( "legs bevel<right>n</right>" )
-
-		guiT.add( params, "seatDetail" )
-			.min( 3 ).max( 50 ).step( 1 )
-			.name( "seat<right>n</right>" )
-
-		guiT.add( params, 'simple' )
-			.name( 'Simple' );
-
-		guiT.add( params, 'flat' )
-			.name( 'Flat' );
-		</script>
-	</body>
+	</script>
+</body>
 </html>

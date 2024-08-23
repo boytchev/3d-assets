@@ -2,29 +2,35 @@ import * as THREE from 'three';
 import * as ASSETS from './assets-utils.js';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 
-class Chair extends THREE.Group {
+class Chair extends ASSETS.Asset {
 
 	static name = 'Chair';
 
-	static defaults = {
-		seatWidth: 42,
-		seatDepth: 45,
-		seatHeight: 45,
-		seatThickness: 2,
-		legThickness: 4,
-		cussionThickness: 3,
-		cussionOffset: 2,
-		backrestHeight: 50,
-		backrestSidesThickness: 4,
-		backrestAngle: 5,
+	/* eslint-disable */
+	static paramData = {
 
-		cussionRoundness: 0.2,
-		cussionDetail: 2,
-		upholstery: false,
+		seatWidth:              { default:    42, type: 'cm'   , min: 20, max: 100, prec: 1, folder: "Seat"    , name: "Width"     },
+		seatDepth:              { default:    45, type: 'cm'   , min: 20, max: 100, prec: 1, folder: "Seat"    , name: "Depth"     },
+		seatHeight:             { default:    45, type: 'cm'   , min: 20, max: 100, prec: 1, folder: "Seat"    , name: "Height"    },
+		seatThickness:          { default:     2, type: 'cm'   , min:  2, max: 10 , prec: 1, folder: "Seat"    , name: "Thickness" },
+                                                                                  
+		backrestHeight:         { default:    50, type: 'cm'   , min: 10, max: 100, prec: 1, folder: "Backrest", name: "Height"    },
+		backrestSidesThickness: { default:     4, type: 'cm'   , min:  1, max: 10 , prec: 1, folder: "Backrest", name: "Thickness" },
+		backrestAngle:          { default:     5, type: 'deg'  , min:  0, max: 45 , prec: 1, folder: "Backrest", name: "Angle"     },
+                                                                                  
+		cussionThickness:       { default:     3, type: 'cm'   , min:  2, max: 15 , prec: 1, folder: "Cussions", name: "Thickness" },
+		cussionOffset:          { default:     2, type: 'cm'   , min:  2, max: 5  , prec: 1, folder: "Cussions", name: "Offset"    },
+        cussionRoundness:       { default:   0.2, type: Number , min:  0, max: 0.2, prec: 1, folder: "Cussions", name: "Roundness" },                                               
+		upholstery:             { default: false, type: Boolean, chance: .5                , folder: "Cussions", name: "Upholstery"},
+                                                                                  
+		legThickness:           { default:     4, type: 'cm'   , min:  2, max: 10 , prec: 1, folder: "Legs"    , name: "Thickness" },
+                                                                                  
+		cussionDetail:          { default:     2, type: 'n'    , min:  1, max: 10 , prec: 0, folder: "Complexity", name: "Cussions", exp: true},
+        flat:                   { default: false, type: Boolean, chance: .3			       , folder: "Complexity", name: "Simple"  },
+		simple:                 { default: false, type: Boolean, chance: .3                , folder: "Complexity", name: "Flat"    },
 
-		flat: false,
-		simple: false,
 	};
+	/* eslint-enable */
 
 
 	constructor( params ) {
@@ -278,33 +284,6 @@ class Chair extends THREE.Group {
 		this.clear();
 
 	} // Chair.dispose
-
-
-	// returns a set of random parameters
-	static random() {
-
-		return {
-			seatWidth: ASSETS.random( 20, 100 ),
-			seatDepth: ASSETS.random( 20, 100 ),
-			seatHeight: ASSETS.random( 20, 100 ),
-			seatThickness: ASSETS.random( 2, 10 ),
-			legThickness: ASSETS.random( 2, 10 ),
-			cussionThickness: ASSETS.random( 2, 15 ),
-			cussionOffset: ASSETS.random( 2, 5 ),
-			backrestHeight: ASSETS.random( 10, 100 ),
-			backrestSidesThickness: ASSETS.random( 1, 10 ),
-			backrestAngle: ASSETS.random( 0, 45 ),
-
-			cussionRoundness: ASSETS.random( 0, 0.2 ),
-			cussionDetail: ASSETS.round( ASSETS.random( 1, 10 ), 0 ),
-			upholstery: ASSETS.random( 0, 100 ) < 50,
-
-			flat: ASSETS.random( 0, 100 ) < 30,
-			simple: ASSETS.random( 0, 100 ) < 30,
-		};
-
-	} // Chair.random
-
 
 } // Chair
 

@@ -4,12 +4,62 @@
 
 
 
-import { BufferAttribute, BufferGeometry, LatheGeometry, MathUtils, Matrix3, Matrix4, MeshPhysicalMaterial, Shape, ShapeGeometry, Vector2, Vector3 } from 'three';
+import { BufferAttribute, BufferGeometry, Group, LatheGeometry, MathUtils, Matrix3, Matrix4, MeshPhysicalMaterial, Shape, ShapeGeometry, Vector2, Vector3 } from 'three';
 //import { MeshPhysicalNodeMaterial } from 'three/nodes';
 //import { marble } from "tsl-textures/marble.js";
 
 
 const AUTO = null;
+
+
+class Asset extends Group {
+
+	static get defaults() {
+
+		let result = {};
+		for ( const [ key, param ] of Object.entries( this.paramData ) ) {
+
+			result[ key ] = param.default;
+
+		}
+
+		return result;
+
+	}
+
+	static random() {
+
+		let result = {};
+		for ( const [ key, param ] of Object.entries( this.paramData ) ) {
+
+			if ( param.type != Boolean ) {
+
+				if ( param.exp ) {
+
+					result[ key ] = Math.floor( mapExp( Math.random(), param.min, param.max, 0, 1 ) );
+
+				} else {
+
+					result[ key ] = random( param.min, param.max, param.prec );
+
+				}
+
+			}
+
+			if ( param.type == Boolean ) {
+
+				result[ key ] = random( 0, 1 ) < param.chance;
+
+			}
+
+		}
+
+		return result;
+
+	}
+
+}
+
 
 // 2D curve with rounded vertices
 // path = [vertex, vertex, vertex,...]
@@ -818,4 +868,4 @@ function clamp( x, min, max ) {
 }
 
 
-export { RoundedBoxGeometry, AUTO, SmoothExtrudeGeometry, UVCylinderGeometry, RoundedShape, LatheUVGeometry, cm, clamp, percent, slope, defaultMaterial, map, mapExp, round, random };
+export { Asset, RoundedBoxGeometry, AUTO, SmoothExtrudeGeometry, UVCylinderGeometry, RoundedShape, LatheUVGeometry, cm, clamp, percent, slope, defaultMaterial, map, mapExp, round, random };

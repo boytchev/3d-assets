@@ -9,22 +9,24 @@ import * as ASSETS from './assets-utils.js';
 
 
 
-class Plate extends THREE.Group {
+class Plate extends ASSETS.Asset {
 
 	static name = 'Plate';
 
-	static defaults = {
+	/* eslint-disable */
+	static paramData = {
 
-		plateHeight: 1.6, // cm
-		plateSize: 18, // cm
-		plateShape: 25, // degrees
-		plateWidth: 0.3, // cm
-		plateComplexity: 50, // n
+		plateHeight:      { default:   1.6, type: 'cm'   , min: 0.5, max:  5 , folder: "Plate", name: "Height"},
+		plateSize:        { default:    18, type: 'cm'   , min:   6, max: 30 , folder: "Plate", name: "Size"},
+		plateShape:       { default:    25, type: 'deg'  , min:   0, max: 35 , folder: "Plate", name: "Shape"},
+		plateWidth:       { default:   0.3, type: 'cm'   , min: 0.3, max:  1 , folder: "Plate", name: "Width"},
 
-		simple: false,
-		flat: false,
+		plateComplexity:  { default:    50, type: 'n'    , min:   4, max: 120, folder: "Complexity", name: "Plate", exp: true},
+        flat:             { default: false, type: Boolean, chance: .3	     , folder: "Complexity", name: "Simple"},
+		simple:           { default: false, type: Boolean, chance: .3        , folder: "Complexity", name: "Flat"  },
+
 	};
-
+	/* eslint-enable */
 
 	constructor( params ) {
 
@@ -110,24 +112,6 @@ class Plate extends THREE.Group {
 		this.clear( );
 
 	} // Plate.dispose
-
-
-	// returns a set of random parameters
-	static random( ) {
-
-		return {
-			plateHeight: ASSETS.random( 0.5, 5 ),
-			plateSize: ASSETS.random( 6, 30 ),
-			plateShape: ASSETS.random( 0, 35, 1 ),
-			plateWidth: ASSETS.random( 0.3, 1, 3 ),
-			plateComplexity: Math.floor( ASSETS.mapExp( Math.random(), 4, 120, 0, 1 ) ),
-
-			simple: ASSETS.random( 0, 100 ) < 30,
-			flat: ASSETS.random( 0, 100 ) < 30,
-		};
-
-	} // Plate.random
-
 
 } // Plate
 

@@ -33,77 +33,8 @@
 		import { install, params } from "./online.js";
 		import { Mug } from "assets/mug.js";
 
+		const gui = install( Mug );
 
-
-		var gui = install( Mug );
-		
-		
-		
-		var guiM = gui.addFolder( '<big>Mug</big>' )
-
-		guiM.add( params, 'mugHeight' )
-			.min( 7 ).max( 20 ).step(0.01)
-			.name( 'Height<right>cm</right>' )
-			.$input.classList.add( 'top' );
-
-		guiM.add( params, 'mugSize' )
-			.min( 6 ).max( 12 ).step(0.01)
-			.name( 'Size<right>cm</right>' );
-
-		guiM.add( params, 'mugShape' )
-			.min( -15 ).max( 15 ).step(0.1)
-			.name( 'Shape<right>&deg;</right>' );
-		
-		guiM.add( params, 'mugWidth' )
-			.min( 0.3 ).max( 1 ).step(0.001)
-			.name( 'Width<right>cm</right>' )
-			.$input.classList.add( 'bottom' );
-
-
-			
-		var guiH = gui.addFolder( '<big>Handle</big>' )
-		
-		guiH.add( params, 'handlePosition' )
-			.min( -100 ).max( 100 ).step(1)
-			.name( 'Position<right>%</right>' );
-
-		guiH.add( params, 'handleHeight' )
-			.min( 3 ).max( 18 ).step(0.01)
-			.name( 'Height<right>cm</right>' );
-		
-		guiH.add( params, 'handleSize' )
-			.min( 3 ).max( 10 ).step(0.01)
-			.name( 'Size<right>cm</right>' );
-
-		guiH.add( params, 'handleShape' )
-			.min( -80 ).max( 80 ).step(0.1)
-			.name( 'Shape <right>&deg;</right>' );
-
-		guiH.add( params, 'handleWidth' )
-			.min( 1 ).max( 2 ).step(0.01)
-			.name( 'Width <right>cm</right>' );
-		
-		guiH.add( params, 'handleThickness' )
-			.min( 0.3 ).max( 1 ).step(0.01)
-			.name( 'Thickness' );
-
-			
-		var guiT = gui.addFolder( '<big>Complexity</big><right id="model-statistics"></right>' )
-
-		guiT.add( params, 'mugComplexity' )
-			.min( 4 ).max( 120 ).step( 1 )
-			.name( 'Mug<right>n</right>' );
-		
-		guiT.add( params, 'handleComplexity' )
-			.min( 3 ).max( 80 ).step( 1 )
-			.name( 'Handle<right>n</right>' );
-		
-		guiT.add( params, 'simple' )
-			.name( 'Simple' );
-		
-		guiT.add( params, 'flat' )
-			.name( 'Flat' );
-		
 	</script>
 </body>
 </html>

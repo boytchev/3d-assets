@@ -8,30 +8,32 @@ import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 import * as ASSETS from './assets-utils.js';
 
 
-class Mug extends THREE.Group {
+class Mug extends ASSETS.Asset {
 
 	static name = 'Mug';
 
-	static defaults = {
+	/* eslint-disable */
+	static paramData = {
+		mugHeight:        { default:    10, type: 'cm'   , min:    7, max:  20, folder: 'Mug', name: 'Height'},
+		mugSize:          { default:     8, type: 'cm'   , min:    6, max:  12, folder: 'Mug', name: 'Size'},
+		mugShape:         { default:     0, type: 'deg'  , min:  -15, max:  15, folder: 'Mug', name: 'Shape'},
+		mugWidth:         { default:   0.4, type: 'cm'   , min:  0.3, max:   1, folder: 'Mug', name: 'Width'},
 
-		mugHeight: 10, // cm
-		mugSize: 8, // cm
-		mugShape: 0, // degrees
-		mugWidth: 0.4, // cm
-		mugComplexity: 50,
+		handlePosition:   { default:    20, type: '%'    , min: -100, max: 100, folder: 'Handle', name: 'Position'},
+		handleHeight:     { default:     6, type: 'cm'   , min:    3, max:  18, folder: 'Handle', name: 'Height'},
+		handleSize:       { default:     7, type: 'cm'   , min:    3, max:  10, folder: 'Handle', name: 'Size'},
+		handleShape:      { default:    20, type: Number , min:  -80, max:  80, folder: 'Handle', name: 'Shape'},
+		handleWidth:      { default:   1.5, type: 'cm'   , min:    1, max:   2, folder: 'Handle', name: 'Width'},
+		handleThickness:  { default:   0.6, type: 'cm'   , min:  0.3, max:   1, folder: 'Handle', name: 'Thickness'},
 
-		handlePosition: 20, // %
-		handleHeight: 6, // cm
-		handleSize: 7, // cm
-		handleShape: 20, // degrees
-		handleWidth: 1.5, // cm
-		handleThickness: 0.6, // cm
-		handleComplexity: 30,
+		mugComplexity:    { default:    50, type: 'n'    , min:    8, max: 100, folder: "Complexity", name: "Mug"},
+		handleComplexity: { default:    30, type: 'n'    , min:    5, max: 100, folder: "Complexity", name: "Handle"},
 
-		simple: false,
-		flat: false,
+        flat:             { default: false, type: Boolean, chance: .3	      , folder: "Complexity", name: "Simple"},
+		simple:           { default: false, type: Boolean, chance: .3         , folder: "Complexity", name: "Flat"  },
+
 	};
-
+	/* eslint-enable */
 
 	constructor( params ) {
 
@@ -176,6 +178,14 @@ class Mug extends THREE.Group {
 
 	} // Mug.constructor
 
+	static random() {
+
+		const res = super.random();
+		res.mugComplexity = ASSETS.random( 0, 50, 0 ) + ASSETS.random( 0, 50, 0 );
+		res.handleComplexity = ASSETS.random( 0, 50, 0 ) + ASSETS.random( 0, 50, 0 );
+		return res;
+
+	}
 
 	dispose( ) {
 
@@ -184,33 +194,6 @@ class Mug extends THREE.Group {
 		this.clear( );
 
 	} // Mug.dispose
-
-
-	// returns a set of random parameters
-	static random( ) {
-
-		return {
-			mugHeight: ASSETS.random( 7, 20 ),
-			mugSize: ASSETS.random( 6, 12 ),
-			mugShape: ASSETS.random( -15, 15, 1 ),
-			mugWidth: ASSETS.random( 0.3, 1, 3 ),
-
-			handlePosition: ASSETS.random( -100, 100, 0 ),
-			handleHeight: ASSETS.random( 3, 18 ),
-			handleSize: ASSETS.random( 3, 10 ),
-			handleShape: ASSETS.random( -40, 40, 1 ),
-			handleWidth: ASSETS.random( 1, 2 ),
-			handleThickness: ASSETS.random( 0.3, 1 ),
-
-			mugComplexity: ASSETS.random( 0, 50 )+ASSETS.random( 0, 50 ),
-			handleComplexity: ASSETS.random( 0, 50 )+ASSETS.random( 0, 50 ),
-
-			edges: ASSETS.random( 0, 100 ) > 30,
-			flat: ASSETS.random( 0, 100 ) < 30,
-		};
-
-	} // Mug.random
-
 
 } // Mug
 

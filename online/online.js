@@ -91,6 +91,7 @@ function install( AssetClass ) {
 
 	}
 
+	console.log( Asset.defaults );
 	for ( const [ key, value ] of Object.entries( Asset.defaults ) )
 		if ( key[ 0 ]!='$' ) {
 
@@ -138,6 +139,8 @@ function install( AssetClass ) {
 	document.getElementById( 'gltf' )?.addEventListener( 'click', exportAsGLTF );
 	document.getElementById( 'random' )?.addEventListener( 'click', randomizeAsset );
 
+	generateParamsGui( gui, Asset );
+
 	// everything is ready, generate the asset
 	regenerateAsset( );
 
@@ -168,6 +171,43 @@ function paramsToArray( symbol ) {
 
 } // paramsToArray
 
+
+function generateParamsGui( gui, AssetClass ) {
+
+	let folders = {};
+	for ( const [ key, value ] of Object.entries( AssetClass.paramData ) ) {
+
+		let folder;
+		if ( value.folder ) {
+
+			if ( !folders[ value.folder ]) {
+
+				name = value.folder;
+				if ( name == "Complexity" ) name = '<big>Complexity</big><right id="model-statistics"></right>';
+				folder = gui.addFolder( name );
+				folders[ value.folder ] = folder;
+
+			} else {
+
+				folder = folders[ value.folder ];
+
+			}
+
+		} else folder = gui;
+
+		let unit = "";
+		if ( value.type != Boolean ) unit = value.type;
+		if ( value.type == Number ) unit = '';
+		if ( value.type == 'deg' ) unit = '°';
+
+		console.log( key, value );
+		folder.add( params, key )
+			.min( value.min ).max( value.max ).step( Math.pow( .1, value.prec ?? 2 ) )
+			.name( value.name + "<right>" + unit + "</right>" );
+
+	}
+
+}
 
 
 // capture keystrokes pairs to see when to activate special modes

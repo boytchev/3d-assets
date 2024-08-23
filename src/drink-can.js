@@ -23,24 +23,26 @@ function getLidTexture( ) {
 
 
 
-class DrinkCan extends THREE.Group {
+class DrinkCan extends ASSETS.Asset {
 
 	static name = 'Drink can';
 
-	static defaults = {
+	/* eslint-disable */
+	static paramData = {
 
-		canHeight: 12, // cm
-		canSize: 6, // cm
-		canComplexity: 50, // n
+		canHeight:     { default:    12, type: 'cm'   , min: 5, max: 20, prec: 1 , folder: "Can"       , name: "Height"},
+		canSize:       { default:     6, type: 'cm'   , min: 5, max:  8, prec: 1 , folder: "Can"       , name: "Size"  },
 
-		neckHeight: 1.5, // cm
-		neckSize: 5, // cm
+		neckHeight:    { default:   1.5, type: 'cm'   , min: 1, max:  3, prec: 1 , folder: "Neck"      , name: "Height"},
+		neckSize:      { default:     5, type: 'cm'   , min: 4, max:  9, prec: 1 , folder: "Neck"      , name: "Size"  },
 
-		hasTag: true,
-		simple: false,
-		flat: false,
+		canComplexity: { default:    50, type: 'n'    , min: 8, max: 120, prec: 1, folder: "Complexity", name: "Can", exp: true},
+		hasTag:        { default:  true, type: Boolean, chance: .7               , folder: "Complexity", name: "3D tag"},
+        flat:          { default: false, type: Boolean, chance: .3			     , folder: "Complexity", name: "Simple"},
+		simple:        { default: false, type: Boolean, chance: .3               , folder: "Complexity", name: "Flat"  },
+
 	};
-
+	/* eslint-enable */
 
 	constructor( params ) {
 
@@ -204,7 +206,6 @@ class DrinkCan extends THREE.Group {
 
 	} // DrinkCan.constructor
 
-
 	dispose( ) {
 
 		this.body?.geometry.dispose( );
@@ -213,26 +214,6 @@ class DrinkCan extends THREE.Group {
 		this.clear( );
 
 	} // DrinkCan.dispose
-
-
-	// returns a set of random parameters
-	static random( ) {
-
-		return {
-			canHeight: ASSETS.random( 5, 20 ),
-			canSize: ASSETS.random( 5, 8 ),
-
-			neckHeight: ASSETS.random( 1, 3 ),
-			neckSize: ASSETS.random( 4, 9 ),
-
-			canComplexity: Math.floor( ASSETS.mapExp( Math.random(), 8, 120, 0, 1 ) ),
-
-			hasTag: ASSETS.random( 0, 100 ) < 70,
-			simple: ASSETS.random( 0, 100 ) < 30,
-			flat: ASSETS.random( 0, 100 ) < 30,
-		};
-
-	} // DrinkCan.random
 
 
 } // DrinkCan

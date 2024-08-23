@@ -3,32 +3,36 @@ import * as ASSETS from './assets-utils.js';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 
-class Table extends THREE.Group {
+class Table extends ASSETS.Asset {
 
 	static name = 'Table';
 
-	static defaults = {
-		legThickness: 10,
-		legRoundness: 0.02,
-		legOffset: 0,
-		legSpread: 0,
-		legAngle: 0,
-		legFaceAngle: 0,
-		legShape: .6,
-		topWidth: 120,
-		topDepth: 90,
-		topHeight: 100,
-		topThickness: 10,
-		topRoundness: 0.05,
 
-		legDetail: 10,
-		legRoundDetail: 3,
-		topRoundDetail: 3,
+	/* eslint-disable */
+	static paramData = {
 
-		flat: false,
-		simple: false,
+		legThickness:    {default:   10, type: 'cm'  , min:  2, max: 15 , folder: "Legs"      , name: "Thickness"},
+		legRoundness:    {default: 0.02, type: 'cm'  , min:  0, max: .1 , folder: "Legs"      , name: "Roundness"},
+		legOffset:       {default:    0, type: 'cm'  , min:  0, max: 100, folder: "Legs"      , name: "Offset"},
+		legSpread:       {default:    0, type: 'cm'  , min:  0, max: 100, folder: "Legs"      , name: "Spread"},
+		legAngle:        {default:    0, type: 'deg' , min:  0, max: 90 , folder: "Legs"      , name: "Curve Angle"},
+		legFaceAngle:    {default:    0, type: 'deg' , min:  0, max: 360, folder: "Legs"      , name: "Face Angle"},
+		legShape:        {default:   .6, type: Number, min:  0, max: 1  , folder: "Legs"      , name: "Shape"},
+		topWidth:        {default:  120, type: 'cm'  , min: 20, max: 200, folder: "Top"       , name: "Width"},
+		topDepth:        {default:   90, type: 'cm'  , min: 20, max: 200, folder: "Top"       , name: "Depth"},
+		topHeight:       {default:  100, type: 'cm'  , min: 10, max: 130, folder: "Top"       , name: "Height"},
+		topThickness:    {default:   10, type: 'cm'  , min:  1, max: 10 , folder: "Top"       , name: "Thickness"},  
+		topRoundness:    {default: 0.05, type: Number, min:  0, max: 0.2, folder: "Top"       , name: "Roundness"},
+
+		legDetail:       {default:   10, type: 'n'   , min:  1, max:  30, folder: "Complexity", name: "Legs"},
+		legRoundDetail:  {default:    3, type: 'n'   , min:  1, max:  10, folder: "Complexity", name: "Legs Bevel"},
+		topRoundDetail:  {default:    3, type: 'n'   , min:  1, max:  10, folder: "Complexity", name: "Top Bevel", exp: true},
+
+		flat:	{ default: false, type: Boolean, chance: .3             , folder: "Complexity", name: "Flat"   },
+		simple: { default: false, type: Boolean, chance: .3             , folder: "Complexity", name: "Simple" },
+
 	};
-
+	/* eslint-enable */
 
 	constructor( params ) {
 
@@ -163,37 +167,6 @@ class Table extends THREE.Group {
 		this.clear();
 
 	} // Table.dispose
-
-
-	// returns a set of random parameters
-	static random() {
-
-		return {
-
-			legThickness: ASSETS.random( 2, 15 ),
-			legRoundness: ASSETS.random( 0, .1 ),
-			legOffset: ASSETS.random( 0, 100 ),
-			legSpread: ASSETS.random( 0, 100 ),
-			legAngle: ASSETS.random( 0, 90 ),
-			legFaceAngle: ASSETS.random( 0, 360 ),
-			legShape: ASSETS.random( 0, 1 ),
-
-			topWidth: ASSETS.random( 20, 200 ),
-			topDepth: ASSETS.random( 20, 200 ),
-			topHeight: ASSETS.random( 10, 130 ),
-			topThickness: ASSETS.random( 1, 10 ),
-			topRoundness: ASSETS.random( 0, 0.2 ),
-
-			legDetail: ASSETS.random( 1, 30, 0 ),
-			legRoundDetail: ASSETS.random( 1, 10, 0 ),
-			topRoundDetail: ASSETS.random( 1, 10, 0 ),
-
-			flat: ASSETS.random( 0, 100 ) < 30,
-			simple: ASSETS.random( 0, 100 ) < 30,
-		};
-
-	} // Table.random
-
 
 } // Table
 

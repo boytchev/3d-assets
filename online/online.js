@@ -91,7 +91,6 @@ function install( AssetClass ) {
 
 	}
 
-	console.log( Asset.defaults );
 	for ( const [ key, value ] of Object.entries( Asset.defaults ) )
 		if ( key[ 0 ]!='$' ) {
 
@@ -200,7 +199,6 @@ function generateParamsGui( gui, AssetClass ) {
 		if ( value.type == Number ) unit = '';
 		if ( value.type == 'deg' ) unit = '°';
 
-		console.log( key, value );
 		folder.add( params, key )
 			.min( value.min ).max( value.max ).step( Math.pow( .1, value.prec ?? 2 ) )
 			.name( value.name + "<right>" + unit + "</right>" );

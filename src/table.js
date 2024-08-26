@@ -159,6 +159,8 @@ class Table extends ASSETS.Asset {
 
 		this.add( seat );
 
+		this.position.y = -height/2;
+
 	} // Table.constructor
 
 

@@ -16,21 +16,21 @@ class WineBottle extends ASSETS.Asset {
 	/* eslint-disable */
 	static paramData = {
 
-		bottleHeight:     { default:    25, type: "cm", min:  15, max: 35 , folder: "Bottle"    , name: "Height"},
-		bottleSize:       { default:     6, type: "cm", min:   5, max: 15 , folder: "Bottle"    , name: "Size"},
-		bottleBulge:      { default:     0, type: "%" , min:-100, max: 100, folder: "Bottle"    , name: "Bulge"},
-		puntHeight:       { default:     1, type: "cm", min:   0, max:   3, folder: "Bottle"    , name: "Punt"},
+		bottleHeight:     { default:    25, type: "cm", min:  15, max: 35 , folder: "Bottle"    , name: "Height" },
+		bottleSize:       { default:     6, type: "cm", min:   5, max: 15 , folder: "Bottle"    , name: "Size"   },
+		bottleBulge:      { default:     0, type: "%" , min:-100, max: 100, folder: "Bottle"    , name: "Bulge"  },
+		puntHeight:       { default:     1, type: "cm", min:   0, max:   3, folder: "Bottle"    , name: "Punt"   },
 
-		neckHeight:       { default:   5.5, type: "cm", min:   2, max:  15, folder: "Neck"      , name: "Height"},
-		neckSize:         { default:     2, type: "cm", min:   1, max:  3 , folder: "Neck"      , name: "Size"},
-		neckSmooth:       { default:   3.5, type: "cm", min: 0.5, max:  15, folder: "Neck"      , name: "Smooth"},
+		neckHeight:       { default:   5.5, type: "cm", min:   2, max:  15, folder: "Neck"      , name: "Height" },
+		neckSize:         { default:     2, type: "cm", min:   1, max:  3 , folder: "Neck"      , name: "Size"   },
+		neckSmooth:       { default:   3.5, type: "cm", min: 0.5, max:  15, folder: "Neck"      , name: "Smooth" },
 
-		topHeight:        { default:   0.4, type: "cm", min: 0.3, max: 3  , folder: "Top"       , name: "Height"},
-		topSize:          { default:   0.2, type: "cm", min:   0, max: 0.5, folder: "Top"       , name: "Size"},
-		topOffset:        { default:   0.2, type: "cm", min:   0, max: 1  , folder: "Top"       , name: "Offset"},
+		topHeight:        { default:   0.4, type: "cm", min: 0.3, max: 3  , folder: "Top"       , name: "Height" },
+		topSize:          { default:   0.2, type: "cm", min:   0, max: 0.5, folder: "Top"       , name: "Size"   },
+		topOffset:        { default:   0.2, type: "cm", min:   0, max: 1  , folder: "Top"       , name: "Offset" },
 
-		bottleComplexity: { default:    50, type: "n" , min:   8, max: 120, folder: "Complexity", name: "Bottle", exp: true},
-		opened:	          { default:  true, type: Boolean, chance: .5     , folder: "Complexity", name: "Opened"   },
+		bottleComplexity: { default:    50, type: "n" , min:   8, max: 120, folder: "Complexity", name: "Bottle" , exp: true},
+		opened:	          { default:  true, type: Boolean, chance: .5     , folder: "Complexity", name: "Opened" },
 		flat:	          { default: false, type: Boolean, chance: .3     , folder: "Complexity", name: "Flat"   },
 		simple:           { default: false, type: Boolean, chance: .3     , folder: "Complexity", name: "Simple" },
 

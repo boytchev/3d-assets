@@ -16,12 +16,12 @@ class Plate extends ASSETS.Asset {
 	/* eslint-disable */
 	static paramData = {
 
-		plateHeight:      { default:   1.6, type: 'cm'   , min: 0.5, max:  5 , folder: "Plate", name: "Height"},
-		plateSize:        { default:    18, type: 'cm'   , min:   6, max: 30 , folder: "Plate", name: "Size"},
-		plateShape:       { default:    25, type: 'deg'  , min:   0, max: 35 , folder: "Plate", name: "Shape"},
-		plateWidth:       { default:   0.3, type: 'cm'   , min: 0.3, max:  1 , folder: "Plate", name: "Width"},
+		plateHeight:      { default:   1.6, type: 'cm'   , min: 0.5, max:  5 , folder: "Plate", name: "Height" },
+		plateSize:        { default:    18, type: 'cm'   , min:   6, max: 30 , folder: "Plate", name: "Size"   },
+		plateShape:       { default:    25, type: 'deg'  , min:   0, max: 35 , folder: "Plate", name: "Shape"  },
+		plateWidth:       { default:   0.3, type: 'cm'   , min: 0.3, max:  1 , folder: "Plate", name: "Width"  },
 
-		plateComplexity:  { default:    50, type: 'n'    , min:   4, max: 120, folder: "Complexity", name: "Plate", exp: true},
+		plateComplexity:  { default:    50, type: 'n'    , min:   4, max: 120, folder: "Complexity", name: "Plate" , exp: true},
         flat:             { default: false, type: Boolean, chance: .3	     , folder: "Complexity", name: "Simple"},
 		simple:           { default: false, type: Boolean, chance: .3        , folder: "Complexity", name: "Flat"  },
 

@@ -30,16 +30,16 @@ class DrinkCan extends ASSETS.Asset {
 	/* eslint-disable */
 	static paramData = {
 
-		canHeight:     { default:    12, type: 'cm'   , min: 5, max: 20, prec: 1 , folder: "Can"       , name: "Height"},
-		canSize:       { default:     6, type: 'cm'   , min: 5, max:  8, prec: 1 , folder: "Can"       , name: "Size"  },
+		canHeight:     { default:    12, type: 'cm'   , min: 5, max: 20, prec: 1 , folder: "Can"       , name: "Height" },
+		canSize:       { default:     6, type: 'cm'   , min: 5, max:  8, prec: 1 , folder: "Can"       , name: "Size"   },
 
-		neckHeight:    { default:   1.5, type: 'cm'   , min: 1, max:  3, prec: 1 , folder: "Neck"      , name: "Height"},
-		neckSize:      { default:     5, type: 'cm'   , min: 4, max:  9, prec: 1 , folder: "Neck"      , name: "Size"  },
+		neckHeight:    { default:   1.5, type: 'cm'   , min: 1, max:  3, prec: 1 , folder: "Neck"      , name: "Height" },
+		neckSize:      { default:     5, type: 'cm'   , min: 4, max:  9, prec: 1 , folder: "Neck"      , name: "Size"   },
 
-		canComplexity: { default:    50, type: 'n'    , min: 8, max: 120, prec: 1, folder: "Complexity", name: "Can", exp: true},
-		hasTag:        { default:  true, type: Boolean, chance: .7               , folder: "Complexity", name: "3D tag"},
-        flat:          { default: false, type: Boolean, chance: .3			     , folder: "Complexity", name: "Simple"},
-		simple:        { default: false, type: Boolean, chance: .3               , folder: "Complexity", name: "Flat"  },
+		canComplexity: { default:    50, type: 'n'    , min: 8, max: 120, prec: 1, folder: "Complexity", name: "Can"    , exp: true},
+		hasTag:        { default:  true, type: Boolean, chance: .7               , folder: "Complexity", name: "3D tag" },
+        flat:          { default: false, type: Boolean, chance: .3			     , folder: "Complexity", name: "Simple" },
+		simple:        { default: false, type: Boolean, chance: .3               , folder: "Complexity", name: "Flat"   },
 
 	};
 	/* eslint-enable */

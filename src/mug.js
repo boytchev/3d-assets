@@ -14,23 +14,23 @@ class Mug extends ASSETS.Asset {
 
 	/* eslint-disable */
 	static paramData = {
-		mugHeight:        { default:    10, type: 'cm'   , min:    7, max:  20, folder: 'Mug', name: 'Height'},
-		mugSize:          { default:     8, type: 'cm'   , min:    6, max:  12, folder: 'Mug', name: 'Size'},
-		mugShape:         { default:     0, type: 'deg'  , min:  -15, max:  15, folder: 'Mug', name: 'Shape'},
-		mugWidth:         { default:   0.4, type: 'cm'   , min:  0.3, max:   1, folder: 'Mug', name: 'Width'},
+		mugHeight:        { default:    10, type: 'cm'   , min:    7, max:  20, folder: 'Mug', name: 'Height'        },
+		mugSize:          { default:     8, type: 'cm'   , min:    6, max:  12, folder: 'Mug', name: 'Size'          },
+		mugShape:         { default:     0, type: 'deg'  , min:  -15, max:  15, folder: 'Mug', name: 'Shape'         },
+		mugWidth:         { default:   0.4, type: 'cm'   , min:  0.3, max:   1, folder: 'Mug', name: 'Width'         },
 
-		handlePosition:   { default:    20, type: '%'    , min: -100, max: 100, folder: 'Handle', name: 'Position'},
-		handleHeight:     { default:     6, type: 'cm'   , min:    3, max:  18, folder: 'Handle', name: 'Height'},
-		handleSize:       { default:     7, type: 'cm'   , min:    3, max:  10, folder: 'Handle', name: 'Size'},
-		handleShape:      { default:    20, type: Number , min:  -80, max:  80, folder: 'Handle', name: 'Shape'},
-		handleWidth:      { default:   1.5, type: 'cm'   , min:    1, max:   2, folder: 'Handle', name: 'Width'},
-		handleThickness:  { default:   0.6, type: 'cm'   , min:  0.3, max:   1, folder: 'Handle', name: 'Thickness'},
+		handlePosition:   { default:    20, type: '%'    , min: -100, max: 100, folder: 'Handle', name: 'Position'   },
+		handleHeight:     { default:     6, type: 'cm'   , min:    3, max:  18, folder: 'Handle', name: 'Height'     },
+		handleSize:       { default:     7, type: 'cm'   , min:    3, max:  10, folder: 'Handle', name: 'Size'       },
+		handleShape:      { default:    20, type: Number , min:  -80, max:  80, folder: 'Handle', name: 'Shape'      },
+		handleWidth:      { default:   1.5, type: 'cm'   , min:    1, max:   2, folder: 'Handle', name: 'Width'      },
+		handleThickness:  { default:   0.6, type: 'cm'   , min:  0.3, max:   1, folder: 'Handle', name: 'Thickness'  },
 
-		mugComplexity:    { default:    50, type: 'n'    , min:    8, max: 100, folder: "Complexity", name: "Mug"},
-		handleComplexity: { default:    30, type: 'n'    , min:    5, max: 100, folder: "Complexity", name: "Handle"},
+		mugComplexity:    { default:    50, type: 'n'    , min:    8, max: 100, folder: "Complexity", name: "Mug"    },
+		handleComplexity: { default:    30, type: 'n'    , min:    5, max: 100, folder: "Complexity", name: "Handle" },
 
-        flat:             { default: false, type: Boolean, chance: .3	      , folder: "Complexity", name: "Simple"},
-		simple:           { default: false, type: Boolean, chance: .3         , folder: "Complexity", name: "Flat"  },
+        flat:             { default: false, type: Boolean, chance: .3	      , folder: "Complexity", name: "Simple" },
+		simple:           { default: false, type: Boolean, chance: .3         , folder: "Complexity", name: "Flat"   },
 
 	};
 	/* eslint-enable */

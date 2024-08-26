@@ -133,6 +133,8 @@ class Stool extends ASSETS.Asset {
 
 		this.add( seat );
 
+		this.position.y = -height/2;
+
 	} // Stool.constructor
 
 

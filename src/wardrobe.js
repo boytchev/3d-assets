@@ -168,6 +168,8 @@ class Wardrobe extends ASSETS.Asset {
 
 		}
 
+		this.position.y = -height/2;
+
 	} // Wardrobe.constructor
 
 

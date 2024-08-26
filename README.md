@@ -10,6 +10,7 @@ for the currently available assets:
 * [Stool](https://boytchev.github.io/3d-assets/online/stool.html)
 * [Table](https://boytchev.github.io/3d-assets/online/table.html)
 * [Plate](https://boytchev.github.io/3d-assets/online/plate.html)
+* [Wardrobe](https://boytchev.github.io/3d-assets/online/wardrobe.html)
 * [Wine bottle](https://boytchev.github.io/3d-assets/online/wine-bottle.html)
 
 #### Demo with mugs and plates

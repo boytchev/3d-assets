@@ -9,25 +9,25 @@ class Chair extends ASSETS.Asset {
 	/* eslint-disable */
 	static paramData = {
 
-		seatWidth:              { default:    42, type: 'cm'   , min: 20, max: 100, prec: 1, folder: "Seat"    , name: "Width"     },
-		seatDepth:              { default:    45, type: 'cm'   , min: 20, max: 100, prec: 1, folder: "Seat"    , name: "Depth"     },
-		seatHeight:             { default:    45, type: 'cm'   , min: 20, max: 100, prec: 1, folder: "Seat"    , name: "Height"    },
-		seatThickness:          { default:     2, type: 'cm'   , min:  2, max: 10 , prec: 1, folder: "Seat"    , name: "Thickness" },
+		seatWidth:              { default:    42, type: 'cm'   , min: 20, max: 100, prec: 1, folder: "Seat"      , name: "Width"      },
+		seatDepth:              { default:    45, type: 'cm'   , min: 20, max: 100, prec: 1, folder: "Seat"      , name: "Depth"      },
+		seatHeight:             { default:    45, type: 'cm'   , min: 20, max: 100, prec: 1, folder: "Seat"      , name: "Height"     },
+		seatThickness:          { default:     2, type: 'cm'   , min:  2, max: 10 , prec: 1, folder: "Seat"      , name: "Thickness"  },
                                                                                   
-		backrestHeight:         { default:    50, type: 'cm'   , min: 10, max: 100, prec: 1, folder: "Backrest", name: "Height"    },
-		backrestSidesThickness: { default:     4, type: 'cm'   , min:  1, max: 10 , prec: 1, folder: "Backrest", name: "Thickness" },
-		backrestAngle:          { default:     5, type: 'deg'  , min:  0, max: 45 , prec: 1, folder: "Backrest", name: "Angle"     },
+		backrestHeight:         { default:    50, type: 'cm'   , min: 10, max: 100, prec: 1, folder: "Backrest"  , name: "Height"     },
+		backrestSidesThickness: { default:     4, type: 'cm'   , min:  1, max: 10 , prec: 1, folder: "Backrest"  , name: "Thickness"  },
+		backrestAngle:          { default:     5, type: 'deg'  , min:  0, max: 45 , prec: 1, folder: "Backrest"  , name: "Angle"      },
                                                                                   
-		cussionThickness:       { default:     3, type: 'cm'   , min:  2, max: 15 , prec: 1, folder: "Cussions", name: "Thickness" },
-		cussionOffset:          { default:     2, type: 'cm'   , min:  2, max: 5  , prec: 1, folder: "Cussions", name: "Offset"    },
-        cussionRoundness:       { default:   0.2, type: Number , min:  0, max: 0.2, prec: 1, folder: "Cussions", name: "Roundness" },                                               
-		upholstery:             { default: false, type: Boolean, chance: .5                , folder: "Cussions", name: "Upholstery"},
+		cussionThickness:       { default:     3, type: 'cm'   , min:  2, max: 15 , prec: 1, folder: "Cussions"  , name: "Thickness"  },
+		cussionOffset:          { default:     2, type: 'cm'   , min:  2, max: 5  , prec: 1, folder: "Cussions"  , name: "Offset"     },
+		cussionRoundness:       { default:   0.2, type: Number , min:  0, max: 0.2, prec: 1, folder: "Cussions"  , name: "Roundness"  },                                               
+		upholstery:             { default: false, type: Boolean, chance: .5                , folder: "Cussions"  , name: "Upholstery" },
                                                                                   
-		legThickness:           { default:     4, type: 'cm'   , min:  2, max: 10 , prec: 1, folder: "Legs"    , name: "Thickness" },
-                                                                                  
-		cussionDetail:          { default:     2, type: 'n'    , min:  1, max: 10 , prec: 0, folder: "Complexity", name: "Cussions", exp: true},
-        flat:                   { default: false, type: Boolean, chance: .3			       , folder: "Complexity", name: "Simple"  },
-		simple:                 { default: false, type: Boolean, chance: .3                , folder: "Complexity", name: "Flat"    },
+		legThickness:           { default:     4, type: 'cm'   , min:  2, max: 10 , prec: 1, folder: "Legs"      , name: "Thickness"  },
+
+		cussionDetail:          { default:     2, type: 'n'    , min:  1, max: 10 , prec: 0, folder: "Complexity", name: "Cussions"   , exp: true },
+		flat:                   { default: false, type: Boolean, chance: .3			       , folder: "Complexity", name: "Simple"     },
+		simple:                 { default: false, type: Boolean, chance: .3                , folder: "Complexity", name: "Flat"       },
 
 	};
 	/* eslint-enable */

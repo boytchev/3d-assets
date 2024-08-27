@@ -22,9 +22,9 @@ class Stool extends ASSETS.Asset {
 		seatHeight:     { default: 100 , type: 'cm'  , min: 10, max: 100, prec: 2, folder: "Seat", name: "Height"    },
 		seatThickness:  { default: 10  , type: 'cm'  , min: 10, max: 100, prec: 2, folder: "Seat", name: "Thickness" },
                                                                         
-		legDetail:      { default: 10  , type: 'n'   , min: 5 , max: 30 , prec: 0, folder: "Complexity", name: "Legs", exp: true},
+		legDetail:      { default: 10  , type: 'n'   , min: 5 , max: 30 , prec: 0, folder: "Complexity", name: "Legs"      , exp: true},
 		legRoundDetail: { default:  3  , type: 'n'   , min: 3 , max: 10 , prec: 0, folder: "Complexity", name: "Legs Bevel", exp: true},
-		seatDetail:     { default: 30  , type: 'n'   , min: 3 , max: 50 , prec: 0, folder: "Complexity", name: "Seat", exp: true},
+		seatDetail:     { default: 30  , type: 'n'   , min: 3 , max: 50 , prec: 0, folder: "Complexity", name: "Seat"      , exp: true},
 
 		flat:	{ default: false, type: Boolean, chance: .3, folder: "Complexity", name: "Flat"   },
 		simple: { default: false, type: Boolean, chance: .3, folder: "Complexity", name: "Simple" },

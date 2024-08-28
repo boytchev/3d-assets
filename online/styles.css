@@ -41,6 +41,7 @@ h3 {
 
 .lil-gui {
 	--name-width: 6em;
+	--width: 25em;
 	--slider-knob-width: 0.5em;
 	--widget-padding: 0 0 0 0.5em;
 	--number-color: orange;

@@ -280,7 +280,12 @@ class RoundedBoxGeometry extends BufferGeometry {
 
 	}
 
-	constructor( x, y, z, segments = 2, roundness = 0, faces = [ 1, 1, 1, 1, 1, 1 ], uvMatrix = new Matrix3() ) {
+	constructor(
+		x, y, z,
+		segments = 2, roundness = 0, faces = [ 1, 1, 1, 1, 1, 1 ],
+		uvMatrix = new Matrix3(),
+		roundFaces = [ 1, 1, 1, 1, 1, 1 ], relativeRoundness = true
+	) {
 
 		super();
 		const seg = roundness > 0 ? segments : 0;
@@ -299,7 +304,7 @@ class RoundedBoxGeometry extends BufferGeometry {
 		y = size[ 1 ];
 		z = size[ 2 ];
 
-		const radius = RoundedBoxGeometry.computeCurveRadius( x, y, z, roundness );
+		const radius = relativeRoundness ? RoundedBoxGeometry.computeCurveRadius( x, y, z, roundness ) : roundness;
 
 		const vertices = new Float32Array( vertexCount * 3 );
 		const normals = new Float32Array( vertexCount * 3 );
@@ -359,18 +364,29 @@ class RoundedBoxGeometry extends BufferGeometry {
 						vertex.z = ( u - 0.5 ) * size[ axis2 ];
 
 						const center = new Vector3(
-							clamp( vertex.x, -size[ axis0 ]/2 + radius, size[ axis0 ]/2 - radius ),
-							clamp( vertex.y, -size[ axis1 ]/2 + radius, size[ axis1 ]/2 - radius ),
-							clamp( vertex.z, -size[ axis2 ]/2 + radius, size[ axis2 ]/2 - radius ),
+							clamp( vertex.x, -size[ axis0 ]/2 + roundFaces[ perm[ axis1 ]*2+0 ]*radius, size[ axis0 ]/2 - roundFaces[ perm[ axis1 ]*2+1 ]*radius ),
+							clamp( vertex.y, -size[ axis1 ]/2 + roundFaces[ perm[ axis2 ]*2+0 ]*radius, size[ axis1 ]/2 - roundFaces[ perm[ axis2 ]*2+1 ]*radius ),
+							clamp( vertex.z, -size[ axis2 ]/2 + roundFaces[ perm[ axis0 ]*2+0 ]*radius, size[ axis2 ]/2 - roundFaces[ perm[ axis0 ]*2+1 ]*radius ),
 						);
 
 						if ( roundness != 0 ) {
 
 							const normal = new Vector3().subVectors( vertex, center ).normalize();
 
-							normals[ k * 3 + perm[ axis0 ] ] = normal.x;
-							normals[ k * 3 + perm[ axis1 ] ] = normal.y;
-							normals[ k * 3 + perm[ axis2 ] ] = normal.z;
+
+							if ( roundFaces[ perm[ axis0 ] * 2 + u ]) {
+
+								normals[ k * 3 + perm[ axis0 ] ] = normal.x;
+								normals[ k * 3 + perm[ axis1 ] ] = normal.y;
+								normals[ k * 3 + perm[ axis2 ] ] = normal.z;
+
+							} else {
+
+								normals[ k * 3 + perm[ axis0 ] ] = 0;
+								normals[ k * 3 + perm[ axis1 ] ] = 0;
+								normals[ k * 3 + perm[ axis2 ] ] = u * 2 - 1;
+
+							}
 
 							vertex.addVectors( center, normal.multiplyScalar( radius ) );
 

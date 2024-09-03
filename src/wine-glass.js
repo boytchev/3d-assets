@@ -5,7 +5,7 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 
 class WineGlass extends ASSETS.Asset {
 
-	static name = 'WineGlass';
+	static name = 'Wine Glass';
 
 
 	/* eslint-disable */

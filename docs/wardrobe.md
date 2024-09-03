@@ -83,9 +83,6 @@ var model = new Wardrobe ({
 An instance of `Wardrobe` is a `THREE.Group` with one submesh called `body` and `wings` subgroups called `Door_<i>`. 
 Each subgroup contains two submeshes called `door_<i>` and `handle_<i>`.
 
-<img src="images/wardrobe-scheme.png">
-
-
 ### Minimal example
 
 [demos/minimal-wardrobe.html](../demos/minimal-wardrobe.html)

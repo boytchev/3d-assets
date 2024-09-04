@@ -55,22 +55,22 @@ var model = new Monitor ({
 
 #### Screen parameters
 
-* `aspectX` &ndash; numerator of the aspect ratio, [ 1, 40]
-* `aspectY` &ndash; denominator of the aspect ratio, [ 1, 40]
-* `diagonal` &ndash; diagonal of the display in inches, [ 5, 40]
-* `screenThickness` &ndash; thickness of the screen in cm, [ 0.2, 4]
+* `aspectX` &ndash; numerator of the aspect ratio, [1, 40]
+* `aspectY` &ndash; denominator of the aspect ratio, [1, 40]
+* `diagonal` &ndash; diagonal of the display in inches, [5, 40]
+* `screenThickness` &ndash; thickness of the screen in cm, [0.2, 4]
 
 #### Base parameters
 
-* `baseHeight` &ndash; distance from the ground to the bottom-most part of the screen in cm, [ 0, 20]
-* `baseThickness` &ndash; thikcness of the base plate in cm, [ .5, 3]
-* `baseWidth` &ndash; width of the base plate in cm, [ 10, 30]
-* `baseDepth` &ndash; depth of the base plate in cm, [ 10, 30]
-* `handleWidth` &ndash; width of the handle of the monitor in cm, [ 3, 10]
+* `baseHeight` &ndash; distance from the ground to the bottom-most part of the screen in cm, [0, 20]
+* `baseThickness` &ndash; thikcness of the base plate in cm, [.5, 3]
+* `baseWidth` &ndash; width of the base plate in cm, [10, 30]
+* `baseDepth` &ndash; depth of the base plate in cm, [10, 30]
+* `handleWidth` &ndash; width of the handle of the monitor in cm, [3, 10]
 
 #### Complexity parameters
 
-* `bevelDetail` &ndash; number of edges across the bevels on the model, [ 1, 6]
+* `bevelDetail` &ndash; number of edges across the bevels on the model, [1, 6]
 * `simple` &ndash; if *true* the complexity of the profile is reduced, boolean
 * `flat` &ndash; if *true* flat shading is used, boolean
 

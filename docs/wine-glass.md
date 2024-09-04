@@ -56,27 +56,27 @@ var model = new WineGlass ({
 
 #### Base Parameters
 
-* `baseSize` &ndash; radius of the base of the glass in cm ,[1, 3]
-* `baseThickness` &ndash; thickness of the base of the glass in cm ,[.1, .5]
+* `baseSize` &ndash; radius of the base of the glass in cm, [1, 3]
+* `baseThickness` &ndash; thickness of the base of the glass in cm, [.1, .5]
 
 #### Stem Parameters
 
-* `stemSize` &ndash; radius of the stem of the glass in cm ,[.1, .4]
-* `stemHeight` &ndash; height of the stem of the glass in cm ,[2, 10]
+* `stemSize` &ndash; radius of the stem of the glass in cm, [.1, .4]
+* `stemHeight` &ndash; height of the stem of the glass in cm, [2, 10]
 
 #### Bowl Parameters
 
-* `bowlSize` &ndash; radius of the bowl of the glass in cm ,[1, 4]
-* `bowlHeight` &ndash; depth of the glass in cm ,[3, 7]
-* `bowlShape` &ndash; shape of the glass in percent ,[.1, .9]
-* `bowlThickness` &ndash; thickness of the glass walls in cm ,[.05, .3]
-* `rimSize` &ndash; radius of the rim of the glass in cm ,[1, 4]
-* `roundness` &ndash; size of the round bevel on the glass ,[0, .03]
+* `bowlSize` &ndash; radius of the bowl of the glass in cm, [1, 4]
+* `bowlHeight` &ndash; depth of the glass in cm, [3, 7]
+* `bowlShape` &ndash; shape of the glass in percent, [.1, .9]
+* `bowlThickness` &ndash; thickness of the glass walls in cm, [.05, .3]
+* `rimSize` &ndash; radius of the rim of the glass in cm, [1, 4]
+* `roundness` &ndash; size of the round bevel on the glass, [0, .03]
 
 #### Complexity Parameters
 
-* `bevelDetail` &ndash; number of lateral edges ,[1, 10]
-* `latheDetail` &ndash; number of edges around the glass ,[6, 50]
+* `bevelDetail` &ndash; number of lateral edges, [1, 10]
+* `latheDetail` &ndash; number of edges around the glass, [6, 50]
 * `simple` &ndash; if *true* the complexity of the profile is reduced, boolean
 * `flat` &ndash; if *true* flat shading is used, boolean
 	

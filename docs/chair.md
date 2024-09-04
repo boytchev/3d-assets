@@ -58,31 +58,31 @@ var model = new Chair ({
 
 #### Seat parameters
 
-* `seatWidth` &ndash; width of the seat in cm, [ 20, 100 ],
-* `seatDepth` &ndash; depth of the seat in cm, [ 20, 100 ],
-* `seatHeight` &ndash; height of the seat in cm, [ 20, 100 ],
-* `seatThickness` &ndash; thickness of seat in cm, [ 2, 10 ],
+* `seatWidth` &ndash; width of the seat in cm, [20, 100],
+* `seatDepth` &ndash; depth of the seat in cm, [20, 100],
+* `seatHeight` &ndash; height of the seat in cm, [20, 100],
+* `seatThickness` &ndash; thickness of seat in cm, [2, 10],
 
 #### Backrest parameters
 
-* `backrestHeight` &ndash; height of the backrest in cm, [ 10, 100 ],
-* `backrestSidesThickness` &ndash; thickness of the backside supports in cm, [ 1, 10 ],
-* `backrestAngle` &ndash; tilt of the backrest in degrees, [ 0, 45 ],
+* `backrestHeight` &ndash; height of the backrest in cm, [10, 100],
+* `backrestSidesThickness` &ndash; thickness of the backside supports in cm, [1, 10],
+* `backrestAngle` &ndash; tilt of the backrest in degrees, [0, 45],
 
 #### Cussions parameters
 
-* `cussionThickness` &ndash; thickness of the cussions in cm, [ 2, 15 ],
-* `cussionOffset` &ndash; offset of the cussion to the end of the seat frame in cm, [ 2, 5 ],
-* `cussionRoundness` &ndash; roundness of the cussions relative to their size, [ 0, 0.2 ],
+* `cussionThickness` &ndash; thickness of the cussions in cm, [2, 15],
+* `cussionOffset` &ndash; offset of the cussion to the end of the seat frame in cm, [2, 5],
+* `cussionRoundness` &ndash; roundness of the cussions relative to their size, [0, 0.2],
 * `upholstery` &ndash; if *true* the pillows are replaced with upholstery on the chair and `cussionThickness` has no effect, boolean
 
 #### Legs parameters
 
-* `legThickness` &ndash; thickness of the chair's legs in cm, [ 2, 10 ],
+* `legThickness` &ndash; thickness of the chair's legs in cm, [2, 10],
 
 #### Complexity parameters
 
-* `cussionDetail` &ndash; number of faces across the rounded part of the cussions, [ 1, 10 ],
+* `cussionDetail` &ndash; number of faces across the rounded part of the cussions, [1, 10],
 * `simple` &ndash; if *true* the complexity of the cussions is reduced, boolean
 * `flat` &ndash; if *true* flat shading is used, boolean
 	

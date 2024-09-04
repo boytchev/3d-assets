@@ -61,26 +61,26 @@ var model = new Table ({
 
 #### Legs parameters
 
-* `legThickness` &ndash; thickness of the legs [ 2, 15 ],
-* `legRoundness` &ndash; size of the round bevel on the legs [ 0, .1 ],
-* `legOffset` &ndash; offset of the legs from the end of the table [ 0, 100 ],
-* `legSpread` &ndash; distance of the bottom position of the leg to the top [ 0, 100 ],
-* `legAngle` &ndash; angle at which the leg contacst the top of the table [ 0, 90 ],
-* `legFaceAngle` &ndash; rotation of the legs [ 0, 360 ],
-* `legShape` &ndash; modifies the 'sharpness' of the curve [ 0, 1 ],
+* `legThickness` &ndash; thickness of the legs, [2, 15],
+* `legRoundness` &ndash; size of the round bevel on the legs, [0, .1],
+* `legOffset` &ndash; offset of the legs from the end of the table, [0, 100],
+* `legSpread` &ndash; distance of the bottom position of the leg to the top, [0, 100],
+* `legAngle` &ndash; angle at which the leg contacst the top of the table, [0, 90],
+* `legFaceAngle` &ndash; rotation of the legs, [0, 360],
+* `legShape` &ndash; modifies the 'sharpness' of the curve, [0, 1],
 
 #### Top parameters 
-* `topWidth` &ndash; width of the table [ 20, 200 ],
-* `topDepth` &ndash; depth of the table [ 20, 200 ],
-* `topHeight` &ndash; height of the table [ 10, 130 ],
-* `topThickness` &ndash; thickness of the table top [ 1, 10 ],
-* `topRoundness` &ndash; size of the bevel of the top [ 0, 0.2 ],
+* `topWidth` &ndash; width of the table, [20, 200],
+* `topDepth` &ndash; depth of the table, [20, 200],
+* `topHeight` &ndash; height of the table, [10, 130],
+* `topThickness` &ndash; thickness of the table top, [1, 10],
+* `topRoundness` &ndash; size of the bevel of the top, [0, 0.2],
 
 #### Complexity parameters 
 
-* `legDetail` &ndash; sections along the legs' length [ 1, 30, 0 ],
-* `legRoundDetail` &ndash; sections on the leg bevel [ 1, 10, 0 ],
-* `topRoundDetail` &ndash; sections on the top bevel [ 1, 10, 0 ],
+* `legDetail` &ndash; sections along the legs' length, [1, 30],
+* `legRoundDetail` &ndash; sections on the leg bevel, [1, 10],
+* `topRoundDetail` &ndash; sections on the top bevel,  1, 10],
 * `simple` &ndash; if *true* the complexity of the profile is reduced, boolean
 * `flat` &ndash; if *true* flat shading is used, boolean
 	

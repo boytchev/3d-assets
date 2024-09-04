@@ -58,26 +58,26 @@ var model = new Stool ({
 
 #### Legs parameters
 
-* `legWidth` &ndash; width of the legs in cm,[ 2, 30 ]
-* `legThickness` &ndash; thickness of the legs in cm,[ 2, 30 ]
-* `legRoundness` &ndash; size of the bevel on the legs in cm ,[ 0, .1 ]
-* `legCount` &ndash; number of legs on the stool ,[ 3, 6, 0 ]
-* `legOffset` &ndash; offset of the start of the legs from the center of the stool in cm ,[ 0, 100 ]
-* `legSpread` &ndash; offset of the ends of the legs from the center of the stool in cm ,[ 0, 100 ]
-* `legAngle` &ndash; angle at which the legs are connected to the stool in degrees,[ 0, 150 ]
-* `legShape` &ndash; controlls the harshness of the leg curve ,[ 0, 1 ]
+* `legWidth` &ndash; width of the legs in cm, [2, 30]
+* `legThickness` &ndash; thickness of the legs in cm, [2, 30]
+* `legRoundness` &ndash; size of the bevel on the legs in cm, [0, .1]
+* `legCount` &ndash; number of legs on the stool, [3, 6]
+* `legOffset` &ndash; offset of the start of the legs from the center of the stool in cm, [0, 100]
+* `legSpread` &ndash; offset of the ends of the legs from the center of the stool in cm, [0, 100]
+* `legAngle` &ndash; angle at which the legs are connected to the stool in degrees, [0, 150]
+* `legShape` &ndash; controlls the harshness of the leg curve, [0, 1]
 
 #### Seat parameters
 
-* `seatSize` &ndash; radius of the seat in cm ,[ 10, 100 ]
-* `seatHeight` &ndash; height at which the seating plane will be in cm ,[ 10, 100 ]
-* `seatThickness` &ndash; thickness of the seat cylinder in cm ,[ 10, 100 ]
+* `seatSize` &ndash; radius of the seat in cm, [10, 100]
+* `seatHeight` &ndash; height at which the seating plane will be in cm, [10, 100]
+* `seatThickness` &ndash; thickness of the seat cylinder in cm, [10, 100]
 
 #### Complexity parameters
 
-* `legDetail` &ndash; number of segments along the leg curve [ 5, 30 ]
-* `legRoundDetail` &ndash; number of edges across the bevel on the legs [ 1, 10 ]
-* `seatDetail` &ndash; number of segments around the seat [ 3, 50 ]
+* `legDetail` &ndash; number of segments along the leg curve, [5, 30]
+* `legRoundDetail` &ndash; number of edges across the bevel on the legs, [1, 10]
+* `seatDetail` &ndash; number of segments around the seat, [3, 50]
 * `simple` &ndash; if *true* the complexity of the profile is reduced, boolean
 * `flat` &ndash; if *true* flat shading is used, boolean
 	

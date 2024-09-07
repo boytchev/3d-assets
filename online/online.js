@@ -521,7 +521,7 @@ scene.add( model );
 
 	navigator.clipboard.writeText( js );
 
-	alert( `Javascript code fragment for this ${asset.$name} is copied to the clipboard.` );
+	alert( `Javascript code fragment for this ${Asset.name} is copied to the clipboard.` );
 
 } // exportAsCode
 

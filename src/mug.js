@@ -4,7 +4,6 @@
 
 
 import * as THREE from 'three';
-import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 import * as ASSETS from './assets-utils.js';
 
 
@@ -132,8 +131,6 @@ class Mug extends ASSETS.Asset {
 
 
 		// handle
-
-		var v = new THREE.Vector3();
 
 		var handleProfileShape = new ASSETS.RoundedShape([
 			[ 0, hT ],

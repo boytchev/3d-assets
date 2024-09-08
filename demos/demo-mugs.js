@@ -1,7 +1,5 @@
 ﻿import * as THREE from "three";
-import * as NODES from "three/nodes";
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import WebGPURenderer from "three/addons/renderers/webgpu/WebGPURenderer.js";
 import * as lil from "three/addons/libs/lil-gui.module.min.js";
 
 // 3D assets
@@ -24,7 +22,7 @@ scene.background = new THREE.Color( 0x303030 );
 var camera = new THREE.PerspectiveCamera( 30, innerWidth / innerHeight );
 camera.position.set( 1, 2, 4 );
 
-var renderer = new WebGPURenderer( { antialias: true } );
+var renderer = new THREE.WebGPURenderer( { antialias: true } );
 renderer.setSize( innerWidth, innerHeight );
 document.body.appendChild( renderer.domElement );
 
@@ -61,14 +59,14 @@ var marbleParams = {
 	...marble.defaults,
 	scale: 3,
 	color: new THREE.Color( 'navy' ),
-	seed: NODES.uniform( 0 )
+	seed: THREE.uniform( 0 )
 };
 
 var camouflageParams = {
 	...camouflage.defaults,
 	scale: 4,
 	color: new THREE.Color( 'tomato' ),
-	seed: NODES.uniform( 0 )
+	seed: THREE.uniform( 0 )
 };
 
 var circlesParams = {
@@ -76,7 +74,7 @@ var circlesParams = {
 	scale: 2,
 	color: new THREE.Color( 'lightsalmon' ),
 	variety: 0.15,
-	seed: NODES.uniform( 0 )
+	seed: THREE.uniform( 0 )
 };
 
 var entangledParams = {
@@ -85,7 +83,7 @@ var entangledParams = {
 	density: 15,
 	color: new THREE.Color( 'white' ),
 	background: new THREE.Color( 'black' ),
-	seed: NODES.uniform( 0 )
+	seed: THREE.uniform( 0 )
 };
 
 
@@ -124,12 +122,12 @@ scene.add( mug1, mug2, plate1, plate2 );
 
 // GUI controls
 
-var guiParams = { textures: false, lowpoly: false };
+var guiParams = { textures: false/*, lowpoly: false*/ };
 
 var gui = new lil.GUI( );
 gui.onChange( regenerateAssets );
 gui.add( guiParams, 'textures' ).name( 'Textures' );
-gui.add( guiParams, 'lowpoly' ).name( 'Lowpoly' );
+/*gui.add( guiParams, 'lowpoly' ).name( 'Lowpoly' );*/
 
 
 
@@ -179,11 +177,11 @@ function randomizeMug1( dT ) {
 
 	mug1.generate( params );
 	mug1.position.set( 0, -0.3, 0.4 );
-	mug1.body.material = new NODES.MeshStandardNodeMaterial( {
+	mug1.body.material = new THREE.MeshStandardNodeMaterial( {
 		roughness: 0.2,
 		metalness: 0,
 		colorNode: guiParams.textures?marbleTexture:null,
-		flatShading: guiParams.lowpoly,
+		flatShading: /*guiParams.lowpoly*/false,
 	} );
 
 	mug1.handle.material = mug1.body.material;
@@ -209,11 +207,11 @@ function randomizeMug2( dT ) {
 
 	mug2.generate( params );
 	mug2.position.set( 0, -0.3, -0.4 );
-	mug2.body.material = new NODES.MeshStandardNodeMaterial( {
+	mug2.body.material = new THREE.MeshStandardNodeMaterial( {
 		roughness: 0.5,
 		metalness: 0.4,
 		colorNode: guiParams.textures?camouflageTexture:null,
-		flatShading: guiParams.lowpoly,
+		flatShading: /*guiParams.lowpoly*/false,
 	} );
 
 	mug2.handle.material = mug2.body.material;
@@ -240,11 +238,11 @@ function randomizePlate1( dT ) {
 
 	plate1.generate( params );
 	plate1.position.set( 0.8, -0.3, 0 );
-	plate1.body.material = new NODES.MeshStandardNodeMaterial( {
+	plate1.body.material = new THREE.MeshStandardNodeMaterial( {
 		roughness: 0.5,
 		metalness: 0.4,
 		colorNode: guiParams.textures?circlesTexture:null,
-		flatShading: guiParams.lowpoly,
+		flatShading: /*guiParams.lowpoly*/false,
 	} );
 
 }
@@ -262,19 +260,19 @@ function randomizePlate2( dT ) {
 	var params = Plate.random();
 	params.plateSize = Math.min( 20, params.plateSize );
 	params.plateHeight = Math.max( 2, params.plateHeight );
-	params.plateComplexity = guiParams.lowpoly?15:70;
-	params.edges = !guiParams.lowpoly;
+	params.plateComplexity = /*guiParams.lowpoly?15:*/70;
+	params.edges = /*!guiParams.lowpoly*/true;
 
 	plate2.generate( params );
 	plate2.position.set( -0.8, -0.3, 0 );
-	plate2.body.material = new NODES.MeshStandardNodeMaterial( {
+	plate2.body.material = new THREE.MeshStandardNodeMaterial( {
 		roughness: 0.5,
 		metalness: 0.4,
 		colorNode: guiParams.textures?entangledTexture:null,
 		opacityNode: guiParams.textures?entangledTexture:null,
 		transparent: true,
 		side: THREE.DoubleSide,
-		flatShading: guiParams.lowpoly,
+		flatShading: /*guiParams.lowpoly*/false,
 	} );
 
 }

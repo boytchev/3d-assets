@@ -1,7 +1,5 @@
 import * as THREE from 'three';
 import * as ASSETS from './assets-utils.js';
-import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
-import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 
 class WineGlass extends ASSETS.Asset {
 

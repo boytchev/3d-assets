@@ -12,13 +12,13 @@ class Monitor extends ASSETS.Asset {
 		
 		aspectX:        { default: 16   , type: Number , min:   1, max: 40, prec: 0, folder: "Screen", name: "Aspect X"        },
 		aspectY:        { default: 9    , type: Number , min:   1, max: 40, prec: 0, folder: "Screen", name: "Aspect Y"        },
-		diagonal:       { default: 24   , type: 'in'   , min:   5, max: 40, prec: 1, folder: "Screen", name: "Diagonal Length" },
+		diagonal:       { default: 24   , type: 'in'   , min:   5, max: 40, prec: 1, folder: "Screen", name: "Diagonal"        },
 		screenThickness:{ default: 1.5  , type: 'cm'   , min: 0.2, max:  4, prec: 1, folder: "Screen", name: "Thickness"       },
 		baseHeight:     { default: 7    , type: 'cm'   , min:   0, max: 20, prec: 1, folder: "Base"  , name: "Height"          },
 		baseThickness:  { default: 2    , type: 'cm'   , min:  .5, max:  3, prec: 1, folder: "Base"  , name: "Thickness"       },
 		baseWidth:      { default: 20   , type: 'cm'   , min:  10, max: 30, prec: 1, folder: "Base"  , name: "Width"           },
 		baseDepth:      { default: 15   , type: 'cm'   , min:  10, max: 30, prec: 1, folder: "Base"  , name: "Depth"           },
-		handleWidth:    { default: 4    , type: 'cm'   , min:   3, max: 10, prec: 1, folder: "Base"  , name: "Handle Width"    },
+		handleWidth:    { default: 4    , type: 'cm'   , min:   3, max: 10, prec: 1, folder: "Base"  , name: "Handle"    },
 
 		bevelDetail:    { default: 2    , type: 'n'    , min:   1, max:  6, prec: 0, folder: "Complexity", name: "Bevels"      , exp: true},
 		flat:	        { default: false, type: Boolean, chance: .3                , folder: "Complexity", name: "Flat"        },

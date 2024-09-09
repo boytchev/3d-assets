@@ -17,11 +17,11 @@ on a snapshot to open it online.
 		<img src="images/monitor-1.png">
 	</a>
 
-	<a class="style-block nocaption" href="http://localhost/online/monitor?aspectX=4&aspectY=3&diagonal=20&screenThickness=1.5&baseHeight=5.1&baseThickness=2.2&baseWidth=13.9&baseDepth=12.5&handleWidth=7&bevelDetail=2&flat=false&simple=false">
+	<a class="style-block nocaption" href="../online/monitor?aspectX=4&aspectY=3&diagonal=20&screenThickness=1.5&baseHeight=5.1&baseThickness=2.2&baseWidth=13.9&baseDepth=12.5&handleWidth=7&bevelDetail=2&flat=false&simple=false">
 		<img src="images/monitor-2.png">
 	</a>
 
-	<a class="style-block nocaption" href="http://localhost/online/monitor?aspectX=21&aspectY=9&diagonal=34&screenThickness=0.7&baseHeight=7&baseThickness=2&baseWidth=30&baseDepth=10.3&handleWidth=4&bevelDetail=2&flat=false&simple=false">
+	<a class="style-block nocaption" href="../online/monitor?aspectX=21&aspectY=9&diagonal=34&screenThickness=0.7&baseHeight=7&baseThickness=2&baseWidth=30&baseDepth=10.3&handleWidth=4&bevelDetail=2&flat=false&simple=false">
 		<img src="images/monitor-3.png">
 	</a>
 

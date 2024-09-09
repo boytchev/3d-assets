@@ -20,7 +20,7 @@ class Chair extends ASSETS.Asset {
                                                                                   
 		cussionThickness:       { default:     3, type: 'cm'   , min:  2, max: 15 , prec: 1, folder: "Cussions"  , name: "Thickness"  },
 		cussionOffset:          { default:     2, type: 'cm'   , min:  2, max: 5  , prec: 1, folder: "Cussions"  , name: "Offset"     },
-		cussionRoundness:       { default:   0.2, type: Number , min:  0, max: 0.2, prec: 1, folder: "Cussions"  , name: "Roundness"  },                                               
+		cussionRoundness:       { default:   0.2, type: Number , min:  0, max: 0.2, prec: 2, folder: "Cussions"  , name: "Roundness"  },                                               
 		upholstery:             { default: false, type: Boolean, chance: .5                , folder: "Cussions"  , name: "Upholstery" },
                                                                                   
 		legThickness:           { default:     4, type: 'cm'   , min:  2, max: 10 , prec: 1, folder: "Legs"      , name: "Thickness"  },

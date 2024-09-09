@@ -14,15 +14,15 @@ class Stool extends ASSETS.Asset {
 		legCount:       { default: 4   , type: 'n'   , min: 3 , max: 6  , prec: 0, folder: "Legs", name: "Count"     },
 		legOffset:      { default: 10  , type: 'cm'  , min: 0 , max: 100, prec: 2, folder: "Legs", name: "Offset"    },
 		legSpread:      { default: 50  , type: 'cm'  , min: 0 , max: 100, prec: 2, folder: "Legs", name: "Spread"    },
-		legAngle:       { default: 0   , type: 'deg' , min: 0 , max: 150, prec: 2, folder: "Legs", name: "Angle"     },
-		legShape:       { default: .6  , type: Number, min: 0 , max: 1  , prec: 2, folder: "Legs", name: "Shape"     },
+		legAngle:       { default: 0   , type: 'deg' , min: 0 , max: 90 , prec: 2, folder: "Legs", name: "Angle"     },
+		legShape:       { default: .6  , type: Number, min: 0 , max: .9 , prec: 2, folder: "Legs", name: "Shape"     },
 		seatSize:       { default: 50  , type: 'cm'  , min: 10, max: 100, prec: 2, folder: "Seat", name: "Size"      },
 		seatHeight:     { default: 100 , type: 'cm'  , min: 10, max: 100, prec: 2, folder: "Seat", name: "Height"    },
 		seatThickness:  { default: 10  , type: 'cm'  , min: 10, max: 100, prec: 2, folder: "Seat", name: "Thickness" },
                                                                         
-		legDetail:      { default: 10  , type: 'n'   , min: 5 , max: 30 , prec: 0, folder: "Complexity", name: "Legs"     , exp: true},
-		legRoundDetail: { default:  3  , type: 'n'   , min: 3 , max: 10 , prec: 0, folder: "Complexity", name: "LegsBevel", exp: true},
-		seatDetail:     { default: 30  , type: 'n'   , min: 3 , max: 50 , prec: 0, folder: "Complexity", name: "Seat"     , exp: true},
+		legDetail:      { default: 10  , type: 'n'   , min: 5 , max: 30 , prec: 0, folder: "Complexity", name: "Legs"      , exp: true},
+		legRoundDetail: { default:  3  , type: 'n'   , min: 1 , max: 10 , prec: 0, folder: "Complexity", name: "Legs Bevel", exp: true},
+		seatDetail:     { default: 30  , type: 'n'   , min: 6 , max: 50 , prec: 0, folder: "Complexity", name: "Seat"      , exp: true},
 
 		flat:	{ default: false, type: Boolean, chance: .3, folder: "Complexity", name: "Flat"   },
 		simple: { default: false, type: Boolean, chance: .3, folder: "Complexity", name: "Simple" },
@@ -50,17 +50,18 @@ class Stool extends ASSETS.Asset {
 		const material = ASSETS.defaultMaterial.clone();
 		material.flatShading = params.flat;
 
+		const size = ASSETS.cm( params.seatSize );
+		const height = ASSETS.cm( params.seatHeight );
+		const thickness = Math.min( height, ASSETS.cm( params.seatThickness ) );
+
 		const legWidth = ASSETS.cm( params.legWidth );
 		const legThickness = ASSETS.cm( params.legThickness );
 		const legRoundness = simple ? 0 : params.legRoundness;
 		const legCount = params.legCount;
-		const legOffset = ASSETS.cm( params.legOffset );
+		const legOffset = Math.min( size - legThickness, ASSETS.cm( params.legOffset ) );
 		const legSpread = ASSETS.cm( params.legSpread );
 		const legAngle = params.legAngle / 180 * Math.PI;
 		const legShape = params.legShape;
-		const size = ASSETS.cm( params.seatSize );
-		const height = ASSETS.cm( params.seatHeight );
-		const thickness = ASSETS.cm( params.seatThickness );
 
 		const legProfileShape = new ASSETS.RoundedShape([
 			[ 0, legThickness ],
@@ -72,7 +73,7 @@ class Stool extends ASSETS.Asset {
 		]);
 
 		const a = Math.cos( legAngle ) * legShape, b = Math.sin( legAngle ) * legShape;
-		const top = height - thickness - legThickness * Math.sin( legAngle );
+		const top = height - thickness - legThickness * Math.sin( legAngle ) * ( legShape != 0. );
 
 		const curve = new THREE.CubicBezierCurve3(
 			new THREE.Vector3(

@@ -17,7 +17,7 @@ class WineGlass extends ASSETS.Asset {
 		bowlShape:      { default: .4, type: '%'    , min:  .1, max:  .9, prec: 2, folder: "Bowl", name: "Shape"     },
 		bowlThickness:  { default: .1, type: 'cm'   , min: .05, max:  .3, prec: 2, folder: "Bowl", name: "Thickness" },
 		rimSize:        { default:2.1, type: 'cm'   , min:   1, max:   4, prec: 1, folder: "Bowl", name: "Rim Size"  },
-		roundness:      { default:.02, type: Number , min:   0, max: .03, prec: 3, folder: "Bowl", name: "Bevel Size"}, 
+		roundness:      { default:.02, type: Number , min:   0, max:.025, prec: 3, folder: "Bowl", name: "Bevel Size"}, 
 
 		bevelDetail: { default:     6, type: 'n'    , min: 1, max: 10, prec: 0, folder: "Complexity", name: "Bevels" },
 		latheDetail: { default:    30, type: 'n'    , min: 6, max: 50, prec: 0, folder: "Complexity", name: "Lathe" },
@@ -70,9 +70,9 @@ class WineGlass extends ASSETS.Asset {
 			[ 0, 0 					                                                                             ], // 0 bottom
 			[ baseSize              , 0                            ,                ,   .1,                      ],
 			[ baseSize*.9           , baseThickness                , roundness      ,  .14, true, d              ],
-			[ stemSize              , baseThickness                , roundness      ,   .2, true, d              ],
+			[ stemSize              , baseThickness                , roundness /4   ,   .2, true, d              ],
 			[ stemSize              , stemHeight/2                 , roundness      , AUTO, true, d              ],
-			[ stemSize*1.2          , stemHeight                   , roundness      ,   .5, true, d              ],
+			[ stemSize*1.2          , stemHeight                   , roundness /4   ,   .5, true, Math.ceil(d/2) ],
 			[ bowlSize              , stemHeight + bowlHeight*shape, roundness      , AUTO, true, d              ],
 			[ rimSize               , stemHeight + bowlHeight      , bowlThickness/2,   .8, true, Math.ceil(d/2) ], // rim
 			[ rimSize-bowlThickness , stemHeight + bowlHeight      , bowlThickness/2, AUTO, true, Math.ceil(d/2) ],

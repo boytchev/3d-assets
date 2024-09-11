@@ -67,17 +67,18 @@ class WineGlass extends ASSETS.Asset {
 		/* eslint-disable */
 		const points = [
 			// x,y,		   rad tex
-			[ 0, 0 					                                                                             ], // 0 bottom
-			[ baseSize              , 0                            ,                ,   .1,                      ],
-			[ baseSize*.9           , baseThickness                , roundness      ,  .14, true, d              ],
-			[ stemSize              , baseThickness                , roundness /4   ,   .2, true, d              ],
-			[ stemSize              , stemHeight/2                 , roundness      , AUTO, true, d              ],
-			[ stemSize*1.2          , stemHeight                   , roundness /4   ,   .5, true, Math.ceil(d/2) ],
-			[ bowlSize              , stemHeight + bowlHeight*shape, roundness      , AUTO, true, d              ],
-			[ rimSize               , stemHeight + bowlHeight      , bowlThickness/2,   .8, true, Math.ceil(d/2) ], // rim
-			[ rimSize-bowlThickness , stemHeight + bowlHeight      , bowlThickness/2, AUTO, true, Math.ceil(d/2) ],
-			[ bowlSize-bowlThickness, stemHeight + bowlHeight*shape, roundness      , AUTO, true, d              ],
-			[ 0                     , stemHeight                   ,                                             ]
+			[ 0, 0 					                                                                                                ], // 0 bottom
+			[ baseSize              , 0                                               ,                ,   .1,                      ], // 1
+			[ baseSize*.9           , baseThickness                                   , roundness      ,  .14, true, d              ], // 2
+			[ stemSize              , baseThickness                                   , roundness /4   ,   .2, true, d              ], // 3
+			[ stemSize              , stemHeight/2                                    , roundness      , AUTO, true, d              ], // 4
+			[ stemSize*1.2          , stemHeight                                      , roundness /4   ,   .5, true, Math.ceil(d/2) ], // 5
+			[ bowlSize              , stemHeight + bowlHeight*shape                   , roundness      , AUTO, true, d              ], // 6
+			[ rimSize               , stemHeight + bowlHeight                         , bowlThickness/2,   .8, true, Math.ceil(d/2) ], // 7 rim
+			[ rimSize-bowlThickness , stemHeight + bowlHeight                         , bowlThickness/2, AUTO, true, Math.ceil(d/2) ], // 8
+			[ bowlSize-bowlThickness, stemHeight + bowlHeight*shape - .002*(shape-0.5), roundness      , AUTO, true, d              ], // 9
+			[ stemSize              , stemHeight + bowlThickness                      , roundness      , AUTO, true, d              ], // 10
+			[ 0                     , stemHeight + bowlThickness                      ,                                             ]  // 11
 		];
 		/* eslint-enable */
 

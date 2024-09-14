@@ -16,7 +16,7 @@ class Wardrobe extends ASSETS.Asset {
 		thickness:        { default:   1.5, type: 'cm'  , min: .2, max:   4, prec: 1, folder: "General", name: "Thickness"},
 		depth:            { default:    40, type: 'cm'  , min: 20, max:  80, prec: 1, folder: "General", name: "Depth"},
 		hangerRail:       { default: false, type: Boolean, chance: .5               , folder: "General", name: "Hanger Rail"},
-		hangerRailHeight: { default:   120, type: 'cm'  , min:100, max: 200, prec: 1, folder: "General", name: "Rail Height"},
+		hangerRailHeight: { default:   120, type: 'cm'  , min: 80, max: 200, prec: 1, folder: "General", name: "Rail Height"},
 		separateWings:    { default:  true, type: Boolean, chance: .5               , folder: "General", name: "Separate Wings"},
 
 		doorRoundness:    { default:  .005, type: Number, min:  0, max: .05, prec: 3, folder: "Doors", name: "Roundness"},
@@ -116,6 +116,8 @@ class Wardrobe extends ASSETS.Asset {
 			).rotateZ( Math.PI/2 ).translate(
 				0, thickness + Math.min( hangerRailHeight, ( height - thickness ) * 0.9 ), 0
 			);
+			rail.uvIndex = 2;
+			this.rail = rail;
 
 			this.add( new THREE.Mesh( rail, material ) );
 
@@ -124,6 +126,7 @@ class Wardrobe extends ASSETS.Asset {
 		const bodyGeom = BufferGeometryUtils.mergeGeometries(
 			[ top, bottom, sideL, sideR, back ].concat( splitters )
 		);
+		this.bodyGeom = bodyGeom;
 		const body = new THREE.Mesh( bodyGeom, material );
 		body.name = 'body';
 		this.add( body );
@@ -150,6 +153,7 @@ class Wardrobe extends ASSETS.Asset {
 			new THREE.Vector3( 0, -handleSize / 2, 0 )
 		);
 
+		this.doors = [];
 		for ( let i = 0; i < wings; ++i ) {
 
 			let dir = -( i % 2 ) * 2 + 1;
@@ -157,10 +161,13 @@ class Wardrobe extends ASSETS.Asset {
 
 			const doorGroup = new THREE.Group();
 			doorGroup.name = 'Door_' + ( i+1 );
+
+			const doorGeometry = new ASSETS.RoundedBoxGeometry(
+				wingWidth, doorHeight, thickness, params.doorRoundDetail, simple ? 0 : params.doorRoundness
+			);
+			this.doors.push( doorGeometry );
 			const door = new THREE.Mesh(
-				new ASSETS.RoundedBoxGeometry(
-					wingWidth, doorHeight, thickness, params.doorRoundDetail, simple ? 0 : params.doorRoundness
-				),
+				doorGeometry,
 				material
 			);
 			door.position.set( dir * ( wingWidth / 2 - thickness/2 ), 0, 0 );
@@ -177,6 +184,7 @@ class Wardrobe extends ASSETS.Asset {
 					}
 				);
 				handleGeometry.uvIndex = 1;
+				this.doors.push( handleGeometry );
 
 				const handle = new THREE.Mesh( handleGeometry, material );
 				handle.name = "handle_" + ( i+1 );
@@ -205,6 +213,10 @@ class Wardrobe extends ASSETS.Asset {
 	dispose() {
 
 		this.clear();
+		this.bodyGeom?.dispose();
+		this.rail?.dispose();
+		if ( this.doors )
+			for ( const geom of this.doors ) geom.dispose();
 
 	} // Wardrobe.dispose
 

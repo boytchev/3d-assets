@@ -15,7 +15,7 @@ class Table extends ASSETS.Asset {
 		legSpread:       {default:    0, type: 'cm'  , min:  0, max: 100, prec: 1, folder: "Legs"      , name: "Spread"      },
 		legAngle:        {default:    0, type: 'deg' , min:  0, max: 90 , prec: 0, folder: "Legs"      , name: "Curve Angle" },
 		legFaceAngle:    {default:    0, type: 'deg' , min:  0, max: 360, prec: 0, folder: "Legs"      , name: "Face Angle"  },
-		legShape:        {default:   .6, type: Number, min:  0, max: 1  , prec: 2, folder: "Legs"      , name: "Shape"       },
+		legShape:        {default:   .6, type: Number, min:  0, max: .9 , prec: 2, folder: "Legs"      , name: "Shape"       },
 
 		topWidth:        {default:  120, type: 'cm'  , min: 20, max: 200, prec: 1, folder: "Top"       , name: "Width"       },
 		topDepth:        {default:   90, type: 'cm'  , min: 20, max: 200, prec: 1, folder: "Top"       , name: "Depth"       },
@@ -112,6 +112,7 @@ class Table extends ASSETS.Asset {
 		];
 		const legRotateDir = [ -1, 1, 1, -1 ];
 
+		this.legs = [];
 		for ( let i = 0; i < 4; ++i ) {
 
 			let geom = new ASSETS.SmoothExtrudeGeometry( legProfileShape, {
@@ -125,6 +126,7 @@ class Table extends ASSETS.Asset {
 				bottomUVMatrix: new THREE.Matrix3().makeScale( 0.18, 0.18 ).translate( 0.81, 0.2 ),
 			} );
 			geom.uvIndex = 0;
+			this.legs.push( geom );
 
 			const mesh = new THREE.Mesh( geom, material );
 			mesh.name = "leg_" + i;
@@ -148,6 +150,7 @@ class Table extends ASSETS.Asset {
 			new THREE.Matrix3().makeScale( uvScale, uvScale )
 		);
 		topGeom.uvIndex = 1;
+		this.topGeom = topGeom;
 
 		const seat = new THREE.Mesh(
 			topGeom,
@@ -165,6 +168,8 @@ class Table extends ASSETS.Asset {
 
 	dispose() {
 
+		this.topGeom?.dispose();
+		if ( this.legs ) for ( const l of this.legs ) l.dispose();
 		this.clear();
 
 	} // Table.dispose

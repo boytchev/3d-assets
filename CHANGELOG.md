@@ -1,6 +1,14 @@
 # 3D Assets
 
 
+## 0.7.0
+* Added "Chair" in *chair.js*
+* Added "Monitor" in *monitor.js*
+* Added "Stool" in *stool.js*
+* Added "Table" in *table.js*
+* Added "Wardrobe" in *wardrobe.js*
+* Added "Wine glass" in *wine-glass.js*
+
 ## 0.6.0
 * Added "Wine bottle" in *wine-bottle.js*
 

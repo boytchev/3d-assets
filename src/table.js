@@ -9,23 +9,23 @@ class Table extends ASSETS.Asset {
 	/* eslint-disable */
 	static paramData = {
 
-		legThickness:    {default:   10, type: 'cm'  , min:  2, max: 15 , folder: "Legs"      , name: "Thickness"   },
-		legRoundness:    {default: 0.02, type: 'cm'  , min:  0, max: .1 , folder: "Legs"      , name: "Roundness"   },
-		legOffset:       {default:    0, type: 'cm'  , min:  0, max: 100, folder: "Legs"      , name: "Offset"      },
-		legSpread:       {default:    0, type: 'cm'  , min:  0, max: 100, folder: "Legs"      , name: "Spread"      },
-		legAngle:        {default:    0, type: 'deg' , min:  0, max: 90 , folder: "Legs"      , name: "Curve Angle" },
-		legFaceAngle:    {default:    0, type: 'deg' , min:  0, max: 360, folder: "Legs"      , name: "Face Angle"  },
-		legShape:        {default:   .6, type: Number, min:  0, max: 1  , folder: "Legs"      , name: "Shape"       },
+		legThickness:    {default:   10, type: 'cm'  , min:  2, max: 15 , prec: 1, folder: "Legs"      , name: "Thickness"   },
+		legRoundness:    {default: 0.02, type: 'cm'  , min:  0, max: .1 , prec: 3, folder: "Legs"      , name: "Roundness"   },
+		legOffset:       {default:    0, type: 'cm'  , min:  0, max: 100, prec: 1, folder: "Legs"      , name: "Offset"      },
+		legSpread:       {default:    0, type: 'cm'  , min:  0, max: 100, prec: 1, folder: "Legs"      , name: "Spread"      },
+		legAngle:        {default:    0, type: 'deg' , min:  0, max: 90 , prec: 0, folder: "Legs"      , name: "Curve Angle" },
+		legFaceAngle:    {default:    0, type: 'deg' , min:  0, max: 360, prec: 0, folder: "Legs"      , name: "Face Angle"  },
+		legShape:        {default:   .6, type: Number, min:  0, max: .9 , prec: 2, folder: "Legs"      , name: "Shape"       },
 
-		topWidth:        {default:  120, type: 'cm'  , min: 20, max: 200, folder: "Top"       , name: "Width"       },
-		topDepth:        {default:   90, type: 'cm'  , min: 20, max: 200, folder: "Top"       , name: "Depth"       },
-		topHeight:       {default:  100, type: 'cm'  , min: 10, max: 130, folder: "Top"       , name: "Height"      },
-		topThickness:    {default:   10, type: 'cm'  , min:  1, max: 10 , folder: "Top"       , name: "Thickness"   },  
-		topRoundness:    {default: 0.05, type: Number, min:  0, max: 0.2, folder: "Top"       , name: "Roundness"   },
+		topWidth:        {default:  120, type: 'cm'  , min: 20, max: 200, prec: 1, folder: "Top"       , name: "Width"       },
+		topDepth:        {default:   90, type: 'cm'  , min: 20, max: 200, prec: 1, folder: "Top"       , name: "Depth"       },
+		topHeight:       {default:  100, type: 'cm'  , min: 10, max: 130, prec: 1, folder: "Top"       , name: "Height"      },
+		topThickness:    {default:   10, type: 'cm'  , min:  1, max: 10 , prec: 1, folder: "Top"       , name: "Thickness"   },  
+		topRoundness:    {default: 0.05, type: Number, min:  0, max: 0.2, prec: 3, folder: "Top"       , name: "Roundness"   },
 
-		legDetail:       {default:   10, type: 'n'   , min:  1, max:  30, folder: "Complexity", name: "Legs"        },
-		legRoundDetail:  {default:    3, type: 'n'   , min:  1, max:  10, folder: "Complexity", name: "Legs Bevel"  },
-		topRoundDetail:  {default:    3, type: 'n'   , min:  1, max:  10, folder: "Complexity", name: "Top Bevel"   , exp: true},
+		legDetail:       {default:   10, type: 'n'   , min:  1, max:  30, prec: 0, folder: "Complexity", name: "Legs"        },
+		legRoundDetail:  {default:    3, type: 'n'   , min:  1, max:  10, prec: 0, folder: "Complexity", name: "Legs Bevel"  },
+		topRoundDetail:  {default:    3, type: 'n'   , min:  1, max:  10, prec: 0, folder: "Complexity", name: "Top Bevel"   , exp: true},
 
 		flat:	{ default: false, type: Boolean, chance: .3             , folder: "Complexity", name: "Flat"        },
 		simple: { default: false, type: Boolean, chance: .3             , folder: "Complexity", name: "Simple"      },
@@ -112,6 +112,7 @@ class Table extends ASSETS.Asset {
 		];
 		const legRotateDir = [ -1, 1, 1, -1 ];
 
+		this.legs = [];
 		for ( let i = 0; i < 4; ++i ) {
 
 			let geom = new ASSETS.SmoothExtrudeGeometry( legProfileShape, {
@@ -125,6 +126,7 @@ class Table extends ASSETS.Asset {
 				bottomUVMatrix: new THREE.Matrix3().makeScale( 0.18, 0.18 ).translate( 0.81, 0.2 ),
 			} );
 			geom.uvIndex = 0;
+			this.legs.push( geom );
 
 			const mesh = new THREE.Mesh( geom, material );
 			mesh.name = "leg_" + i;
@@ -148,6 +150,7 @@ class Table extends ASSETS.Asset {
 			new THREE.Matrix3().makeScale( uvScale, uvScale )
 		);
 		topGeom.uvIndex = 1;
+		this.topGeom = topGeom;
 
 		const seat = new THREE.Mesh(
 			topGeom,
@@ -165,6 +168,8 @@ class Table extends ASSETS.Asset {
 
 	dispose() {
 
+		this.topGeom?.dispose();
+		if ( this.legs ) for ( const l of this.legs ) l.dispose();
 		this.clear();
 
 	} // Table.dispose

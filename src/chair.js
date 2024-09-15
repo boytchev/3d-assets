@@ -169,8 +169,6 @@ class Chair extends ASSETS.Asset {
 					new THREE.Matrix4().makeRotationX( -backrestAngle )
 				);
 
-
-
 		let backrestSideL = null;
 		let backrestSideR = null;
 

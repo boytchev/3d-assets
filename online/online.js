@@ -346,6 +346,7 @@ function toggleDebugProfile( ) {
 
 var debugUVMode = false;
 var debugUVModeTexturePlane = null;
+var debugUVModeMaxOffset = 0;
 
 function toggleDebugUVMode() {
 
@@ -394,22 +395,24 @@ function toggleDebugUVMode() {
 
 	}
 
-	if ( !debugUVModeTexturePlane ) {
+	if ( !debugUVModeTexturePlane || maxOffset != debugUVModeMaxOffset ) {
 
 		if ( !debugTexture ) loadDebugTexture();
-		if ( !debugUVModeTexturePlane ) {
+		console.log( maxOffset, debugUVModeMaxOffset );
 
-			debugUVModeTexturePlane = new THREE.Mesh(
-				new THREE.PlaneGeometry( maxOffset + 1, 1 ),
-				new THREE.MeshBasicMaterial( { color: 0xffffff, map: debugTexture, side: THREE.DoubleSide } )
-			);
-			debugUVModeTexturePlane.position.x = 0.0;
-			debugUVModeTexturePlane.position.y = 0.0;
-			debugUVModeTexturePlane.position.z = 0.0;
+		if ( debugUVModeTexturePlane ) scene.remove( debugUVModeTexturePlane );
 
-			scene.add( debugUVModeTexturePlane );
+		debugUVModeTexturePlane = new THREE.Mesh(
+			new THREE.PlaneGeometry( maxOffset + 1, 1 ),
+			new THREE.MeshBasicMaterial( { color: 0xffffff, map: debugTexture, side: THREE.DoubleSide } )
+		);
+		debugUVModeTexturePlane.position.x = 0.0;
+		debugUVModeTexturePlane.position.y = 0.0;
+		debugUVModeTexturePlane.position.z = 0.0;
 
-		}
+		scene.add( debugUVModeTexturePlane );
+
+		debugUVModeMaxOffset = maxOffset;
 
 	}
 

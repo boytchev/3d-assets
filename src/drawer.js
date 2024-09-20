@@ -11,7 +11,7 @@ class Drawer extends ASSETS.Asset {
 	static paramData = {
 
 		width:            { default:    40, type: 'cm'  , min: 20, max:  80, prec: 1, folder: "General", name: "width"},
-		height:           { default:    60, type: 'cm'  , min: 60, max: 210, prec: 1, folder: "General", name: "Height"},
+		height:           { default:    60, type: 'cm'  , min: 30, max: 210, prec: 1, folder: "General", name: "Height"},
 		thickness:        { default:   1.5, type: 'cm'  , min: .2, max:   2, prec: 1, folder: "General", name: "Thickness"},
 		depth:            { default:    40, type: 'cm'  , min: 20, max:  80, prec: 1, folder: "General", name: "Depth"},
 		drawerCount:      { default:     4, type: 'n'   , min:  1, max:  10, prec: 0, folder: "General", name: "Drawers"},
@@ -25,8 +25,8 @@ class Drawer extends ASSETS.Asset {
 
 		handleRoundDetail:{ default:     1, type: 'n'   , min:  1, max:   3, prec: 0, folder: "Complexity", name: "Handle Bevel"},
 		doorRoundDetail:  { default:     1, type: 'n'   , min:  1, max:   4, prec: 0, folder: "Complexity", name: "Faces Bevel"},
-		flat:	{ default: false, type: Boolean, chance: .3              , folder: "Complexity", name: "Flat"   },
-		simple: { default: false, type: Boolean, chance: .3              , folder: "Complexity", name: "Simple" },
+		flat:	          { default: false, type: Boolean, chance: .3               , folder: "Complexity", name: "Flat"   },
+		simple:           { default: false, type: Boolean, chance: .3               , folder: "Complexity", name: "Simple" },
 
 	};
 	/* eslint-enable */
@@ -170,9 +170,9 @@ class Drawer extends ASSETS.Asset {
 					.translate( 0, drawerHeight * handleHeight, depth/2 + open );
 				handleGeometry.uvIndex = 1;
 				drawer.add( new THREE.Mesh( handleGeometry, material ) );
+				this.drawers.push( handleGeometry );
 
 			}
-
 
 		}
 

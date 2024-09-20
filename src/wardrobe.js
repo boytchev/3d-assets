@@ -90,7 +90,7 @@ class Wardrobe extends ASSETS.Asset {
 		).translate( wingWidth/2 * wings - thickness/2, height/2, -thickness/2 );
 
 		const back = new ASSETS.RoundedBoxGeometry(
-			wingWidth * wings - 2 * thickness, height - thickness, thickness
+			wingWidth * wings - 2 * thickness, height - 2 * thickness, thickness
 		).translate( 0, height/2, -depth/2+thickness/2 );
 
 		const splitters = [];

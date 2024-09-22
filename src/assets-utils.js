@@ -290,11 +290,7 @@ class RoundedBoxGeometry extends BufferGeometry {
 	) {
 
 		super();
-		const seg = roundness > 0 ? segments : 0;
-		const detail = seg * 2 + 1;
-		let planeCount = faces.reduce( ( a, b ) => a+b );
-		const vertexCount = planeCount * ( detail + 1 ) * ( detail + 1 );
-		const faceCount = planeCount * detail * detail;
+		// switch face order depending on size so that the UV unwrap is more efficient
 		let perm;
 		if ( x <= y && x <= z ) perm = [ 2, 0, 1 ];
 		else if ( y <= x && y <= z ) perm = [ 0, 1, 2 ];
@@ -305,6 +301,18 @@ class RoundedBoxGeometry extends BufferGeometry {
 		x = size[ 0 ];
 		y = size[ 1 ];
 		z = size[ 2 ];
+
+		const seg = roundness > 0 ? segments : 0;
+		const detail = [
+			seg * roundFaces[ 2 ] + seg * roundFaces[ 3 ] + 1,
+			seg * roundFaces[ 4 ] + seg * roundFaces[ 5 ] + 1,
+			seg * roundFaces[ 0 ] + seg * roundFaces[ 1 ] + 1,
+		];
+
+		let vertexCount = 0;
+		let faceCount = 0;
+		faces.forEach( ( x, i ) => vertexCount += x * ( detail[ Math.floor( i/2 ) ] + 1 ) * ( detail[ Math.floor( i/2 ) ] + 1 ) );
+		faces.forEach( ( x, i ) => faceCount += x * detail[ Math.floor( i/2 ) ] * detail[ Math.floor( i/2 ) ]);
 
 		const radius = relativeRoundness ? RoundedBoxGeometry.computeCurveRadius( x, y, z, roundness ) : roundness;
 
@@ -338,27 +346,38 @@ class RoundedBoxGeometry extends BufferGeometry {
 			const axis2 = ( axis0 + 2 ) % 3;
 
 			// vertex count for current face
-			const faceVertices = ( detail + 1 ) * ( detail + 1 );
-			const faceIndices = detail * detail;
+			const faceVertices = ( detail[ perm[ axis0 ] ] + 1 ) * ( detail[ perm[ axis1 ] ] + 1 );
+			const faceIndices = detail[ perm[ axis0 ] ] * detail[ perm[ axis1 ] ];
 			for ( let u = 0; u < 2; ++u ) {
 
 				if ( !faces[ perm[ axis0 ] * 2 + u ]) continue;
 
-				for ( let i = 0; i < detail + 1; ++i ) {
+				for ( let _i = 0; _i < detail[ perm[ axis0 ] ] + 1; ++_i ) {
 
-					for ( let j = 0; j < detail + 1; ++j ) {
+					for ( let _j = 0; _j < detail[ perm[ axis1 ] ] + 1; ++_j ) {
 
-						let k = i * ( detail + 1 ) + j + vertexOffset;
+						let i = _i;
+						let j = _j;
+						if ( _i > 0 && !roundFaces[ perm[ axis1 ] * 2 + 0 ])
+							i += seg;
+						if ( _i == detail[ perm[ axis0 ] ] && !roundFaces[ perm[ axis1 ] * 2 + 1 ])
+							i += seg;
+						if ( _j > 0 && !roundFaces[ perm[ axis2 ] * 2 + 0 ])
+							j += seg;
+						if ( _j == detail[ perm[ axis1 ] ] && !roundFaces[ perm[ axis2 ] * 2 + 1 ])
+							j += seg;
+
+						let k = _i * ( detail[ perm[ axis1 ] ] + 1 ) + _j + vertexOffset;
 
 						const vertex = new Vector3();
 						const d = Math.max( 1, seg );
 
-						if ( i < detail / 2 )
+						if ( i < ( seg * 2 + 1 ) / 2 )
 							vertex.x = i * radius / d - size[ axis0 ] / 2;
 						else
 							vertex.x = size[ axis0 ] / 2 - radius + ( i-d-1 ) * radius / d;
 
-						if ( j < detail / 2 )
+						if ( j < ( seg * 2 + 1 ) / 2 )
 							vertex.y = j * radius / d - size[ axis1 ] / 2;
 						else
 							vertex.y = size[ axis1 ] / 2 - radius + ( j-d-1 ) * radius / d;
@@ -418,20 +437,20 @@ class RoundedBoxGeometry extends BufferGeometry {
 
 				}
 
-				for ( let i = 0; i < detail; ++i ) {
+				for ( let i = 0; i < detail[ perm[ axis0 ] ]; ++i ) {
 
-					for ( let j = 0; j < detail; ++j ) {
+					for ( let j = 0; j < detail[ perm[ axis1 ] ]; ++j ) {
 
-						let ki = i * detail + j + indexOffset;
-						let kv = i * ( detail + 1 ) + j + vertexOffset;
+						let ki = i * detail[ perm[ axis1 ] ] + j + indexOffset;
+						let kv = i * ( detail[ perm[ axis1 ] ] + 1 ) + j + vertexOffset;
 
 						const norm = ( -u * 2 + 1 );
 						indices[ ki * 6 + 5 * u + 0 * norm ] = kv;
 						indices[ ki * 6 + 5 * u + 1 * norm ] = kv + 1;
-						indices[ ki * 6 + 5 * u + 2 * norm ] = kv + detail + 1;
-						indices[ ki * 6 + 5 * u + 3 * norm ] = kv + detail + 1;
+						indices[ ki * 6 + 5 * u + 2 * norm ] = kv + detail[ perm[ axis1 ] ] + 1;
+						indices[ ki * 6 + 5 * u + 3 * norm ] = kv + detail[ perm[ axis1 ] ] + 1;
 						indices[ ki * 6 + 5 * u + 4 * norm ] = kv + 1;
-						indices[ ki * 6 + 5 * u + 5 * norm ] = kv + detail + 2;
+						indices[ ki * 6 + 5 * u + 5 * norm ] = kv + detail[ perm[ axis1 ] ] + 2;
 
 					}
 

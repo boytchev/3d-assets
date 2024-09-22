@@ -98,7 +98,7 @@ class Bookshelf extends ASSETS.Asset {
 		sideL.dispose();
 		sideR.dispose();
 		back.dispose();
-		for(const s of shelves) s.dispose();
+		for ( const s of shelves ) s.dispose();
 
 		this.position.y -= height/2;
 

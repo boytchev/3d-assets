@@ -25,7 +25,7 @@ class Drawer extends ASSETS.Asset {
 		handleHeight:     { default:   0.5, type: Number, min:0.1, max: 0.9, prec: 2, folder: "Handles", name: "Height"},
 
 		handleRoundDetail:{ default:     1, type: 'n'   , min:  1, max:   3, prec: 0, folder: "Complexity", name: "Handle Bevel"},
-		roundDetail:      { default:     1, type: 'n'   , min:  1, max:   4, prec: 0, folder: "Complexity", name: "Faces Bevel"},
+		roundDetail:      { default:     1, type: 'n'   , min:  1, max:   4, prec: 0, folder: "Complexity", name: "Body Bevel"},
 		doorRoundDetail:  { default:     1, type: 'n'   , min:  1, max:   4, prec: 0, folder: "Complexity", name: "Faces Bevel"},
 		flat:	          { default: false, type: Boolean, chance: .3               , folder: "Complexity", name: "Flat"   },
 		simple:           { default: false, type: Boolean, chance: .3               , folder: "Complexity", name: "Simple" },

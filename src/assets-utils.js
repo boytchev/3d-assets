@@ -824,7 +824,7 @@ function cm( x ) {
 // converts milimeters to meters
 function mm( x ) {
 
-	return x / 1000;
+	return x/1000;
 
 }
 
@@ -917,4 +917,4 @@ function clamp( x, min, max ) {
 }
 
 
-export { Asset, RoundedBoxGeometry, AUTO, SmoothExtrudeGeometry, UVCylinderGeometry, RoundedShape, LatheUVGeometry, cm, clamp, percent, slope, defaultMaterial, map, mapExp, round, random };
+export { Asset, RoundedBoxGeometry, AUTO, SmoothExtrudeGeometry, UVCylinderGeometry, RoundedShape, LatheUVGeometry, cm, mm, clamp, percent, slope, defaultMaterial, map, mapExp, round, random };

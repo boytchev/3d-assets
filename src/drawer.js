@@ -11,11 +11,12 @@ class Drawer extends ASSETS.Asset {
 	static paramData = {
 
 		width:            { default:    40, type: 'cm'  , min: 20, max:  80, prec: 1, folder: "General", name: "width"},
-		height:           { default:    60, type: 'cm'  , min: 30, max: 210, prec: 1, folder: "General", name: "Height"},
 		thickness:        { default:   1.5, type: 'cm'  , min: .2, max:   2, prec: 1, folder: "General", name: "Thickness"},
 		depth:            { default:    40, type: 'cm'  , min: 20, max:  80, prec: 1, folder: "General", name: "Depth"},
-		drawerCount:      { default:     4, type: 'n'   , min:  1, max:  10, prec: 0, folder: "General", name: "Drawers"},
+		roundness:        { default:     2, type: 'mm'  , min:  0, max:   5, prec: 1, folder: "General", name: "Roundness"},
 
+		drawerHeight:     { default:    15, type: 'cm'  , min:  7, max:  60, prec: 1, folder: "Drawers", name: "Height"},
+		drawerCount:      { default:     4, type: 'n'   , min:  1, max:  10, prec: 0, folder: "Drawers", name: "Drawers"},
 		doorRoundness:    { default:   .02, type: Number, min:  0, max: .05, prec: 3, folder: "Drawers", name: "Roundness"},
 		openness:         { default:     0, type: Number, min:  0, max:   1, prec: 2, folder: "Drawers", name: "Openness"},
 
@@ -24,6 +25,7 @@ class Drawer extends ASSETS.Asset {
 		handleHeight:     { default:   0.5, type: Number, min:0.1, max: 0.9, prec: 2, folder: "Handles", name: "Height"},
 
 		handleRoundDetail:{ default:     1, type: 'n'   , min:  1, max:   3, prec: 0, folder: "Complexity", name: "Handle Bevel"},
+		roundDetail:      { default:     1, type: 'n'   , min:  1, max:   4, prec: 0, folder: "Complexity", name: "Faces Bevel"},
 		doorRoundDetail:  { default:     1, type: 'n'   , min:  1, max:   4, prec: 0, folder: "Complexity", name: "Faces Bevel"},
 		flat:	          { default: false, type: Boolean, chance: .3               , folder: "Complexity", name: "Flat"   },
 		simple:           { default: false, type: Boolean, chance: .3               , folder: "Complexity", name: "Simple" },
@@ -52,7 +54,7 @@ class Drawer extends ASSETS.Asset {
 		material.flatShading = params.flat;
 
 		const width = ASSETS.cm( params.width );
-		const height = ASSETS.cm( params.height );
+		const drawerHeight = ASSETS.cm( params.drawerHeight );
 		const thickness = ASSETS.cm( params.thickness );
 
 		const depth = ASSETS.cm( params.depth );
@@ -61,29 +63,40 @@ class Drawer extends ASSETS.Asset {
 		const handleSize = ASSETS.cm( params.handleSize );
 		const handleHeight = params.handleHeight;
 
-		const drawerHeight = ( height - 2 * thickness ) / params.drawerCount;
+		const height = drawerHeight * params.drawerCount + 2 * thickness;
 		const drawerWidth = width - 2 * thickness - .02;
 
+		const r = ASSETS.mm( params.roundness );
+		const rd = params.roundDetail;
+
 		const bottom = new ASSETS.RoundedBoxGeometry(
-			width, thickness, depth
+			width, thickness, depth,
+			rd, r, undefined,
+			undefined, [ 1, 1, 1, 1, 1, 0 ], false
 		).translate( 0, thickness/2, 0 );
 
 		const top = new ASSETS.RoundedBoxGeometry(
-			width, thickness, depth
+			width, thickness, depth,
+			rd, r, undefined,
+			undefined, [ 1, 1, 1, 1, 0, 1 ], false
 		).translate( 0, height - thickness/2, 0 );
 
 		const sideL = new ASSETS.RoundedBoxGeometry(
 			thickness, height - 2*thickness, depth - thickness,
-			undefined, undefined, [ 1, 1, 1, 1, 0, 0 ]
+			rd, r, [ 1, 1, 1, 1, 0, 0 ],
+			undefined, [ 1, 1, 1, 0, 0, 0 ], false
 		).translate( -width/2 + thickness / 2, height/2, -thickness/2 );
 
 		const sideR = new ASSETS.RoundedBoxGeometry(
 			thickness, height - 2*thickness, depth - thickness,
-			undefined, undefined, [ 1, 1, 1, 1, 0, 0 ]
+			rd, r, [ 1, 1, 1, 1, 0, 0 ],
+			undefined, [ 1, 1, 0, 1, 0, 0 ], false
 		).translate( width/2 - thickness/2, height/2, -thickness/2 );
 
 		const back = new ASSETS.RoundedBoxGeometry(
-			width - 2 * thickness, height - 2 * thickness, thickness
+			width - 2 * thickness, height - 2 * thickness, thickness,
+			rd, 0, undefined,
+			undefined, undefined, false
 		).translate( 0, height/2, -depth/2+thickness/2 );
 
 		const bodyGeom = BufferGeometryUtils.mergeGeometries(
@@ -110,8 +123,8 @@ class Drawer extends ASSETS.Asset {
 
 		const handleCurve = new THREE.CubicBezierCurve3(
 			new THREE.Vector3( 0, +handleSize / 2, 0 ),
-			new THREE.Vector3( 0, +handleSize * 0.3, .02 ),
-			new THREE.Vector3( 0, -handleSize * 0.3, .02 ),
+			new THREE.Vector3( 0, +handleSize * 0.3, .2 * handleSize + handleThickness/2 ),
+			new THREE.Vector3( 0, -handleSize * 0.3, .2 * handleSize + handleThickness/2 ),
 			new THREE.Vector3( 0, -handleSize / 2, 0 )
 		);
 
@@ -123,27 +136,27 @@ class Drawer extends ASSETS.Asset {
 			const back = new ASSETS.RoundedBoxGeometry(
 				drawerWidth, drawerHeight - 2 * thickness, thickness,
 				undefined, undefined, [ 1, 1, 1, 1, 0, 1 ]
-			).translate( 0, drawerHeight/2, -depth/2 + thickness + thickness/2 + open );
+			).translate( 0, drawerHeight/2, -depth/2 + thickness + thickness/2 );
 
 			const bottom = new ASSETS.RoundedBoxGeometry(
 				drawerWidth, thickness, depth - 2 * thickness,
 				undefined, undefined, [ 1, 1, 1, 1, 1, 1 ]
-			).translate( 0, thickness/2, open );
+			).translate( 0, thickness/2, 0 );
 
 			const sideL = new ASSETS.RoundedBoxGeometry(
 				thickness, drawerHeight - 2 * thickness, depth - 3 * thickness,
 				undefined, undefined, [ 0, 0, 1, 1, 0, 1 ]
-			).translate( -drawerWidth/2 + thickness/2, drawerHeight/2, thickness/2 + open );
+			).translate( -drawerWidth/2 + thickness/2, drawerHeight/2, thickness/2 );
 
 			const sideR = new ASSETS.RoundedBoxGeometry(
 				thickness, drawerHeight - 2 * thickness, depth - 3 * thickness,
 				undefined, undefined, [ 0, 0, 1, 1, 0, 1 ]
-			).translate( drawerWidth/2 - thickness/2, drawerHeight/2, thickness/2 + open );
+			).translate( drawerWidth/2 - thickness/2, drawerHeight/2, thickness/2 );
 
 			const front = new ASSETS.RoundedBoxGeometry(
 				width, drawerHeight, thickness,
 				params.doorRoundDetail, simple ? 0 : params.doorRoundness, undefined, undefined, [ 1, 1, 1, 1, 1, 1 ]
-			).translate( 0, drawerHeight/2, depth/2 - thickness/2 + open );
+			).translate( 0, drawerHeight/2, depth/2 - thickness/2 );
 
 			let meshes = [ back, bottom, sideL, sideR, front ];
 			const drawerGeom = BufferGeometryUtils.mergeGeometries( meshes );
@@ -152,10 +165,14 @@ class Drawer extends ASSETS.Asset {
 
 			for ( const m of meshes ) m.dispose();
 
+			const drawerGroup = new THREE.Group();
+			drawerGroup.position.y = baseHeight;
+			drawerGroup.position.z = open;
+			drawerGroup.name = 'Drawer_' + ( i+1 );
+
 			const drawer = new THREE.Mesh( drawerGeom, material );
-			drawer.position.y = baseHeight;
-			drawer.name = 'drawer_' + i;
-			this.add( drawer );
+			drawer.name = 'drawer_' + ( i+1 );
+			drawerGroup.add( drawer );
 
 			if ( !simple ) {
 
@@ -165,14 +182,19 @@ class Drawer extends ASSETS.Asset {
 						steps: 10,
 						caps: [ 0, 0 ]
 					}
-				)
-					.rotateZ( Math.PI /2 )
-					.translate( 0, drawerHeight * handleHeight, depth/2 + open );
-				handleGeometry.uvIndex = 1;
-				drawer.add( new THREE.Mesh( handleGeometry, material ) );
+				).rotateZ( Math.PI /2 );
+
+				handleGeometry.uvIndex = 2;
+				const handle = new THREE.Mesh( handleGeometry, material );
+				handle.position.set( 0, drawerHeight * handleHeight, depth/2 - handleThickness/2 );
+				handle.name = 'handle_' + ( i+1 );
+
+				drawerGroup.add( handle );
 				this.drawers.push( handleGeometry );
 
 			}
+
+			this.add( drawerGroup );
 
 		}
 

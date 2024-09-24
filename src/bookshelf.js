@@ -52,7 +52,7 @@ class Bookshelf extends ASSETS.Asset {
 		const depth = ASSETS.cm( params.depth );
 		const thickness = ASSETS.cm( params.thickness );
 		const offset = Math.min( ASSETS.cm( params.offset ), shelfHeight );
-		const roundness = simple ? 0 : Math.min( thickness /2, params.roundness / 1000 );
+		const roundness = simple ? 0 : Math.min( thickness /2, ASSETS.mm( params.roundness ) );
 		const detail = params.roundDetail;
 
 		const height = ( shelvesCount-1 ) * ( shelfHeight ) + thickness + offset;

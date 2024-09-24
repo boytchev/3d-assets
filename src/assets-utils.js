@@ -309,10 +309,16 @@ class RoundedBoxGeometry extends BufferGeometry {
 			seg * roundFaces[ 0 ] + seg * roundFaces[ 1 ] + 1,
 		];
 
-		let vertexCount = 0;
-		let faceCount = 0;
-		faces.forEach( ( x, i ) => vertexCount += x * ( detail[ Math.floor( i/2 ) ] + 1 ) * ( detail[ Math.floor( i/2 ) ] + 1 ) );
-		faces.forEach( ( x, i ) => faceCount += x * detail[ Math.floor( i/2 ) ] * detail[ Math.floor( i/2 ) ]);
+		const vertexCount =
+			faces[ 0 ] * ( detail[ 0 ]+1 ) * ( detail[ 1 ]+1 ) + faces[ 1 ] * ( detail[ 0 ]+1 ) * ( detail[ 1 ]+1 ) +
+			faces[ 2 ] * ( detail[ 1 ]+1 ) * ( detail[ 2 ]+1 ) + faces[ 3 ] * ( detail[ 1 ]+1 ) * ( detail[ 2 ]+1 ) +
+			faces[ 4 ] * ( detail[ 2 ]+1 ) * ( detail[ 0 ]+1 ) + faces[ 5 ] * ( detail[ 2 ]+1 ) * ( detail[ 0 ]+1 )
+		;
+		const faceCount =
+			faces[ 0 ] * detail[ 0 ] * detail[ 1 ] + faces[ 1 ] * detail[ 0 ] * detail[ 1 ] +
+			faces[ 2 ] * detail[ 1 ] * detail[ 2 ] + faces[ 3 ] * detail[ 1 ] * detail[ 2 ] +
+			faces[ 4 ] * detail[ 2 ] * detail[ 0 ] + faces[ 5 ] * detail[ 2 ] * detail[ 0 ]
+		;
 
 		const radius = relativeRoundness ? RoundedBoxGeometry.computeCurveRadius( x, y, z, roundness ) : roundness;
 
@@ -814,6 +820,13 @@ function cm( x ) {
 	return x/100;
 
 } // cm
+
+// converts milimeters to meters
+function mm( x ) {
+
+	return x / 1000;
+
+}
 
 
 // converts percentages to units

@@ -398,7 +398,6 @@ function toggleDebugUVMode() {
 	if ( !debugUVModeTexturePlane || maxOffset != debugUVModeMaxOffset ) {
 
 		if ( !debugTexture ) loadDebugTexture();
-		console.log( maxOffset, debugUVModeMaxOffset );
 
 		if ( debugUVModeTexturePlane ) scene.remove( debugUVModeTexturePlane );
 

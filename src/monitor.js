@@ -70,7 +70,7 @@ class Monitor extends ASSETS.Asset {
 		);
 
 		const bodyGeom2 = new ASSETS.RoundedBoxGeometry(
-			width/3, height/3, 0.03,
+			Math.max( width/3, handleWidth ), height/3, 0.03,
 			bevelDetail, .1 * !simple, [ 1, 0, 1, 1, 1, 1 ], undefined, [ 1, 0, 1, 1, 1, 1 ],
 		).translate(
 			0, height/2 + baseHeight, -screenThickness/2 - 0.015

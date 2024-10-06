@@ -12,7 +12,6 @@ class Doorframe extends ASSETS.Asset {
 
 		width:         { default:   90, type: 'cm'   , min: 50 , max: 100, prec: 1, folder: "General", name: "Width"},
 		height:        { default:  210, type: 'cm'   , min: 150, max: 300, prec: 1, folder: "General", name: "Height"},
-		double:        { default: true, type: Boolean, chance: .3                 , folder: "General", name: "Double"},
 		thickness:     { default:    2, type: 'cm'   , min: .4 , max: 5  , prec: 1, folder: "General", name: "Thickness"},
 		openness:      { default:    0, type: Number , min: 0  , max: 1  , prec: 2, folder: "General", name: "Openness" },
 		roundness:     { default:    1, type: 'cm'   , min: 0  , max: 5  , prec: 1, folder: "General", name: "Roundness"},

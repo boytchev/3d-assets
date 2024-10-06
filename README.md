@@ -5,11 +5,13 @@ Procedural 3D assets. Work in progress. Check the website at
 for the currently available assets:
 
 * [Chair](https://boytchev.github.io/3d-assets/online/chair.html)
+* [Doorframe](https://boytchev.github.io/3d-assets/online/doorframe.html)
 * [Drink can](https://boytchev.github.io/3d-assets/online/drink-can.html)
 * [Monitor](https://boytchev.github.io/3d-assets/online/monitor.html)
 * [Mug](https://boytchev.github.io/3d-assets/online/mug.html)
 * [Stool](https://boytchev.github.io/3d-assets/online/stool.html)
 * [Table](https://boytchev.github.io/3d-assets/online/table.html)
+* [Photo Frame](https://boytchev.github.io/3d-assets/online/photo-frame.html)
 * [Plate](https://boytchev.github.io/3d-assets/online/plate.html)
 * [Wardrobe](https://boytchev.github.io/3d-assets/online/wardrobe.html)
 * [Wine bottle](https://boytchev.github.io/3d-assets/online/wine-bottle.html)

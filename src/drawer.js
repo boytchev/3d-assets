@@ -113,12 +113,12 @@ class Drawer extends ASSETS.Asset {
 		sideR.dispose();
 
 		const handleProfileShape = new ASSETS.RoundedShape([
-			[ 0, handleThickness ],
+			[ 0, handleThickness/2 ],
 			[ -handleThickness/2, handleThickness/2, handleThickness * .2, .2,, params.handleRoundDetail ],
 			[ -handleThickness/2, -handleThickness/2, handleThickness * .2, .4,, params.handleRoundDetail ],
 			[ handleThickness/2, -handleThickness/2, handleThickness * .2, .6,, params.handleRoundDetail ],
 			[ handleThickness/2, handleThickness/2, handleThickness * .2, .8,, params.handleRoundDetail ],
-			[ 0, handleThickness ], // fake vertex, later it will match the first vertex
+			[ 0, handleThickness/2 ], // fake vertex, later it will match the first vertex
 		]);
 
 		const handleCurve = new THREE.CubicBezierCurve3(

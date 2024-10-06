@@ -117,7 +117,48 @@ class Doorframe extends ASSETS.Asset {
 		const hinge0 = new ASSETS.UVCylinderGeometry( hingeOffset, hingeOffset, .07, params.hingeDetail, 1 ).translate( 0, height/4, 0 );
 		const hinge1 = new ASSETS.UVCylinderGeometry( hingeOffset, hingeOffset, .07, params.hingeDetail, 1 ).translate( 0, -height/4, 0 );
 
-		this.door = BufferGeometryUtils.mergeGeometries([ door0, door1, hinge0, hinge1 ]);
+		const handleThickness = .02;
+		const handleProfileShape = new ASSETS.RoundedShape([
+			[ 0, handleThickness/2 ],
+			[ -handleThickness/2, handleThickness/2, handleThickness * .2, .2,, params.handleRoundDetail ],
+			[ -handleThickness/2, -handleThickness/2, handleThickness * .2, .4,, params.handleRoundDetail ],
+			[ handleThickness/2, -handleThickness/2, handleThickness * .2, .6,, params.handleRoundDetail ],
+			[ handleThickness/2, handleThickness/2, handleThickness * .2, .8,, params.handleRoundDetail ],
+			[ 0, handleThickness/2 ], // fake vertex, later it will match the first vertex
+		]);
+
+		const handleCurve0 = new THREE.CubicBezierCurve3(
+			new THREE.Vector3( 0, 0, 0 ),
+			new THREE.Vector3( -.0, .06, 0 ),
+			new THREE.Vector3( -.05, .05, 0 ),
+			new THREE.Vector3( -.15, .04, 0 )
+		);
+		const handleGeometry0 = new ASSETS.SmoothExtrudeGeometry(
+			handleProfileShape,
+			{
+				extrudePath: handleCurve0,
+				steps: 10,
+				caps: [ 0, 1 ]
+			}
+		).rotateX( Math.PI/2 ).translate( width, 0, 0 );
+
+
+		const handleCurve1 = new THREE.CubicBezierCurve3(
+			new THREE.Vector3( 0, 0, 0 ),
+			new THREE.Vector3( -.0, .06, 0 ),
+			new THREE.Vector3( -.05, .05, 0 ),
+			new THREE.Vector3( -.15, .04, 0 )
+		);
+		const handleGeometry1 = new ASSETS.SmoothExtrudeGeometry(
+			handleProfileShape,
+			{
+				extrudePath: handleCurve1,
+				steps: 10,
+				caps: [ 0, 1 ]
+			}
+		).rotateX( -Math.PI/2 ).translate( width, 0, 0 );
+
+		this.door = BufferGeometryUtils.mergeGeometries([ door0, door1, hinge0, hinge1, handleGeometry0, handleGeometry1 ]);
 
 		const doorMesh = new THREE.Mesh( this.door, material );
 		doorMesh.position.set( -width/2 - frameThickness/4 - hingeOffset, 0, -wallThickness/2 - 5/4*thickness );
@@ -139,6 +180,8 @@ class Doorframe extends ASSETS.Asset {
 		door1.dispose();
 		hinge0.dispose();
 		hinge1.dispose();
+		handleGeometry0.dispose();
+		handleGeometry1.dispose();
 
 	} // Doorframe.constructor
 

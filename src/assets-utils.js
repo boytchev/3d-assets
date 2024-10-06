@@ -4,7 +4,7 @@
 
 
 
-import { BufferAttribute, BufferGeometry, Group, LatheGeometry, MathUtils, Matrix3, Matrix4, MeshPhysicalMaterial, Shape, ShapeGeometry, Vector2, Vector3 } from 'three';
+import { BufferAttribute, BufferGeometry, Group, LatheGeometry, Line3, MathUtils, Matrix3, Matrix4, MeshPhysicalMaterial, Shape, ShapeGeometry, Vector2, Vector3 } from 'three';
 //import { MeshPhysicalNodeMaterial } from 'three/nodes';
 //import { marble } from "tsl-textures/marble.js";
 
@@ -391,7 +391,10 @@ class RoundedBoxGeometry extends BufferGeometry {
 						vertex.z = ( u - 0.5 ) * size[ axis2 ];
 
 						const center = new Vector3(
-							clamp( vertex.x, -size[ axis0 ]/2 + roundFaces[ perm[ axis1 ]*2+0 ]*radius, size[ axis0 ]/2 - roundFaces[ perm[ axis1 ]*2+1 ]*radius ),
+							clamp( vertex.x,
+								-size[ axis0 ]/2 + roundFaces[ perm[ axis1 ]*2+0 ]*radius,
+								size[ axis0 ]/2 - roundFaces[ perm[ axis1 ]*2+1 ]*radius
+							),
 							clamp( vertex.y, -size[ axis1 ]/2 + roundFaces[ perm[ axis2 ]*2+0 ]*radius, size[ axis1 ]/2 - roundFaces[ perm[ axis2 ]*2+1 ]*radius ),
 							clamp( vertex.z, -size[ axis2 ]/2 + roundFaces[ perm[ axis0 ]*2+0 ]*radius, size[ axis2 ]/2 - roundFaces[ perm[ axis0 ]*2+1 ]*radius ),
 						);
@@ -814,6 +817,30 @@ class UVCylinderGeometry extends BufferGeometry {
 
 }
 
+function clampGeometry( geometry, plane, dir = plane.normal ) {
+
+	const pos = geometry.getAttribute( 'position' ).array;
+	if ( dir.dot( plane.normal ) < 0 ) plane = plane.clone().negate();
+
+	for ( let i = 0; i < pos.length; i += 3 ) {
+
+		const vertex = new Vector3( pos[ i ], pos[ i+1 ], pos[ i+2 ]);
+		const d = plane.distanceToPoint( vertex );
+		if ( d < 0 ) {
+
+			const l = new Line3( vertex, vertex.clone().add( dir.clone().multiplyScalar( 100 ) ) );
+			plane.intersectLine( l, vertex );
+
+		}
+
+		pos[ i + 0 ] = vertex.x;
+		pos[ i + 1 ] = vertex.y;
+		pos[ i + 2 ] = vertex.z;
+
+	}
+
+}
+
 // converts centimeters to meters
 function cm( x ) {
 
@@ -917,4 +944,4 @@ function clamp( x, min, max ) {
 }
 
 
-export { Asset, RoundedBoxGeometry, AUTO, SmoothExtrudeGeometry, UVCylinderGeometry, RoundedShape, LatheUVGeometry, cm, mm, clamp, percent, slope, defaultMaterial, map, mapExp, round, random };
+export { Asset, RoundedBoxGeometry, AUTO, SmoothExtrudeGeometry, UVCylinderGeometry, RoundedShape, LatheUVGeometry, cm, mm, clamp, percent, slope, defaultMaterial, map, mapExp, round, random, clampGeometry };

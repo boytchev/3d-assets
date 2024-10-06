@@ -309,15 +309,30 @@ class RoundedBoxGeometry extends BufferGeometry {
 			seg * roundFaces[ 0 ] + seg * roundFaces[ 1 ] + 1,
 		];
 
+		const simplify = [
+			!roundFaces[ 0 ] && ( ( !roundFaces[ 2 ]&&!roundFaces[ 3 ])||( !roundFaces[ 4 ]&&!roundFaces[ 5 ]) ),
+			!roundFaces[ 1 ] && ( ( !roundFaces[ 2 ]&&!roundFaces[ 3 ])||( !roundFaces[ 4 ]&&!roundFaces[ 5 ]) ),
+			!roundFaces[ 2 ] && ( ( !roundFaces[ 0 ]&&!roundFaces[ 1 ])||( !roundFaces[ 4 ]&&!roundFaces[ 5 ]) ),
+			!roundFaces[ 3 ] && ( ( !roundFaces[ 0 ]&&!roundFaces[ 1 ])||( !roundFaces[ 4 ]&&!roundFaces[ 5 ]) ),
+			!roundFaces[ 4 ] && ( ( !roundFaces[ 0 ]&&!roundFaces[ 1 ])||( !roundFaces[ 2 ]&&!roundFaces[ 3 ]) ),
+			!roundFaces[ 5 ] && ( ( !roundFaces[ 0 ]&&!roundFaces[ 1 ])||( !roundFaces[ 2 ]&&!roundFaces[ 3 ]) ),
+		];
+
 		const vertexCount =
-			faces[ 0 ] * ( detail[ 0 ]+1 ) * ( detail[ 1 ]+1 ) + faces[ 1 ] * ( detail[ 0 ]+1 ) * ( detail[ 1 ]+1 ) +
-			faces[ 2 ] * ( detail[ 1 ]+1 ) * ( detail[ 2 ]+1 ) + faces[ 3 ] * ( detail[ 1 ]+1 ) * ( detail[ 2 ]+1 ) +
-			faces[ 4 ] * ( detail[ 2 ]+1 ) * ( detail[ 0 ]+1 ) + faces[ 5 ] * ( detail[ 2 ]+1 ) * ( detail[ 0 ]+1 )
+			( simplify[ 0 ] ? 4 : faces[ 0 ] * ( detail[ 0 ]+1 ) * ( detail[ 1 ]+1 ) ) +
+			( simplify[ 1 ] ? 4 : faces[ 1 ] * ( detail[ 0 ]+1 ) * ( detail[ 1 ]+1 ) ) +
+			( simplify[ 2 ] ? 4 : faces[ 2 ] * ( detail[ 1 ]+1 ) * ( detail[ 2 ]+1 ) ) +
+			( simplify[ 3 ] ? 4 : faces[ 3 ] * ( detail[ 1 ]+1 ) * ( detail[ 2 ]+1 ) ) +
+			( simplify[ 4 ] ? 4 : faces[ 4 ] * ( detail[ 2 ]+1 ) * ( detail[ 0 ]+1 ) ) +
+			( simplify[ 5 ] ? 4 : faces[ 5 ] * ( detail[ 2 ]+1 ) * ( detail[ 0 ]+1 ) )
 		;
 		const faceCount =
-			faces[ 0 ] * detail[ 0 ] * detail[ 1 ] + faces[ 1 ] * detail[ 0 ] * detail[ 1 ] +
-			faces[ 2 ] * detail[ 1 ] * detail[ 2 ] + faces[ 3 ] * detail[ 1 ] * detail[ 2 ] +
-			faces[ 4 ] * detail[ 2 ] * detail[ 0 ] + faces[ 5 ] * detail[ 2 ] * detail[ 0 ]
+			( simplify[ 0 ] ? 1 : faces[ 0 ] * detail[ 0 ] * detail[ 1 ]) +
+			( simplify[ 1 ] ? 1 : faces[ 1 ] * detail[ 0 ] * detail[ 1 ]) +
+			( simplify[ 2 ] ? 1 : faces[ 2 ] * detail[ 1 ] * detail[ 2 ]) +
+			( simplify[ 3 ] ? 1 : faces[ 3 ] * detail[ 1 ] * detail[ 2 ]) +
+			( simplify[ 4 ] ? 1 : faces[ 4 ] * detail[ 2 ] * detail[ 0 ]) +
+			( simplify[ 5 ] ? 1 : faces[ 5 ] * detail[ 2 ] * detail[ 0 ])
 		;
 
 		const radius = relativeRoundness ? RoundedBoxGeometry.computeCurveRadius( x, y, z, roundness ) : roundness;
@@ -352,63 +367,104 @@ class RoundedBoxGeometry extends BufferGeometry {
 			const axis2 = ( axis0 + 2 ) % 3;
 
 			// vertex count for current face
-			const faceVertices = ( detail[ perm[ axis0 ] ] + 1 ) * ( detail[ perm[ axis1 ] ] + 1 );
-			const faceIndices = detail[ perm[ axis0 ] ] * detail[ perm[ axis1 ] ];
 			for ( let u = 0; u < 2; ++u ) {
+
+				let det = [
+					simplify[ perm[ axis0 ]*2+u ] ? 1 : detail[ perm[ axis0 ] ],
+					simplify[ perm[ axis0 ]*2+u ] ? 1 : detail[ perm[ axis1 ] ]
+				];
+
+				const faceVertices = ( det[ 0 ] + 1 ) * ( det[ 1 ] + 1 );
+				const faceIndices = det[ 0 ] * det[ 1 ];
 
 				if ( !faces[ perm[ axis0 ] * 2 + u ]) continue;
 
-				for ( let _i = 0; _i < detail[ perm[ axis0 ] ] + 1; ++_i ) {
+				if ( det[ 0 ] == 1 && det[ 1 ] == 1 ) {
 
-					for ( let _j = 0; _j < detail[ perm[ axis1 ] ] + 1; ++_j ) {
+					for ( let i = 0; i < 2; ++i ) {
 
-						let i = _i;
-						let j = _j;
-						if ( _i > 0 && !roundFaces[ perm[ axis1 ] * 2 + 0 ])
-							i += seg;
-						if ( _i == detail[ perm[ axis0 ] ] && !roundFaces[ perm[ axis1 ] * 2 + 1 ])
-							i += seg;
-						if ( _j > 0 && !roundFaces[ perm[ axis2 ] * 2 + 0 ])
-							j += seg;
-						if ( _j == detail[ perm[ axis1 ] ] && !roundFaces[ perm[ axis2 ] * 2 + 1 ])
-							j += seg;
+						for ( let j = 0; j < 2; ++j ) {
 
-						let k = _i * ( detail[ perm[ axis1 ] ] + 1 ) + _j + vertexOffset;
+							let k = i * ( det[ 1 ] + 1 ) + j + vertexOffset;
 
-						const vertex = new Vector3();
-						const d = Math.max( 1, seg );
+							vertices[ k * 3 + perm[ axis0 ] ] = ( i-.5 ) * size[ axis0 ];
+							vertices[ k * 3 + perm[ axis1 ] ] = ( j-.5 ) * size[ axis1 ];
+							vertices[ k * 3 + perm[ axis2 ] ] = ( u-.5 ) * size[ axis2 ];
 
-						if ( i < ( seg * 2 + 1 ) / 2 )
-							vertex.x = i * radius / d - size[ axis0 ] / 2;
-						else
-							vertex.x = size[ axis0 ] / 2 - radius + ( i-d-1 ) * radius / d;
+							normals[ k * 3 + perm[ axis0 ] ] = 0;
+							normals[ k * 3 + perm[ axis1 ] ] = 0;
+							normals[ k * 3 + perm[ axis2 ] ] = u * 2 - 1;
 
-						if ( j < ( seg * 2 + 1 ) / 2 )
-							vertex.y = j * radius / d - size[ axis1 ] / 2;
-						else
-							vertex.y = size[ axis1 ] / 2 - radius + ( j-d-1 ) * radius / d;
+							let uv = new Vector2( i, j );
+							uv.applyMatrix3( m[ axis0 * 2 + u ]);
 
-						vertex.z = ( u - 0.5 ) * size[ axis2 ];
+							uvs[ k * 2 ] = uv.x;
+							uvs[ k * 2 + 1 ] = uv.y;
 
-						const center = new Vector3(
-							clamp( vertex.x,
-								-size[ axis0 ]/2 + roundFaces[ perm[ axis1 ]*2+0 ]*radius,
-								size[ axis0 ]/2 - roundFaces[ perm[ axis1 ]*2+1 ]*radius
-							),
-							clamp( vertex.y, -size[ axis1 ]/2 + roundFaces[ perm[ axis2 ]*2+0 ]*radius, size[ axis1 ]/2 - roundFaces[ perm[ axis2 ]*2+1 ]*radius ),
-							clamp( vertex.z, -size[ axis2 ]/2 + roundFaces[ perm[ axis0 ]*2+0 ]*radius, size[ axis2 ]/2 - roundFaces[ perm[ axis0 ]*2+1 ]*radius ),
-						);
+						}
 
-						if ( roundness != 0 ) {
+					}
 
-							const normal = new Vector3().subVectors( vertex, center ).normalize();
+				} else {
+
+					for ( let _i = 0; _i < det[ 0 ] + 1; ++_i ) {
+
+						for ( let _j = 0; _j < det[ 1 ] + 1; ++_j ) {
+
+							let i = _i;
+							let j = _j;
+							if ( _i > 0 && !roundFaces[ perm[ axis1 ] * 2 + 0 ])
+								i += seg;
+							if ( _i == det[ 0 ] && !roundFaces[ perm[ axis1 ] * 2 + 1 ])
+								i += seg;
+							if ( _j > 0 && !roundFaces[ perm[ axis2 ] * 2 + 0 ])
+								j += seg;
+							if ( _j == det[ 1 ] && !roundFaces[ perm[ axis2 ] * 2 + 1 ])
+								j += seg;
+
+							let k = _i * ( det[ 1 ] + 1 ) + _j + vertexOffset;
+
+							const vertex = new Vector3();
+							const d = Math.max( 1, seg );
+
+							if ( i < ( seg * 2 + 1 ) / 2 )
+								vertex.x = i * radius / d - size[ axis0 ] / 2;
+							else
+								vertex.x = size[ axis0 ] / 2 - radius + ( i-d-1 ) * radius / d;
+
+							if ( j < ( seg * 2 + 1 ) / 2 )
+								vertex.y = j * radius / d - size[ axis1 ] / 2;
+							else
+								vertex.y = size[ axis1 ] / 2 - radius + ( j-d-1 ) * radius / d;
+
+							vertex.z = ( u - 0.5 ) * size[ axis2 ];
+
+							const center = new Vector3(
+								clamp( vertex.x, -size[ axis0 ]/2 + roundFaces[ perm[ axis1 ]*2+0 ]*radius, size[ axis0 ]/2 - roundFaces[ perm[ axis1 ]*2+1 ]*radius ),
+								clamp( vertex.y, -size[ axis1 ]/2 + roundFaces[ perm[ axis2 ]*2+0 ]*radius, size[ axis1 ]/2 - roundFaces[ perm[ axis2 ]*2+1 ]*radius ),
+								clamp( vertex.z, -size[ axis2 ]/2 + roundFaces[ perm[ axis0 ]*2+0 ]*radius, size[ axis2 ]/2 - roundFaces[ perm[ axis0 ]*2+1 ]*radius ),
+							);
+
+							if ( roundness != 0 ) {
+
+								const normal = new Vector3().subVectors( vertex, center ).normalize();
 
 
-							if ( roundFaces[ perm[ axis0 ] * 2 + u ]) {
+								if ( roundFaces[ perm[ axis0 ] * 2 + u ]) {
 
-								normals[ k * 3 + perm[ axis0 ] ] = normal.x;
-								normals[ k * 3 + perm[ axis1 ] ] = normal.y;
-								normals[ k * 3 + perm[ axis2 ] ] = normal.z;
+									normals[ k * 3 + perm[ axis0 ] ] = normal.x;
+									normals[ k * 3 + perm[ axis1 ] ] = normal.y;
+									normals[ k * 3 + perm[ axis2 ] ] = normal.z;
+
+								} else {
+
+									normals[ k * 3 + perm[ axis0 ] ] = 0;
+									normals[ k * 3 + perm[ axis1 ] ] = 0;
+									normals[ k * 3 + perm[ axis2 ] ] = u * 2 - 1;
+
+								}
+
+								vertex.addVectors( center, normal.multiplyScalar( radius ) );
 
 							} else {
 
@@ -418,48 +474,40 @@ class RoundedBoxGeometry extends BufferGeometry {
 
 							}
 
-							vertex.addVectors( center, normal.multiplyScalar( radius ) );
+							vertices[ k * 3 + perm[ axis0 ] ] = vertex.x;
+							vertices[ k * 3 + perm[ axis1 ] ] = vertex.y;
+							vertices[ k * 3 + perm[ axis2 ] ] = vertex.z;
 
-						} else {
+							let uv = new Vector2(
+								( vertex.x + size[ axis0 ] / 2 ) / size[ axis0 ],
+								( vertex.y + size[ axis1 ] / 2 ) / size[ axis1 ]
+							);
 
-							normals[ k * 3 + perm[ axis0 ] ] = 0;
-							normals[ k * 3 + perm[ axis1 ] ] = 0;
-							normals[ k * 3 + perm[ axis2 ] ] = u * 2 - 1;
+							uv.applyMatrix3( m[ axis0 * 2 + u ]);
+
+							uvs[ k * 2 ] = uv.x;
+							uvs[ k * 2 + 1 ] = uv.y;
 
 						}
-
-						vertices[ k * 3 + perm[ axis0 ] ] = vertex.x;
-						vertices[ k * 3 + perm[ axis1 ] ] = vertex.y;
-						vertices[ k * 3 + perm[ axis2 ] ] = vertex.z;
-
-						let uv = new Vector2(
-							( vertex.x + size[ axis0 ] / 2 ) / size[ axis0 ],
-							( vertex.y + size[ axis1 ] / 2 ) / size[ axis1 ]
-						);
-
-						uv.applyMatrix3( m[ axis0 * 2 + u ]);
-
-						uvs[ k * 2 ] = uv.x;
-						uvs[ k * 2 + 1 ] = uv.y;
 
 					}
 
 				}
 
-				for ( let i = 0; i < detail[ perm[ axis0 ] ]; ++i ) {
+				for ( let i = 0; i < det[ 0 ]; ++i ) {
 
-					for ( let j = 0; j < detail[ perm[ axis1 ] ]; ++j ) {
+					for ( let j = 0; j < det[ 1 ]; ++j ) {
 
-						let ki = i * detail[ perm[ axis1 ] ] + j + indexOffset;
-						let kv = i * ( detail[ perm[ axis1 ] ] + 1 ) + j + vertexOffset;
+						let ki = i * det[ 1 ] + j + indexOffset;
+						let kv = i * ( det[ 1 ] + 1 ) + j + vertexOffset;
 
 						const norm = ( -u * 2 + 1 );
 						indices[ ki * 6 + 5 * u + 0 * norm ] = kv;
 						indices[ ki * 6 + 5 * u + 1 * norm ] = kv + 1;
-						indices[ ki * 6 + 5 * u + 2 * norm ] = kv + detail[ perm[ axis1 ] ] + 1;
-						indices[ ki * 6 + 5 * u + 3 * norm ] = kv + detail[ perm[ axis1 ] ] + 1;
+						indices[ ki * 6 + 5 * u + 2 * norm ] = kv + det[ 1 ] + 1;
+						indices[ ki * 6 + 5 * u + 3 * norm ] = kv + det[ 1 ] + 1;
 						indices[ ki * 6 + 5 * u + 4 * norm ] = kv + 1;
-						indices[ ki * 6 + 5 * u + 5 * norm ] = kv + detail[ perm[ axis1 ] ] + 2;
+						indices[ ki * 6 + 5 * u + 5 * norm ] = kv + det[ 1 ] + 2;
 
 					}
 

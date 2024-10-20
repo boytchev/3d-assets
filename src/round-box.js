@@ -27,6 +27,13 @@ class RoundBox extends ASSETS.Asset {
 		r4: {default: true, type: Boolean, chance: .5, folder: "Round", name: "Y-"},
 		r5: {default: true, type: Boolean, chance: .5, folder: "Round", name: "Y+"},
 
+		c0: {default: true, type: Boolean, chance: .5, folder: "Center", name: "Z-"},
+		c1: {default: true, type: Boolean, chance: .5, folder: "Center", name: "Z+"},
+		c2: {default: true, type: Boolean, chance: .5, folder: "Center", name: "X-"},
+		c3: {default: true, type: Boolean, chance: .5, folder: "Center", name: "X+"},
+		c4: {default: true, type: Boolean, chance: .5, folder: "Center", name: "Y-"},
+		c5: {default: true, type: Boolean, chance: .5, folder: "Center", name: "Y+"},
+
 		roundness: {default: .2, type: Number, min: 0, max: 1, name: "Roundness"},
 
 		roundDetail:  {default:    3, type: 'n'   , min:  1, max:  10, prec: 0, folder: "Complexity", name: "Bevel"   , exp: true},
@@ -74,8 +81,17 @@ class RoundBox extends ASSETS.Asset {
 			params.r5,
 		];
 
-		this.box = new ASSETS.RoundedBoxGeometry( params.x, params.y, params.z, params.roundDetail,
-			params.roundness, f, undefined, r, true );
+		const c = [
+			params.c0,
+			params.c1,
+			params.c2,
+			params.c3,
+			params.c4,
+			params.c5,
+		];
+
+		this.box = new ASSETS.RoundedBoxGeometry( params.x, params.y, params.z, simple ? 0 : params.roundDetail,
+			params.roundness, f, undefined, r, true, c );
 
 		this.add( new THREE.Mesh( this.box, material ) );
 

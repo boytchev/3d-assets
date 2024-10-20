@@ -286,7 +286,8 @@ class RoundedBoxGeometry extends BufferGeometry {
 		x, y, z,
 		segments = 2, roundness = 0, faces = [ 1, 1, 1, 1, 1, 1 ],
 		uvMatrix = new Matrix3(),
-		roundFaces = [ 1, 1, 1, 1, 1, 1 ], relativeRoundness = true
+		roundFaces = [ 1, 1, 1, 1, 1, 1 ], relativeRoundness = true,
+		fillCenter = [ 1, 1, 1, 1, 1, 1 ]
 	) {
 
 		super();
@@ -379,7 +380,7 @@ class RoundedBoxGeometry extends BufferGeometry {
 
 				if ( !faces[ perm[ axis0 ] * 2 + u ]) continue;
 
-				if ( det[ 0 ] == 1 && det[ 1 ] == 1 ) {
+				if ( det[ 0 ] == 1 && det[ 1 ] == 1 ) { // create a simple quad
 
 					for ( let i = 0; i < 2; ++i ) {
 
@@ -448,15 +449,17 @@ class RoundedBoxGeometry extends BufferGeometry {
 							if ( roundness != 0 ) {
 
 								if ( !roundFaces[ perm[ axis0 ] * 2 + u ] &&
-									i != 0 && j != 0 && i != 2*seg+1 && j != 2*seg+1 )
-									vertex.multiply( new Vector3( .9, .9, 1. ) );
+									i != 0 && j != 0 && i != 2*seg+1 && j != 2*seg+1 &&
+									Math.abs( i - ( seg * 2 + 1 ) / 2 ) > .5 &&
+									Math.abs( j - ( seg * 2 + 1 ) / 2 ) > .5
+								)
+									vertex.addVectors( center, new Vector3().subVectors( vertex, center ).multiplyScalar( 1/Math.sqrt( 2 ) ) );
 
 								const dir = new Vector3().subVectors( vertex, center );
 								const normal = dir.clone().normalize();
 								const dirlenS = dir.lengthSq();
 								if ( dirlenS > radius * radius )
 									dir.divideScalar( Math.sqrt( dirlenS ) / radius );
-
 
 								if ( roundFaces[ perm[ axis0 ] * 2 + u ]) {
 
@@ -469,7 +472,6 @@ class RoundedBoxGeometry extends BufferGeometry {
 									normals[ k * 3 + perm[ axis0 ] ] = 0;
 									normals[ k * 3 + perm[ axis1 ] ] = 0;
 									normals[ k * 3 + perm[ axis2 ] ] = u * 2 - 1;
-
 
 								}
 
@@ -506,6 +508,16 @@ class RoundedBoxGeometry extends BufferGeometry {
 				for ( let i = 0; i < det[ 0 ]; ++i ) {
 
 					for ( let j = 0; j < det[ 1 ]; ++j ) {
+
+						let _i = i;
+						let _j = j;
+						if ( i >= 0 && !roundFaces[ perm[ axis1 ] * 2 + 0 ])
+							_i += seg;
+						if ( j >= 0 && !roundFaces[ perm[ axis2 ] * 2 + 0 ])
+							_j += seg;
+
+						if ( !fillCenter[ perm[ axis0 ] * 2 + u ] && _i == seg && _j == seg )
+							continue;
 
 						let ki = i * det[ 1 ] + j + indexOffset;
 						let kv = i * ( det[ 1 ] + 1 ) + j + vertexOffset;

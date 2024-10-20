@@ -447,7 +447,15 @@ class RoundedBoxGeometry extends BufferGeometry {
 
 							if ( roundness != 0 ) {
 
-								const normal = new Vector3().subVectors( vertex, center ).normalize();
+								if ( !roundFaces[ perm[ axis0 ] * 2 + u ] &&
+									i != 0 && j != 0 && i != 2*seg+1 && j != 2*seg+1 )
+									vertex.multiply( new Vector3( .9, .9, 1. ) );
+
+								const dir = new Vector3().subVectors( vertex, center );
+								const normal = dir.clone().normalize();
+								const dirlenS = dir.lengthSq();
+								if ( dirlenS > radius * radius )
+									dir.divideScalar( Math.sqrt( dirlenS ) / radius );
 
 
 								if ( roundFaces[ perm[ axis0 ] * 2 + u ]) {
@@ -462,9 +470,10 @@ class RoundedBoxGeometry extends BufferGeometry {
 									normals[ k * 3 + perm[ axis1 ] ] = 0;
 									normals[ k * 3 + perm[ axis2 ] ] = u * 2 - 1;
 
+
 								}
 
-								vertex.addVectors( center, normal.multiplyScalar( radius ) );
+								vertex.addVectors( center, dir );
 
 							} else {
 

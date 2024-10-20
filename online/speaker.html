@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+
+<html>
+
+
+<head>
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<link rel="shortcut icon" type="image/png" href="../assets/logo/logo.png"/>
+	<link rel="stylesheet" href="styles.css">
+
+	<script type="importmap">
+	  {
+		"imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js",
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/",
+			"assets/": "../src/"
+		}
+	  }
+	</script>
+</head>
+
+
+<body>
+	<div class="footnote bottomfixed">
+		<a href="../">Home</a>
+	</div>
+	
+	<script type="module">
+
+		import * as THREE from "three";
+		import { install, params } from "./online.js";
+		import { Speaker } from "assets/speaker.js";
+		
+		const gui = install( Speaker );
+	</script>
+</body>
+</html>

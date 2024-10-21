@@ -98,6 +98,11 @@
 			<div class="title">Wine glass</div>
 			<img src="./docs/images/wine-glass.png">
 		</a>
+
+		<a class="style-block" href="./online/speaker.html">
+			<div class="title">Speaker</div>
+			<img src="./docs/images/speaker.png">
+		</a>
 	</div>
 
 	<p style="max-width: 36em; margin: 1em auto;">
@@ -113,6 +118,20 @@
 		<a href="docs/licence.html">Licence</a> 
 	</div>
 
+	<script>
+		function sortDivs(s) {
+		    Array.prototype.slice.call(document.body.querySelectorAll(s)).sort(function sort (ea, eb) {
+		        var a = ea.textContent.trim();
+		        var b = eb.textContent.trim();
+		        if (a < b) return -1;
+		        if (a > b) return 1;
+		        return 0;
+		    }).forEach(function(div) {
+		        div.parentElement.appendChild(div);
+		    });
+		}
+		sortDivs('.style-block');
+	</script>
 
 </body>
 </html>

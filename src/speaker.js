@@ -12,7 +12,7 @@ class Speaker extends ASSETS.Asset {
 		width:         {default: 15, type: 'cm', min: 5, max: 20  ,prec: 2, folder: "Box", name: "Width"},
 		height:        {default: 30, type: 'cm', min: 5, max: 100 ,prec: 2, folder: "Box", name: "Height"},
 		depth:         {default: 20, type: 'cm', min: 5, max: 20  ,prec: 2, folder: "Box", name: "Depth"},
-		speakerDepth:  {default:  1, type: 'cm', min: 5, max: 20  ,prec: 2, folder: "Speakers", name: "Depth"},
+		speakerDepth:  {default:  2, type: 'cm', min: 1, max: 5  ,prec: 2, folder: "Speakers", name: "Depth"},
 	
 		speakerDetail: {default: 12, type: 'n' , min: 6, max: 20  ,prec: 0, folder: "Complexity", name: "Speakers"},
 		bevelDetail:   {default:  2, type: 'n' , min: 1, max: 10  ,prec: 0, folder: "Complexity", name: "Bevel"},

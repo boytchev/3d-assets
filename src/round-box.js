@@ -9,9 +9,9 @@ class RoundBox extends ASSETS.Asset {
 	/* eslint-disable */
 	static paramData = {
 
-		x: {default: 1, type: 'm', min: 0, max: 1, prec: 1, name: "x"},
-		y: {default: 1, type: 'm', min: 0, max: 1, prec: 1, name: "y"},
-		z: {default: 1, type: 'm', min: 0, max: 1, prec: 1, name: "z"},
+		x: {default: 1, type: 'm', min: 0.1, max: 1, prec: 1, name: "x"},
+		y: {default: 1, type: 'm', min: 0.1, max: 1, prec: 1, name: "y"},
+		z: {default: 1, type: 'm', min: 0.1, max: 1, prec: 1, name: "z"},
 
 		f0: {default: true, type: Boolean, chance: 1., folder: "Face", name: "Z-"},
 		f1: {default: true, type: Boolean, chance: 1., folder: "Face", name: "Z+"},
@@ -20,19 +20,19 @@ class RoundBox extends ASSETS.Asset {
 		f4: {default: true, type: Boolean, chance: 1., folder: "Face", name: "Y-"},
 		f5: {default: true, type: Boolean, chance: 1., folder: "Face", name: "Y+"},
 
-		r0: {default: true, type: Boolean, chance: .5, folder: "Round", name: "Z-"},
-		r1: {default: true, type: Boolean, chance: .5, folder: "Round", name: "Z+"},
-		r2: {default: true, type: Boolean, chance: .5, folder: "Round", name: "X-"},
-		r3: {default: true, type: Boolean, chance: .5, folder: "Round", name: "X+"},
-		r4: {default: true, type: Boolean, chance: .5, folder: "Round", name: "Y-"},
-		r5: {default: true, type: Boolean, chance: .5, folder: "Round", name: "Y+"},
+		r0: {default: true, type: Boolean, chance: .7, folder: "Round", name: "Z-"},
+		r1: {default: true, type: Boolean, chance: .7, folder: "Round", name: "Z+"},
+		r2: {default: true, type: Boolean, chance: .7, folder: "Round", name: "X-"},
+		r3: {default: true, type: Boolean, chance: .7, folder: "Round", name: "X+"},
+		r4: {default: true, type: Boolean, chance: .7, folder: "Round", name: "Y-"},
+		r5: {default: true, type: Boolean, chance: .7, folder: "Round", name: "Y+"},
 
-		c0: {default: true, type: Boolean, chance: .5, folder: "Center", name: "Z-"},
-		c1: {default: true, type: Boolean, chance: .5, folder: "Center", name: "Z+"},
-		c2: {default: true, type: Boolean, chance: .5, folder: "Center", name: "X-"},
-		c3: {default: true, type: Boolean, chance: .5, folder: "Center", name: "X+"},
-		c4: {default: true, type: Boolean, chance: .5, folder: "Center", name: "Y-"},
-		c5: {default: true, type: Boolean, chance: .5, folder: "Center", name: "Y+"},
+		c0: {default: true, type: Boolean, chance: 1., folder: "Center", name: "Z-"},
+		c1: {default: true, type: Boolean, chance: 1., folder: "Center", name: "Z+"},
+		c2: {default: true, type: Boolean, chance: 1., folder: "Center", name: "X-"},
+		c3: {default: true, type: Boolean, chance: 1., folder: "Center", name: "X+"},
+		c4: {default: true, type: Boolean, chance: 1., folder: "Center", name: "Y-"},
+		c5: {default: true, type: Boolean, chance: 1., folder: "Center", name: "Y+"},
 
 		roundness: {default: .2, type: Number, min: 0, max: 1, name: "Roundness"},
 

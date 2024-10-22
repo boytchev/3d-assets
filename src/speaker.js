@@ -11,7 +11,7 @@ class Speaker extends ASSETS.Asset {
 
 		width:         {default: 15, type: 'cm', min: 5, max: 20  ,prec: 2, folder: "Box", name: "Width"},
 		height:        {default: 30, type: 'cm', min: 5, max: 100 ,prec: 2, folder: "Box", name: "Height"},
-		depth:         {default: 20, type: 'cm', min: 5, max: 20  ,prec: 2, folder: "Box", name: "Depth"},
+		depth:         {default: 20, type: 'cm', min: 5, max: 40  ,prec: 2, folder: "Box", name: "Depth"},
 		speakerDepth:  {default:  2, type: 'cm', min: 1, max: 5  ,prec: 2, folder: "Speakers", name: "Depth"},
 	
 		speakerDetail: {default: 12, type: 'n' , min: 6, max: 20  ,prec: 0, folder: "Complexity", name: "Speakers"},
@@ -39,7 +39,6 @@ class Speaker extends ASSETS.Asset {
 		this.dispose();
 
 		const simple = params.simple;
-
 		const material = ASSETS.defaultMaterial.clone();
 		material.flatShading = params.flat;
 
@@ -47,15 +46,13 @@ class Speaker extends ASSETS.Asset {
 		const height = Math.max( ASSETS.cm( params.height ), 1.7 * width );
 		const depth = ASSETS.cm( params.depth );
 		const speakerDepth = ASSETS.cm( params.speakerDepth );
-
-		const roundness = .01;
+		const roundness = simple ? 0 : .01;
 
 		const box = new ASSETS.RoundedBoxGeometry( width, height, depth,
 			params.bevelDetail, roundness, [ 1, 1, 1, 1, 1, 1 ],
 			undefined, [ 0, 1, 1, 1, 0, 0 ], false,
 			[ 1, 0, 1, 1, 1, 1 ]
 		).translate( 0, height/2, 0 );
-
 
 		const frontFrame = new THREE.Shape([
 			new THREE.Vector2( -( width )/2+roundness, 0 ),
@@ -68,15 +65,11 @@ class Speaker extends ASSETS.Asset {
 		const s1Height = .9 * height - r1;
 		const s2Height = .1 * height + r2;
 
-		{
-
-			const hole1 = new THREE.Path();
-			hole1.absarc( .0, s1Height, r1, 0, 2*Math.PI, !true );
-			const hole2 = new THREE.Path();
-			hole2.absarc( .0, s2Height, r2, 0, 2*Math.PI, !true );
-			frontFrame.holes = [ hole1, hole2 ];
-
-		}
+		const hole1 = new THREE.Path();
+		hole1.absarc( .0, s1Height, r1, 0, 2*Math.PI, !true );
+		const hole2 = new THREE.Path();
+		hole2.absarc( .0, s2Height, r2, 0, 2*Math.PI, !true );
+		frontFrame.holes = [ hole1, hole2 ];
 
 		const front = new THREE.ShapeGeometry( frontFrame, params.speakerDetail ).translate( 0, 0, depth/2 );
 
@@ -105,9 +98,7 @@ class Speaker extends ASSETS.Asset {
 		bodyMesh.name = 'body';
 
 		this.add( bodyMesh );
-
 		this.position.y -= height/2;
-
 
 	} // Speaker.constructor
 

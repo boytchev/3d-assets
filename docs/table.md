@@ -80,7 +80,7 @@ var model = new Table ({
 
 * `legDetail` &ndash; sections along the legs' length, [1, 30],
 * `legRoundDetail` &ndash; sections on the leg bevel, [1, 10],
-* `topRoundDetail` &ndash; sections on the top bevel,  1, 10],
+* `topRoundDetail` &ndash; sections on the top bevel, [1, 10],
 * `simple` &ndash; if *true* the complexity of the profile is reduced, boolean
 * `flat` &ndash; if *true* flat shading is used, boolean
 	

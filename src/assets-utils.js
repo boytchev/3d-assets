@@ -910,6 +910,42 @@ function clampGeometry( geometry, plane, dir = plane.normal ) {
 
 }
 
+function transformUVs( geometry, matrix ) {
+
+	const uv = geometry.getAttribute( 'uv' ).array;
+	let v = new Vector2();
+	for ( let i = 0; i < uv.length; i += 2 ) {
+
+		v.set( uv[ i ], uv[ i+1 ]);
+		v.applyMatrix3( matrix );
+		uv[ i ] = v.x;
+		uv[ i+1 ] = v.y;
+
+	}
+
+}
+
+function projectUVs( geometry, dir, up = new Vector3( 0, 1, 0 ) ) {
+
+	const uv = geometry.getAttribute( 'uv' ).array;
+	const pos = geometry.getAttribute( 'position' ).array;
+
+	const d2 = up.clone().cross( dir );
+	const d3 = dir.clone().cross( d2 );
+
+	const mat = new Matrix4().makeBasis( d2, d3, dir );
+	let v = new Vector3();
+	for ( let i = 0; i < uv.length / 2; ++i ) {
+
+		v.set( pos[ 3 * i ], pos[ 3 * i + 1 ], pos[ 3 * i + 2 ]);
+		v.applyMatrix4( mat );
+		uv[ 2 * i + 0 ] = v.x;
+		uv[ 2 * i + 1 ] = v.y;
+
+	}
+
+}
+
 // converts centimeters to meters
 function cm( x ) {
 
@@ -1013,4 +1049,4 @@ function clamp( x, min, max ) {
 }
 
 
-export { Asset, RoundedBoxGeometry, AUTO, SmoothExtrudeGeometry, UVCylinderGeometry, RoundedShape, LatheUVGeometry, cm, mm, clamp, percent, slope, defaultMaterial, map, mapExp, round, random, clampGeometry };
+export { Asset, RoundedBoxGeometry, AUTO, SmoothExtrudeGeometry, UVCylinderGeometry, RoundedShape, LatheUVGeometry, cm, mm, clamp, percent, slope, defaultMaterial, map, mapExp, round, random, clampGeometry, transformUVs, projectUVs };

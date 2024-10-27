@@ -72,6 +72,7 @@ class Speaker extends ASSETS.Asset {
 		frontFrame.holes = [ hole1, hole2 ];
 
 		const front = new THREE.ShapeGeometry( frontFrame, params.speakerDetail ).translate( 0, 0, depth/2 );
+		ASSETS.transformUVs( front, new THREE.Matrix3().translate( width/2, width ) );
 
 		const s1 = new ASSETS.LatheUVGeometry([
 			[ 0, speakerDepth ],
@@ -82,6 +83,8 @@ class Speaker extends ASSETS.Asset {
 			[ r1 * .9, speakerDepth/4 ],
 			[ r1, 0 ],
 		], 2 * params.speakerDetail ).rotateX( -Math.PI/2 ).translate( 0, s1Height, depth/2 );
+		ASSETS.projectUVs( s1, new THREE.Vector3( 0, 0, 1 ) );
+		ASSETS.transformUVs( s1, new THREE.Matrix3().translate( width/2, width ) );
 
 		const s2 = new ASSETS.LatheUVGeometry([
 			[ 0, speakerDepth ],
@@ -92,9 +95,12 @@ class Speaker extends ASSETS.Asset {
 			[ r2 * .9, speakerDepth/4 ],
 			[ r2, 0 ],
 		], 2 * params.speakerDetail ).rotateX( -Math.PI/2 ).translate( 0, s2Height, depth/2 );
+		ASSETS.projectUVs( s2, new THREE.Vector3( 0, 0, 1 ) );
+		ASSETS.transformUVs( s2, new THREE.Matrix3().translate( width/2, width ) );
 
 		const body = BufferGeometryUtils.mergeGeometries([ box, front, s1, s2 ]);
 		const bodyMesh = new THREE.Mesh( body, material );
+
 		bodyMesh.name = 'body';
 
 		this.add( bodyMesh );

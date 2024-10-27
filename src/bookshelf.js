@@ -13,7 +13,7 @@ class Bookshelf extends ASSETS.Asset {
 		width:        { default: 90, type: 'cm'  , min: 30, max: 120, prec: 1, folder: "General", name: "Width" },
 		depth:        { default: 20, type: 'cm'  , min: 10, max:  40, prec: 1, folder: "General", name: "Depth" },
 		thickness:    { default:  2, type: 'cm'  , min:  1, max:   3, prec: 1, folder: "General", name: "Thickness" },
-		offset:       { default: 10, type: 'cm'  , min:  0, max:  30, prec: 1, folder: "General", name: "Legs" },
+		legs:       { default: 10, type: 'cm'  , min:  0, max:  30, prec: 1, folder: "General", name: "Legs" },
 		roundness:    { default:  2, type: 'mm'  , min:  0, max:  20, prec: 3, folder: "General", name: "Roundness" },
 		shelfHeight:  { default: 25, type: 'cm'  , min: 10, max:  50, prec: 1, folder: "Shelves", name: "Height" },
 		shelvesCount: { default:  3, type:  'n'  , min:  1, max:  10, prec: 0, folder: "Shelves", name: "Count" },
@@ -51,11 +51,11 @@ class Bookshelf extends ASSETS.Asset {
 		const shelvesCount = params.shelvesCount + 1;
 		const depth = ASSETS.cm( params.depth );
 		const thickness = ASSETS.cm( params.thickness );
-		const offset = Math.min( ASSETS.cm( params.offset ), shelfHeight );
+		const legs = Math.min( ASSETS.cm( params.legs ), shelfHeight );
 		const roundness = simple ? 0 : Math.min( thickness /2, ASSETS.mm( params.roundness ) );
 		const detail = params.roundDetail;
 
-		const height = ( shelvesCount-1 ) * ( shelfHeight ) + thickness + offset;
+		const height = ( shelvesCount-1 ) * ( shelfHeight ) + thickness + legs;
 
 		const sideL = new ASSETS.RoundedBoxGeometry(
 			thickness, height, depth,
@@ -82,7 +82,7 @@ class Bookshelf extends ASSETS.Asset {
 				width - 2 * thickness, thickness, depth - thickness,
 				detail, roundness, [ 0, 1, 0, 0, 1, 1 ],
 				undefined, [ 0, 1, 0, 0, 1, 1 ], false
-			).translate( 0, i * shelfHeight + offset + thickness/2, thickness/2 );
+			).translate( 0, i * shelfHeight + legs + thickness/2, thickness/2 );
 			shelves.push( shelf );
 
 		}

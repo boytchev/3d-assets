@@ -114,6 +114,7 @@ class PhotoFrame extends ASSETS.Asset {
 		const plane = new THREE.PlaneGeometry( width, height ).translate( 0, 0, -thickness/2 );
 		const planeMesh = new THREE.Mesh( plane, material );
 		plane.uvIndex =1;
+		planeMesh.name = 'plane';
 		this.add( planeMesh );
 
 

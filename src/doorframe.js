@@ -98,6 +98,7 @@ class Doorframe extends ASSETS.Asset {
 		const frame0 = BufferGeometryUtils.mergeGeometries([
 			left, right, top,
 		]).translate( 0, 0, wallThickness/2 + thickness/2 );
+		ASSETS.projectUVs( frame0, new THREE.Vector3( 0, 0, 1 ) );
 		const frame1 = frame0.clone().rotateY( Math.PI );
 
 		this.frame = BufferGeometryUtils.mergeGeometries([

@@ -1,6 +1,15 @@
 # 3D Assets
 
 
+## 0.8.0
+* Added "Bookshelf" in *bookshelf.js*
+* Added "Doorframe" in *doorframe.js*
+* Added "Drawer" in *drawer.js*
+* Added "Photo frame" in *photo-frame.js*
+* Added "Round box" in *round-box.js*
+* Added "Speaker" in *speaker.js*
+
+
 ## 0.7.0
 * Added "Chair" in *chair.js*
 * Added "Monitor" in *monitor.js*

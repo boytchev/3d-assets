@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import * as ASSETS from './assets-utils.js';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
+import * as BP from './bin-packing.js';
 
 class Chair extends ASSETS.Asset {
 
@@ -9,25 +10,25 @@ class Chair extends ASSETS.Asset {
 	/* eslint-disable */
 	static paramData = {
 
-		seatWidth:              { default:    42, type: 'cm'   , min: 20, max: 100, prec: 1, folder: "Seat"      , name: "Width"      },
-		seatDepth:              { default:    45, type: 'cm'   , min: 20, max: 100, prec: 1, folder: "Seat"      , name: "Depth"      },
-		seatHeight:             { default:    45, type: 'cm'   , min: 20, max: 100, prec: 1, folder: "Seat"      , name: "Height"     },
-		seatThickness:          { default:     2, type: 'cm'   , min:  2, max: 10 , prec: 1, folder: "Seat"      , name: "Thickness"  },
-                                                                                  
-		backrestHeight:         { default:    50, type: 'cm'   , min: 10, max: 100, prec: 1, folder: "Backrest"  , name: "Height"     },
-		backrestSidesThickness: { default:     4, type: 'cm'   , min:  1, max: 10 , prec: 1, folder: "Backrest"  , name: "Thickness"  },
-		backrestAngle:          { default:     5, type: 'deg'  , min:  0, max: 45 , prec: 1, folder: "Backrest"  , name: "Angle"      },
-                                                                                  
-		cussionThickness:       { default:     3, type: 'cm'   , min:  2, max: 15 , prec: 1, folder: "Cussions"  , name: "Thickness"  },
-		cussionOffset:          { default:     2, type: 'cm'   , min:  2, max: 5  , prec: 1, folder: "Cussions"  , name: "Offset"     },
-		cussionRoundness:       { default:   0.2, type: Number , min:  0, max: 0.2, prec: 2, folder: "Cussions"  , name: "Roundness"  },                                               
-		upholstery:             { default: false, type: Boolean, chance: .5                , folder: "Cussions"  , name: "Upholstery" },
-                                                                                  
-		legThickness:           { default:     4, type: 'cm'   , min:  2, max: 10 , prec: 1, folder: "Legs"      , name: "Thickness"  },
+		seatWidth: {default: 42, type: 'cm', min: 20, max: 100, prec: 1, folder: "Seat", name: "Width"},
+		seatDepth: {default: 45, type: 'cm', min: 20, max: 100, prec: 1, folder: "Seat", name: "Depth"},
+		seatHeight: {default: 45, type: 'cm', min: 20, max: 100, prec: 1, folder: "Seat", name: "Height"},
+		seatThickness: {default: 2, type: 'cm', min: 2, max: 10, prec: 1, folder: "Seat", name: "Thickness"},
 
-		cussionDetail:          { default:     2, type: 'n'    , min:  1, max: 10 , prec: 0, folder: "Complexity", name: "Cussions"   , exp: true },
-		flat:                   { default: false, type: Boolean, chance: .3			       , folder: "Complexity", name: "Simple"     },
-		simple:                 { default: false, type: Boolean, chance: .3                , folder: "Complexity", name: "Flat"       },
+		backrestHeight: {default: 50, type: 'cm', min: 10, max: 100, prec: 1, folder: "Backrest", name: "Height"},
+		backrestSidesThickness: {default: 4, type: 'cm', min: 1, max: 10, prec: 1, folder: "Backrest", name: "Thickness"},
+		backrestAngle: {default: 5, type: 'deg', min: 0, max: 45, prec: 1, folder: "Backrest", name: "Angle"},
+
+		cussionThickness: {default: 3, type: 'cm', min: 2, max: 15, prec: 1, folder: "Cussions", name: "Thickness"},
+		cussionOffset: {default: 2, type: 'cm', min: 2, max: 5, prec: 1, folder: "Cussions", name: "Offset"},
+		cussionRoundness: {default: 0.2, type: Number, min: 0, max: 0.2, prec: 2, folder: "Cussions", name: "Roundness"},
+		upholstery: {default: false, type: Boolean, chance: .5, folder: "Cussions", name: "Upholstery"},
+
+		legThickness: {default: 4, type: 'cm', min: 2, max: 10, prec: 1, folder: "Legs", name: "Thickness"},
+
+		cussionDetail: {default: 2, type: 'n', min: 1, max: 10, prec: 0, folder: "Complexity", name: "Cussions", exp: true},
+		flat: {default: false, type: Boolean, chance: .3, folder: "Complexity", name: "Simple"},
+		simple: {default: false, type: Boolean, chance: .3, folder: "Complexity", name: "Flat"},
 
 	};
 	/* eslint-enable */
@@ -71,43 +72,68 @@ class Chair extends ASSETS.Asset {
 		material.flatShading = params.flat;
 
 
+		const l = [];
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( seatWidth, seatThickness, seatDepth ) ); // seat
+
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles(
+			seatCussionWidth + ( upholstery ? r1 / Math.sqrt( 3 ) : 0 ),
+			upholstery ? 1. : cussionThickness,
+			seatCussionDepth + ( upholstery ? r1 / Math.sqrt( 3 ) : 0 )
+		) ); // cussion1
+
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles(
+			legThickness, seatHeight - seatThickness, legThickness, [ 1, 1, 1, 1, 1, 0 ]) ); // legs
+
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles(
+			backrestSidesThickness, backrestHeight, backrestSidesThickness, [ 1, 1, 1, 1, 0, 1 ]) ); // backrest
+
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles(
+			( upholstery ? seatWidth : backrestCussionWidth ) + ( upholstery ? r2 / Math.sqrt( 3 ) : 0 ),
+			backrestHeight + ( upholstery ? r2 / Math.sqrt( 3 ) : 0 ),
+			upholstery ? 1 : cussionThickness,
+			[ !upholstery, 1, !upholstery, !upholstery, 0, !upholstery ]) ); // cussion2
+		l.forEach( ( rect ) => {
+
+			rect.width += 0.01;
+			rect.height += 0.01;
+
+		} );
+
+		//console.log( "packing", l.length, "rectangles" );
+		console.time( 'test' );
+		let repeat = true;
+		let scale = 1;
+		let binPacker;
+		while ( repeat ) {
+
+			binPacker = BP.BinPack();
+			binPacker.binWidth( scale );
+			binPacker.binHeight( scale );
+			binPacker.addAll( l );
+			if ( binPacker.unpositioned.length == 0 ) repeat = false;
+			else scale *= 1.1;
+
+		}
+
+		console.timeEnd( 'test' );
+		//console.log( "packed", binPacker.positioned.length, "failed", binPacker.unpositioned.length, 'scale', scale );
+
 		const uvRemap = ( tx = 0, ty = 0, s = 1, r = 0 ) => {
 
 			return new THREE.Matrix3().rotate( r / 180 * Math.PI ).translate( tx, ty ).scale( s, s );
 
 		};
 
-		const uvEmpty = 0.03;
-		const uvX1 = 2*uvEmpty + legThickness * 4;
-		const uvY1 = 2*uvEmpty + seatDepth + seatThickness * 2;
+		const pack = binPacker.positioned;
+		//console.log( pack );
 
-		const uvY2 = 2 * uvEmpty + 2 * cussionThickness + backrestCussionWidth;
-
-		const uvBoundX0 = 2*uvEmpty + 2 * seatWidth + 2 * seatThickness;
-		const uvBoundY0 =
-			uvEmpty + uvY1 + Math.max( backrestHeight + backrestSidesThickness, seatHeight + legThickness );
-
-		const uvBoundX1 =
-			2 * uvEmpty +
-			Math.max( 2 * backrestHeight + 2 * cussionThickness, 2 * seatCussionWidth + 2 * cussionThickness );
-		const uvBoundY1 = 2 * uvEmpty + backrestCussionWidth + seatCussionDepth + 4 * cussionThickness;
-
-		const uvScale0 = 1 / Math.max( uvBoundX0, uvBoundY0 );
-		const uvScale1 = 1 / Math.max( uvBoundX1, uvBoundY1 );
-
-		const uvMatrices = [
-			uvRemap( uvEmpty, uvEmpty, uvScale0 ), // seat
-			uvRemap( uvEmpty, uvY2, uvScale1 ), // cussion1
-			uvRemap( uvEmpty, uvY1, uvScale0 ), // legs
-			uvRemap( uvX1, uvY1 - backrestSidesThickness, uvScale0 ), // backrestL
-			uvRemap( uvX1 + backrestSidesThickness * 4, uvY1 - backrestSidesThickness, uvScale0 ), // backrestR
-			uvRemap( uvEmpty, uvEmpty, uvScale1 ), // cussion2
-		];
+		const uvMatrices = pack.map( ( rect ) => uvRemap( rect.x + 0.005, rect.y + 0.005, 1./scale, 0 ) );
+		//console.log( uvMatrices );
 
 		const seat = new ASSETS.RoundedBoxGeometry(
-				 seatWidth, seatThickness, seatDepth,
+			seatWidth, seatThickness, seatDepth,
 			undefined, undefined, undefined,
-			uvMatrices[ 0 ]
+			uvMatrices.slice( 0, 6 )
 		).translate(
 			0, seatHeight - seatThickness / 2, 0
 		);
@@ -123,12 +149,12 @@ class Chair extends ASSETS.Asset {
 			simple ? undefined : cussionDetail,
 			simple ? undefined : cussionRoundness,
 			[ !upholstery, !upholstery, !upholstery, !upholstery, 0, 1 ],
-			uvMatrices[ 1 ]
+			uvMatrices.slice( 6, 12 )
 		);
 		if ( upholstery )
 			cussion1.translate(
 				0,
-				seatHeight - 0.5 + r1 * ( 1 - 1/Math.sqrt( 2 ) ),
+				seatHeight - 0.5 + r1 * ( 1 - 1 / Math.sqrt( 2 ) ),
 				-cussionOffset / 4,
 			);
 		else
@@ -152,7 +178,7 @@ class Chair extends ASSETS.Asset {
 				legThickness, seatHeight - seatThickness, legThickness,
 				undefined, undefined,
 				[ 1, 1, 1, 1, 1, 0 ],
-				uvMatrices[ 2 ]
+				uvMatrices.slice( 12, 18 )
 			).translate(
 				legPositions[ i ].x, seatHeight / 2 - seatThickness / 2, legPositions[ i ].y
 			);
@@ -161,13 +187,13 @@ class Chair extends ASSETS.Asset {
 
 		// backrest
 		const backrestMatrix =
-				new THREE.Matrix4().makeTranslation(
-					0,
-					seatHeight - Math.sin( backrestAngle ) * backrestSidesThickness / 2,
-					-seatDepth / 2 + backrestSidesThickness / 2
-				).multiply(
-					new THREE.Matrix4().makeRotationX( -backrestAngle )
-				);
+			new THREE.Matrix4().makeTranslation(
+				0,
+				seatHeight - Math.sin( backrestAngle ) * backrestSidesThickness / 2,
+				-seatDepth / 2 + backrestSidesThickness / 2
+			).multiply(
+				new THREE.Matrix4().makeRotationX( -backrestAngle )
+			);
 
 		let backrestSideL = null;
 		let backrestSideR = null;
@@ -178,7 +204,7 @@ class Chair extends ASSETS.Asset {
 				seatWidth - 0.001, backrestHeight, backrestSidesThickness,
 				undefined, undefined,
 				[ 1, 1, 1, 1, 0, 1 ],
-				uvMatrices[ 3 ]
+				uvMatrices.slice( 18, 24 )
 			).translate( 0, backrestHeight / 2, 0 ).applyMatrix4( backrestMatrix );
 
 		} else {
@@ -188,7 +214,7 @@ class Chair extends ASSETS.Asset {
 				backrestScale.x, backrestScale.y, backrestScale.z,
 				undefined, undefined,
 				[ 1, 1, 1, 1, 0, 1 ],
-				uvMatrices[ 3 ]
+				uvMatrices.slice( 18, 24 )
 			).translate(
 				seatWidth / 2 - backrestSidesThickness / 2 - 0.001, backrestHeight / 2, 0
 			).applyMatrix4( backrestMatrix );
@@ -197,7 +223,7 @@ class Chair extends ASSETS.Asset {
 				backrestScale.x, backrestScale.y, backrestScale.z,
 				undefined, undefined,
 				[ 1, 1, 1, 1, 0, 1 ],
-				uvMatrices[ 4 ]
+				uvMatrices.slice( 18, 24 )
 			).translate(
 				-seatWidth / 2 + backrestSidesThickness / 2 + 0.001, backrestHeight / 2, 0
 			).applyMatrix4( backrestMatrix );
@@ -217,13 +243,13 @@ class Chair extends ASSETS.Asset {
 			simple ? undefined : cussionDetail,
 			simple ? undefined : cussionRoundness,
 			[ !upholstery, 1, !upholstery, !upholstery, 0, !upholstery ],
-			uvMatrices[ 5 ]
+			uvMatrices.slice( 24, 30 )
 		);
 		if ( upholstery )
 			cussion2.translate(
 				0,
 				backrestHeight / 2,
-				-.5 + backrestSidesThickness / 2 + r2 * ( 1 - 1/Math.sqrt( 2 ) )
+				-.5 + backrestSidesThickness / 2 + r2 * ( 1 - 1 / Math.sqrt( 2 ) )
 			).applyMatrix4( backrestMatrix );
 		else
 			cussion2.translate(
@@ -247,7 +273,7 @@ class Chair extends ASSETS.Asset {
 				cussion1,
 				cussion2
 			]);
-			this.cussions.uvIndex = 1;
+			this.cussions.uvIndex = 0;
 
 		}
 
@@ -262,7 +288,7 @@ class Chair extends ASSETS.Asset {
 
 		}
 
-		this.position.y = -( seatHeight+backrestHeight )/2;
+		this.position.y = -( seatHeight + backrestHeight ) / 2;
 
 		seat.dispose();
 		backrestSideL.dispose();

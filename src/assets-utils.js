@@ -282,6 +282,30 @@ class RoundedBoxGeometry extends BufferGeometry {
 
 	}
 
+	static getRectangles( x, y, z, faces = [ 1, 1, 1, 1, 1, 1 ]) {
+
+		let perm;
+		if ( x <= y && x <= z ) perm = [ 2, 0, 1 ];
+		else if ( y <= x && y <= z ) perm = [ 0, 1, 2 ];
+		else if ( z <= x && z <= y ) perm = [ 1, 2, 0 ];
+
+		let size = [ x, y, z ];
+		size = [ size[ perm[ 0 ] ], size[ perm[ 1 ] ], size[ perm[ 2 ] ] ];
+		x = size[ 0 ];
+		y = size[ 1 ];
+		z = size[ 2 ];
+		let res =[];
+
+		res.push( { width: x, height: y } );
+		res.push( { width: x, height: y } );
+		res.push( { width: y, height: z } );
+		res.push( { width: y, height: z } );
+		res.push( { width: z, height: x } );
+		res.push( { width: z, height: x } );
+		return res;
+
+	}
+
 	constructor(
 		x, y, z,
 		segments = 2, roundness = 0, faces = [ 1, 1, 1, 1, 1, 1 ],
@@ -347,16 +371,34 @@ class RoundedBoxGeometry extends BufferGeometry {
 		const uvRemapMatrix = ( tx, ty, sx, sy, r = 0 ) =>
 			new Matrix3().scale( sx, sy ).rotate( r / 180 * Math.PI ).translate( tx, ty );
 
-		let m = [
-			uvRemapMatrix( y+x, 0, -x, y ).premultiply( uvMatrix ),
-			uvRemapMatrix( y+x, y+z+y, -x, -y ).premultiply( uvMatrix ),
+		let m;
+		if ( Array.isArray( uvMatrix ) ) {
 
-			uvRemapMatrix( y+x+y, y, -y, z ).premultiply( uvMatrix ),
-			uvRemapMatrix( 0, y, y, z ).premultiply( uvMatrix ),
+			m = [
+				uvRemapMatrix( x, 0, -x, y ).premultiply( uvMatrix[ 0 ]),
+				uvRemapMatrix( x, y, -x, -y ).premultiply( uvMatrix[ 1 ]),
 
-			uvRemapMatrix( 2*y + x, y, -z, x, 90 ).premultiply( uvMatrix ),
-			uvRemapMatrix( y + x, y, -z, -x, 90 ).premultiply( uvMatrix ),
-		];
+				uvRemapMatrix( y, 0, -y, z ).premultiply( uvMatrix[ 2 ]),
+				uvRemapMatrix( 0, 0, y, z ).premultiply( uvMatrix[ 3 ]),
+
+				uvRemapMatrix( 0, 0, z, x ).premultiply( uvMatrix[ 4 ]),
+				uvRemapMatrix( 0, 0, z, x ).premultiply( uvMatrix[ 5 ]),
+			];
+
+		} else {
+
+			m = [
+				uvRemapMatrix( y+x, 0, -x, y ).premultiply( uvMatrix ),
+				uvRemapMatrix( y+x, y+z+y, -x, -y ).premultiply( uvMatrix ),
+
+				uvRemapMatrix( y+x+y, y, -y, z ).premultiply( uvMatrix ),
+				uvRemapMatrix( 0, y, y, z ).premultiply( uvMatrix ),
+
+				uvRemapMatrix( 2*y + x, y, -z, x, 90 ).premultiply( uvMatrix ),
+				uvRemapMatrix( y + x, y, -z, -x, 90 ).premultiply( uvMatrix ),
+			];
+
+		}
 
 		// count offset for writing
 		let vertexOffset = 0;

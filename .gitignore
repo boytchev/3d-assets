@@ -7,3 +7,6 @@ test/
 src/temp.js
 online/temp.html
 *.bkp
+
+paper/*
+!paper/paper.tex

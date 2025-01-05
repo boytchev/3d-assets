@@ -282,29 +282,22 @@ class RoundedBoxGeometry extends BufferGeometry {
 
 	}
 
-	static getRectangles( x, y, z, faces = [ 1, 1, 1, 1, 1, 1 ]) {
+	static getRectangles( params ) {
 
-		let perm;
-		if ( x <= y && x <= z ) perm = [ 2, 0, 1 ];
-		else if ( y <= x && y <= z ) perm = [ 0, 1, 2 ];
-		else if ( z <= x && z <= y ) perm = [ 1, 2, 0 ];
+		let { x, y, z, faces = [ 1, 1, 1, 1, 1, 1 ] } = params;
 
-		let size = [ x, y, z ];
-		size = [ size[ perm[ 0 ] ], size[ perm[ 1 ] ], size[ perm[ 2 ] ] ];
-		x = size[ 0 ];
-		y = size[ 1 ];
-		z = size[ 2 ];
 		let res =[];
 
-		res.push( { width: x, height: y } );
-		res.push( { width: x, height: y } );
-		res.push( { width: y, height: z } );
-		res.push( { width: y, height: z } );
-		res.push( { width: z, height: x } );
-		res.push( { width: z, height: x } );
+		if ( faces[ 0 ]) res.push( { width: x, height: y, i: 0, src: params } );
+		if ( faces[ 1 ]) res.push( { width: x, height: y, i: 1, src: params } );
+		if ( faces[ 2 ]) res.push( { width: y, height: z, i: 2, src: params } );
+		if ( faces[ 3 ]) res.push( { width: y, height: z, i: 3, src: params } );
+		if ( faces[ 4 ]) res.push( { width: z, height: x, i: 4, src: params } );
+		if ( faces[ 5 ]) res.push( { width: z, height: x, i: 5, src: params } );
 		return res;
 
 	}
+
 
 	constructor(
 		x, y, z,
@@ -315,17 +308,28 @@ class RoundedBoxGeometry extends BufferGeometry {
 	) {
 
 		super();
+
+
 		// switch face order depending on size so that the UV unwrap is more efficient
 		let perm;
-		if ( x <= y && x <= z ) perm = [ 2, 0, 1 ];
-		else if ( y <= x && y <= z ) perm = [ 0, 1, 2 ];
-		else if ( z <= x && z <= y ) perm = [ 1, 2, 0 ];
-
 		let size = [ x, y, z ];
-		size = [ size[ perm[ 0 ] ], size[ perm[ 1 ] ], size[ perm[ 2 ] ] ];
-		x = size[ 0 ];
-		y = size[ 1 ];
-		z = size[ 2 ];
+
+		if ( Array.isArray( uvMatrix ) ) {
+
+			perm = [ 0, 1, 2 ];
+
+		} else {
+
+			if ( x <= y && x <= z ) perm = [ 2, 0, 1 ];
+			else if ( y <= x && y <= z ) perm = [ 0, 1, 2 ];
+			else if ( z <= x && z <= y ) perm = [ 1, 2, 0 ];
+
+			size = [ size[ perm[ 0 ] ], size[ perm[ 1 ] ], size[ perm[ 2 ] ] ];
+			x = size[ 0 ];
+			y = size[ 1 ];
+			z = size[ 2 ];
+
+		}
 
 		const seg = roundness > 0 ? segments : 0;
 		const detail = [
@@ -374,15 +378,18 @@ class RoundedBoxGeometry extends BufferGeometry {
 		let m;
 		if ( Array.isArray( uvMatrix ) ) {
 
+			for ( let i = 0; i < 6; ++i )
+				console.assert( uvMatrix[ i ] || !faces[ i ]);
+
 			m = [
-				uvRemapMatrix( x, 0, -x, y ).premultiply( uvMatrix[ 0 ]),
-				uvRemapMatrix( x, y, -x, -y ).premultiply( uvMatrix[ 1 ]),
+				uvRemapMatrix( x, 0, -x, y ).premultiply( uvMatrix[ 0 ] ?? new Matrix3().makeScale( 0, 0 ) ),
+				uvRemapMatrix( x, y, -x, -y ).premultiply( uvMatrix[ 1 ] ?? new Matrix3().makeScale( 0, 0 ) ),
 
-				uvRemapMatrix( y, 0, -y, z ).premultiply( uvMatrix[ 2 ]),
-				uvRemapMatrix( 0, 0, y, z ).premultiply( uvMatrix[ 3 ]),
+				uvRemapMatrix( y, 0, -y, z ).premultiply( uvMatrix[ 2 ] ?? new Matrix3().makeScale( 0, 0 ) ),
+				uvRemapMatrix( 0, 0, y, z ).premultiply( uvMatrix[ 3 ] ?? new Matrix3().makeScale( 0, 0 ) ),
 
-				uvRemapMatrix( 0, 0, z, x ).premultiply( uvMatrix[ 4 ]),
-				uvRemapMatrix( 0, 0, z, x ).premultiply( uvMatrix[ 5 ]),
+				uvRemapMatrix( 0, 0, z, x ).premultiply( uvMatrix[ 4 ] ?? new Matrix3().makeScale( 0, 0 ) ),
+				uvRemapMatrix( 0, 0, z, x ).premultiply( uvMatrix[ 5 ] ?? new Matrix3().makeScale( 0, 0 ) ),
 			];
 
 		} else {

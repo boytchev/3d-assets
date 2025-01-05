@@ -71,27 +71,65 @@ class Chair extends ASSETS.Asset {
 		const material = ASSETS.defaultMaterial.clone();
 		material.flatShading = params.flat;
 
+		// data for parts
+		const seatData = {
+			x: seatWidth, y: seatThickness, z: seatDepth,
+		};
+		const cussion1Data = {
+			x: seatCussionWidth,
+			y: upholstery ? 1. : cussionThickness,
+			z: seatCussionDepth,
+			faces: [ !upholstery, !upholstery, !upholstery, !upholstery, 0, 1 ],
+			roundness: simple ? undefined : cussionRoundness,
+		};
+		const r1 = ASSETS.RoundedBoxGeometry.computeCurveRadius(
+			cussion1Data.x, cussion1Data.y, cussion1Data.z, cussion1Data.roundness
+		);
+		if ( upholstery ) {
+
+			cussion1Data.x += r1 / Math.sqrt( 3 );
+			cussion1Data.z += r1 / Math.sqrt( 3 );
+
+		}
+
+		const legsData = {
+			x: legThickness, y: seatHeight - seatThickness, z: legThickness,
+			faces: [ 1, 1, 1, 1, 1, 0 ],
+		};
+		const cussion2Data = {
+			x: ( upholstery ? seatWidth : backrestCussionWidth ),
+			y: backrestHeight,
+			z: upholstery ? 1 : cussionThickness,
+			faces: [ !upholstery, 1, !upholstery, !upholstery, 0, !upholstery ],
+			roundness: simple ? undefined : cussionRoundness,
+		};
+		const r2 = ASSETS.RoundedBoxGeometry.computeCurveRadius(
+			cussion2Data.x, cussion2Data.y, cussion2Data.z, cussion2Data.roundness
+		);
+		if ( upholstery ) {
+
+			cussion2Data.x += r2 / Math.sqrt( 3 );
+			cussion2Data.y += r2 / Math.sqrt( 3 );
+
+		}
+
+		const backrestData = {
+			x: upholstery ? seatWidth - 0.001 : backrestSidesThickness,
+			y: backrestHeight,
+			z: backrestSidesThickness,
+			faces: [ 1, 1, 1, 1, 0, 1 ],
+		};
 
 		const l = [];
-		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( seatWidth, seatThickness, seatDepth ) ); // seat
+		const addFaces = ( data ) =>
+			l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( data ) );
 
-		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles(
-			seatCussionWidth + ( upholstery ? r1 / Math.sqrt( 3 ) : 0 ),
-			upholstery ? 1. : cussionThickness,
-			seatCussionDepth + ( upholstery ? r1 / Math.sqrt( 3 ) : 0 )
-		) ); // cussion1
+		addFaces( seatData );
+		addFaces( cussion1Data );
+		addFaces( legsData );
+		addFaces( backrestData );
+		addFaces( cussion2Data );
 
-		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles(
-			legThickness, seatHeight - seatThickness, legThickness, [ 1, 1, 1, 1, 1, 0 ]) ); // legs
-
-		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles(
-			backrestSidesThickness, backrestHeight, backrestSidesThickness, [ 1, 1, 1, 1, 0, 1 ]) ); // backrest
-
-		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles(
-			( upholstery ? seatWidth : backrestCussionWidth ) + ( upholstery ? r2 / Math.sqrt( 3 ) : 0 ),
-			backrestHeight + ( upholstery ? r2 / Math.sqrt( 3 ) : 0 ),
-			upholstery ? 1 : cussionThickness,
-			[ !upholstery, 1, !upholstery, !upholstery, 0, !upholstery ]) ); // cussion2
 		l.forEach( ( rect ) => {
 
 			rect.width += 0.01;
@@ -106,9 +144,7 @@ class Chair extends ASSETS.Asset {
 		let binPacker;
 		while ( repeat ) {
 
-			binPacker = BP.BinPack();
-			binPacker.binWidth( scale );
-			binPacker.binHeight( scale );
+			binPacker = new BP.BinPack( scale, scale );
 			binPacker.addAll( l );
 			if ( binPacker.unpositioned.length == 0 ) repeat = false;
 			else scale *= 1.1;
@@ -116,40 +152,43 @@ class Chair extends ASSETS.Asset {
 		}
 
 		console.timeEnd( 'test' );
-		//console.log( "packed", binPacker.positioned.length, "failed", binPacker.unpositioned.length, 'scale', scale );
 
-		const uvRemap = ( tx = 0, ty = 0, s = 1, r = 0 ) => {
+		const uvRemap = ( tx = 0, ty = 0, s = 1, r = false, width = 0 ) => {
 
-			return new THREE.Matrix3().rotate( r / 180 * Math.PI ).translate( tx, ty ).scale( s, s );
+			let mat = new THREE.Matrix3();
+			if ( r )
+				mat = mat.rotate( .5 * Math.PI ).translate( 0, width );
+
+			return mat.translate( tx, ty ).scale( s, s );
 
 		};
 
 		const pack = binPacker.positioned;
-		//console.log( pack );
 
-		const uvMatrices = pack.map( ( rect ) => uvRemap( rect.x + 0.005, rect.y + 0.005, 1./scale, 0 ) );
+		for ( const rect of pack ) {
+
+			rect.data.src.uvMatrices ??= [];
+			if ( rect.rotated )
+				rect.data.src.uvMatrices[ rect.data.i ] = uvRemap( rect.x + 0.005, rect.y + 0.005, 1./scale, true, rect.height );
+			else rect.data.src.uvMatrices[ rect.data.i ] = uvRemap( rect.x + 0.005, rect.y + 0.005, 1./scale, 0 );
+
+		}
 		//console.log( uvMatrices );
 
 		const seat = new ASSETS.RoundedBoxGeometry(
-			seatWidth, seatThickness, seatDepth,
+			seatData.x, seatData.y, seatData.z,
 			undefined, undefined, undefined,
-			uvMatrices.slice( 0, 6 )
+			seatData.uvMatrices
 		).translate(
 			0, seatHeight - seatThickness / 2, 0
 		);
 
-		const r1 = ASSETS.RoundedBoxGeometry.computeCurveRadius(
-			seatCussionWidth, upholstery ? 1 : cussionThickness, seatCussionDepth,
-			simple ? undefined : cussionRoundness
-		);
 		const cussion1 = new ASSETS.RoundedBoxGeometry(
-			seatCussionWidth + ( upholstery ? r1 / Math.sqrt( 3 ) : 0 ),
-			upholstery ? 1. : cussionThickness,
-			seatCussionDepth + ( upholstery ? r1 / Math.sqrt( 3 ) : 0 ),
+			cussion1Data.x, cussion1Data.y, cussion1Data.z,
 			simple ? undefined : cussionDetail,
 			simple ? undefined : cussionRoundness,
-			[ !upholstery, !upholstery, !upholstery, !upholstery, 0, 1 ],
-			uvMatrices.slice( 6, 12 )
+			cussion1Data.faces,
+			cussion1Data.uvMatrices
 		);
 		if ( upholstery )
 			cussion1.translate(
@@ -175,10 +214,10 @@ class Chair extends ASSETS.Asset {
 		for ( let i = 0; i < 4; ++i ) {
 
 			legs[ i ] = new ASSETS.RoundedBoxGeometry(
-				legThickness, seatHeight - seatThickness, legThickness,
+				legsData.x, legsData.y, legsData.z,
 				undefined, undefined,
-				[ 1, 1, 1, 1, 1, 0 ],
-				uvMatrices.slice( 12, 18 )
+				legsData.faces,
+				legsData.uvMatrices
 			).translate(
 				legPositions[ i ].x, seatHeight / 2 - seatThickness / 2, legPositions[ i ].y
 			);
@@ -198,52 +237,38 @@ class Chair extends ASSETS.Asset {
 		let backrestSideL = null;
 		let backrestSideR = null;
 
-		if ( upholstery ) {
+		backrestSideL = new ASSETS.RoundedBoxGeometry(
+			backrestData.x, backrestData.y, backrestData.z,
+			undefined, undefined,
+			backrestData.faces,
+			backrestData.uvMatrices
+		);
 
-			backrestSideL = new ASSETS.RoundedBoxGeometry(
-				seatWidth - 0.001, backrestHeight, backrestSidesThickness,
-				undefined, undefined,
-				[ 1, 1, 1, 1, 0, 1 ],
-				uvMatrices.slice( 18, 24 )
-			).translate( 0, backrestHeight / 2, 0 ).applyMatrix4( backrestMatrix );
+		if ( upholstery )
+			backrestSideL.translate( 0, backrestHeight / 2, 0 ).applyMatrix4( backrestMatrix );
+		else {
 
-		} else {
-
-			const backrestScale = new THREE.Vector3( backrestSidesThickness, backrestHeight, backrestSidesThickness );
-			backrestSideL = new ASSETS.RoundedBoxGeometry(
-				backrestScale.x, backrestScale.y, backrestScale.z,
-				undefined, undefined,
-				[ 1, 1, 1, 1, 0, 1 ],
-				uvMatrices.slice( 18, 24 )
-			).translate(
+			backrestSideL.translate(
 				seatWidth / 2 - backrestSidesThickness / 2 - 0.001, backrestHeight / 2, 0
 			).applyMatrix4( backrestMatrix );
 
 			backrestSideR = new ASSETS.RoundedBoxGeometry(
-				backrestScale.x, backrestScale.y, backrestScale.z,
+				backrestData.x, backrestData.y, backrestData.z,
 				undefined, undefined,
-				[ 1, 1, 1, 1, 0, 1 ],
-				uvMatrices.slice( 18, 24 )
+				backrestData.faces,
+				backrestData.uvMatrices
 			).translate(
 				-seatWidth / 2 + backrestSidesThickness / 2 + 0.001, backrestHeight / 2, 0
 			).applyMatrix4( backrestMatrix );
 
 		}
 
-		const r2 = ASSETS.RoundedBoxGeometry.computeCurveRadius(
-			upholstery ? seatWidth : backrestCussionWidth,
-			backrestHeight,
-			upholstery ? 1 : cussionThickness,
-			simple ? undefined : cussionRoundness
-		);
 		const cussion2 = new ASSETS.RoundedBoxGeometry(
-			( upholstery ? seatWidth : backrestCussionWidth ) + ( upholstery ? r2 / Math.sqrt( 3 ) : 0 ),
-			backrestHeight + ( upholstery ? r2 / Math.sqrt( 3 ) : 0 ),
-			upholstery ? 1 : cussionThickness,
+			cussion2Data.x, cussion2Data.y, cussion2Data.z,
 			simple ? undefined : cussionDetail,
 			simple ? undefined : cussionRoundness,
-			[ !upholstery, 1, !upholstery, !upholstery, 0, !upholstery ],
-			uvMatrices.slice( 24, 30 )
+			cussion2Data.faces,
+			cussion2Data.uvMatrices
 		);
 		if ( upholstery )
 			cussion2.translate(

@@ -1,8 +1,7 @@
 
-import { Vector2 } from 'three';
+import { Matrix3 } from 'three';
 
 
-//______________________________________________________________________________
 // Rect class
 class Rect {
 
@@ -80,16 +79,15 @@ function filterInPlace( a, condition ) {
 
 }
 
-//______________________________________________________________________________
-// BinPacker class
-
-// Uses MAXRECTS-BSSF-BNF bin packer algorithm from
-// https://github.com/juj/RectangleBinPack
-//
-// MAXRECTS-BSSF-BNF stands for "Maximal Rectangles - Best Short Side Fit". It
-// positions the rectangle against the short side of the free rectangle into
-// which it fits most snugly.
-
+/** BinPacker class
+ *
+ * Uses MAXRECTS-BSSF-BNF bin packer algorithm from
+ * https://github.com/juj/RectangleBinPack
+ *
+ * MAXRECTS-BSSF-BNF stands for "Maximal Rectangles - Best Short Side Fit". It
+ * positions the rectangle against the short side of the free rectangle into
+ * which it fits most snugly.
+ */
 class BinPacker {
 
 	constructor( width, height ) {
@@ -284,15 +282,17 @@ class BinPacker {
 
 class BinPack {
 
-	binWidth = 800;
-	binHeight = 800;
+	binWidth;
+	binHeight;
+	padding;
 	#packer;
 	#sort;
 
-	constructor( binWidth, binHeight ) {
+	constructor( binWidth = 800, binHeight = 800, padding = 0.01 ) {
 
-		if ( binWidth ) this.binWidth = binWidth;
-		if ( binHeight ) this.binHeight = binHeight;
+		this.binWidth = binWidth;
+		this.binHeight = binHeight;
+		this.padding = padding;
 		this.#packer = new BinPacker( this.binWidth, this.binHeight );
 		this.#sort = ( a, b ) => b.width * b.height - a.width * a.height;
 
@@ -306,7 +306,7 @@ class BinPack {
 		if ( this.#sort ) array.sort( this.#sort );
 		array.forEach( function ( d, _ ) {
 
-			var o = this.#packer.insert( d.width, d.height );
+			var o = this.#packer.insert( d.width + this.padding, d.height + this.padding );
 			o.rectangle.data = d;
 
 		}, this );
@@ -317,6 +317,29 @@ class BinPack {
 
 		let res = this.#packer.insert( r.width, r.height );
 		res.data = r;
+
+	}
+
+	generateUV() {
+
+		const uvRemap = ( tx = 0, ty = 0, s = 1, r = false, width = 0 ) => {
+
+			let mat = new Matrix3();
+			if ( r )
+				mat = mat.rotate( .5 * Math.PI ).translate( 0, width );
+
+			return mat.translate( tx, ty ).scale( s, s );
+
+		};
+
+		for ( const rect of this.positioned ) {
+
+			rect.data.src.uvMatrix ??= [];
+			if ( rect.rotated )
+				rect.data.src.uvMatrix[ rect.data.i ] = uvRemap( rect.x + this.padding/2, rect.y + this.padding/2, 1./this.binWidth, true, rect.height );
+			else rect.data.src.uvMatrix[ rect.data.i ] = uvRemap( rect.x + this.padding/2, rect.y + this.padding/2, 1./this.binWidth );
+
+		}
 
 	}
 
@@ -342,4 +365,21 @@ class BinPack {
 
 }
 
-export { BinPack };
+function minimalPacking( list, startSize ) {
+
+	let binPacker;
+	let repeat = true;
+	while ( repeat ) {
+
+		binPacker = new BinPack( startSize, startSize, 0.01 );
+		binPacker.addAll( list );
+		if ( binPacker.unpositioned.length == 0 ) repeat = false;
+		else startSize *= 1.1;
+
+	}
+
+	return binPacker;
+
+}
+
+export { BinPack, minimalPacking };

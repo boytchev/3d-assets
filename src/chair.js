@@ -130,55 +130,14 @@ class Chair extends ASSETS.Asset {
 		addFaces( backrestData );
 		addFaces( cussion2Data );
 
-		l.forEach( ( rect ) => {
-
-			rect.width += 0.01;
-			rect.height += 0.01;
-
-		} );
-
-		//console.log( "packing", l.length, "rectangles" );
-		console.time( 'test' );
-		let repeat = true;
-		let scale = 1;
-		let binPacker;
-		while ( repeat ) {
-
-			binPacker = new BP.BinPack( scale, scale );
-			binPacker.addAll( l );
-			if ( binPacker.unpositioned.length == 0 ) repeat = false;
-			else scale *= 1.1;
-
-		}
-
-		console.timeEnd( 'test' );
-
-		const uvRemap = ( tx = 0, ty = 0, s = 1, r = false, width = 0 ) => {
-
-			let mat = new THREE.Matrix3();
-			if ( r )
-				mat = mat.rotate( .5 * Math.PI ).translate( 0, width );
-
-			return mat.translate( tx, ty ).scale( s, s );
-
-		};
-
-		const pack = binPacker.positioned;
-
-		for ( const rect of pack ) {
-
-			rect.data.src.uvMatrices ??= [];
-			if ( rect.rotated )
-				rect.data.src.uvMatrices[ rect.data.i ] = uvRemap( rect.x + 0.005, rect.y + 0.005, 1./scale, true, rect.height );
-			else rect.data.src.uvMatrices[ rect.data.i ] = uvRemap( rect.x + 0.005, rect.y + 0.005, 1./scale, 0 );
-
-		}
-		//console.log( uvMatrices );
+		//console.time( 'test' );
+		let binPacker = BP.minimalPacking( l, 1. );
+		binPacker.generateUV();
 
 		const seat = new ASSETS.RoundedBoxGeometry(
 			seatData.x, seatData.y, seatData.z,
 			undefined, undefined, undefined,
-			seatData.uvMatrices
+			seatData.uvMatrix
 		).translate(
 			0, seatHeight - seatThickness / 2, 0
 		);
@@ -188,7 +147,7 @@ class Chair extends ASSETS.Asset {
 			simple ? undefined : cussionDetail,
 			simple ? undefined : cussionRoundness,
 			cussion1Data.faces,
-			cussion1Data.uvMatrices
+			cussion1Data.uvMatrix
 		);
 		if ( upholstery )
 			cussion1.translate(
@@ -217,7 +176,7 @@ class Chair extends ASSETS.Asset {
 				legsData.x, legsData.y, legsData.z,
 				undefined, undefined,
 				legsData.faces,
-				legsData.uvMatrices
+				legsData.uvMatrix
 			).translate(
 				legPositions[ i ].x, seatHeight / 2 - seatThickness / 2, legPositions[ i ].y
 			);
@@ -241,7 +200,7 @@ class Chair extends ASSETS.Asset {
 			backrestData.x, backrestData.y, backrestData.z,
 			undefined, undefined,
 			backrestData.faces,
-			backrestData.uvMatrices
+			backrestData.uvMatrix
 		);
 
 		if ( upholstery )
@@ -256,7 +215,7 @@ class Chair extends ASSETS.Asset {
 				backrestData.x, backrestData.y, backrestData.z,
 				undefined, undefined,
 				backrestData.faces,
-				backrestData.uvMatrices
+				backrestData.uvMatrix
 			).translate(
 				-seatWidth / 2 + backrestSidesThickness / 2 + 0.001, backrestHeight / 2, 0
 			).applyMatrix4( backrestMatrix );
@@ -268,7 +227,7 @@ class Chair extends ASSETS.Asset {
 			simple ? undefined : cussionDetail,
 			simple ? undefined : cussionRoundness,
 			cussion2Data.faces,
-			cussion2Data.uvMatrices
+			cussion2Data.uvMatrix
 		);
 		if ( upholstery )
 			cussion2.translate(

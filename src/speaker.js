@@ -43,7 +43,7 @@ class Speaker extends ASSETS.Asset {
 		material.flatShading = params.flat;
 
 		const width = ASSETS.cm( params.width );
-		const height = Math.max( ASSETS.cm( params.height ), 1.7 * width );
+		const height = Math.max( ASSETS.cm( params.height ), ( simple ? 1.9 : 1.7 ) * width );
 		const depth = ASSETS.cm( params.depth );
 		const speakerDepth = ASSETS.cm( params.speakerDepth );
 		const roundness = simple ? 0 : .01;

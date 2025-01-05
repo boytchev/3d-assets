@@ -365,16 +365,16 @@ class BinPack {
 
 }
 
-function minimalPacking( list, startSize ) {
+function minimalPacking( list, startSize, padding = 0.015, increment = 1.1 ) {
 
 	let binPacker;
 	let repeat = true;
 	while ( repeat ) {
 
-		binPacker = new BinPack( startSize, startSize, 0.01 );
+		binPacker = new BinPack( startSize, startSize, padding * startSize );
 		binPacker.addAll( list );
 		if ( binPacker.unpositioned.length == 0 ) repeat = false;
-		else startSize *= 1.1;
+		else startSize *= increment;
 
 	}
 

@@ -121,16 +121,13 @@ class Chair extends ASSETS.Asset {
 		};
 
 		const l = [];
-		const addFaces = ( data ) =>
-			l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( data ) );
 
-		addFaces( seatData );
-		addFaces( cussion1Data );
-		addFaces( legsData );
-		addFaces( backrestData );
-		addFaces( cussion2Data );
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( seatData ) );
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( cussion1Data ) );
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( legsData ) );
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( backrestData ) );
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( cussion2Data ) );
 
-		//console.time( 'test' );
 		let binPacker = BP.minimalPacking( l, 1. );
 		binPacker.generateUV();
 

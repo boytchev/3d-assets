@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import * as ASSETS from './assets-utils.js';
+import * as BP from './bin-packing.js';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 
 class Drawer extends ASSETS.Asset {
@@ -68,35 +69,71 @@ class Drawer extends ASSETS.Asset {
 
 		const r = ASSETS.mm( params.roundness );
 		const rd = params.roundDetail;
+		const bottomData = {
+			x: width, y: thickness, z: depth,
+			roundFaces: [ 1, 1, 1, 1, 1, 0 ]
+		};
+
+		const topData = {
+			x: width, y: thickness, z: depth,
+			roundFaces: [ 1, 1, 1, 1, 0, 1 ]
+		};
+
+		const sideLData = {
+			x: thickness, y: height - 2*thickness, z: depth - thickness,
+			faces: [ 1, 1, 1, 1, 0, 0 ],
+			roundFaces: [ 1, 1, 1, 0, 0, 0 ],
+		};
+
+		const sideRData = {
+			x: thickness, y: height - 2*thickness, z: depth - thickness,
+			faces: [ 1, 1, 1, 1, 0, 0 ],
+			roundFaces: [ 1, 1, 0, 1, 0, 0 ],
+		};
+
+		const backData = {
+			x: width - 2 * thickness, y: height - 2 * thickness, z: thickness,
+		};
+
+		const l = [];
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( bottomData ) );
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( topData ) );
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( sideLData ) );
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( sideRData ) );
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( backData ) );
+
+		const packer = BP.minimalPacking( l, 1 );
+		packer.generateUV();
+
 
 		const bottom = new ASSETS.RoundedBoxGeometry(
-			width, thickness, depth,
+			bottomData.x, bottomData.y, bottomData.z,
 			rd, r, undefined,
-			undefined, [ 1, 1, 1, 1, 1, 0 ], false
+			bottomData.uvMatrix, bottomData.roundFaces, false
 		).translate( 0, thickness/2, 0 );
 
 		const top = new ASSETS.RoundedBoxGeometry(
-			width, thickness, depth,
+			topData.x, topData.y, topData.z,
 			rd, r, undefined,
-			undefined, [ 1, 1, 1, 1, 0, 1 ], false
+			topData.uvMatrix, topData.roundFaces, false
 		).translate( 0, height - thickness/2, 0 );
 
 		const sideL = new ASSETS.RoundedBoxGeometry(
-			thickness, height - 2*thickness, depth - thickness,
-			rd, r, [ 1, 1, 1, 1, 0, 0 ],
-			undefined, [ 1, 1, 1, 0, 0, 0 ], false
+			sideLData.x, sideLData.y, sideLData.z,
+			rd, r, sideLData.faces,
+			sideLData.uvMatrix, sideLData.roundFaces, false
 		).translate( -width/2 + thickness / 2, height/2, -thickness/2 );
 
 		const sideR = new ASSETS.RoundedBoxGeometry(
-			thickness, height - 2*thickness, depth - thickness,
-			rd, r, [ 1, 1, 1, 1, 0, 0 ],
-			undefined, [ 1, 1, 0, 1, 0, 0 ], false
+			sideRData.x, sideRData.y, sideRData.z,
+			rd, r, sideRData.faces,
+			sideRData.uvMatrix, sideRData.roundFaces, false
 		).translate( width/2 - thickness/2, height/2, -thickness/2 );
 
 		const back = new ASSETS.RoundedBoxGeometry(
-			width - 2 * thickness, height - 2 * thickness, thickness,
+			backData.x, backData.y, backData.z,
 			rd, 0, undefined,
-			undefined, undefined, false
+			backData.uvMatrix, undefined, false
 		).translate( 0, height/2, -depth/2+thickness/2 );
 
 		const bodyGeom = BufferGeometryUtils.mergeGeometries(
@@ -128,73 +165,117 @@ class Drawer extends ASSETS.Asset {
 			new THREE.Vector3( 0, -handleSize / 2, 0 )
 		);
 
-		this.drawers = [];
-		for ( let i = 0; i < params.drawerCount; ++i ) {
+		{ // indivirual drawers
 
-			const baseHeight = thickness + i * drawerHeight;
-			const open = params.openness * ( depth - 2 * thickness );
-			const back = new ASSETS.RoundedBoxGeometry(
-				drawerWidth, drawerHeight - 2 * thickness, thickness,
-				undefined, undefined, [ 1, 1, 1, 1, 0, 1 ]
-			).translate( 0, drawerHeight/2, -depth/2 + thickness + thickness/2 );
+			const backData = {
+				x: drawerWidth, y: drawerHeight - 2 * thickness, z: thickness,
+				faces: [ 1, 1, 1, 1, 0, 1 ],
+			};
 
-			const bottom = new ASSETS.RoundedBoxGeometry(
-				drawerWidth, thickness, depth - 2 * thickness,
-				undefined, undefined, [ 1, 1, 1, 1, 1, 1 ]
-			).translate( 0, thickness/2, 0 );
+			const bottomData = {
+				x: drawerWidth, y: thickness, z: depth - 2 * thickness,
+				faces: [ 1, 1, 1, 1, 1, 1 ]
+			};
 
-			const sideL = new ASSETS.RoundedBoxGeometry(
-				thickness, drawerHeight - 2 * thickness, depth - 3 * thickness,
-				undefined, undefined, [ 0, 0, 1, 1, 0, 1 ]
-			).translate( -drawerWidth/2 + thickness/2, drawerHeight/2, thickness/2 );
+			const sideLData = {
+				x: thickness, y: drawerHeight - 2 * thickness, z: depth - 3 * thickness,
+				faces: [ 0, 0, 1, 1, 0, 1 ]
+			};
 
-			const sideR = new ASSETS.RoundedBoxGeometry(
-				thickness, drawerHeight - 2 * thickness, depth - 3 * thickness,
-				undefined, undefined, [ 0, 0, 1, 1, 0, 1 ]
-			).translate( drawerWidth/2 - thickness/2, drawerHeight/2, thickness/2 );
+			const sideRData = {
+				x: thickness, y: drawerHeight - 2 * thickness, z: depth - 3 * thickness,
+				faces: [ 0, 0, 1, 1, 0, 1 ]
+			};
 
-			const front = new ASSETS.RoundedBoxGeometry(
-				width, drawerHeight, thickness,
-				params.doorRoundDetail, simple ? 0 : params.doorRoundness, undefined, undefined, [ 1, 1, 1, 1, 1, 1 ]
-			).translate( 0, drawerHeight/2, depth/2 - thickness/2 );
+			const frontData = {
+				x: width, y: drawerHeight, z: thickness,
+				roundFaces: [ 1, 1, 1, 1, 1, 1 ]
+			};
 
-			let meshes = [ back, bottom, sideL, sideR, front ];
-			const drawerGeom = BufferGeometryUtils.mergeGeometries( meshes );
-			drawerGeom.uvIndex = 1;
-			this.drawers.push( drawerGeom );
+			const l = [];
+			l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( bottomData ) );
+			l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( sideLData ) );
+			l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( sideRData ) );
+			l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( backData ) );
+			l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( frontData ) );
 
-			for ( const m of meshes ) m.dispose();
+			const packer = BP.minimalPacking( l, depth+width/2 );
+			packer.generateUV();
 
-			const drawerGroup = new THREE.Group();
-			drawerGroup.position.y = baseHeight;
-			drawerGroup.position.z = open;
-			drawerGroup.name = 'Drawer_' + ( i+1 );
+			this.drawers = [];
+			for ( let i = 0; i < params.drawerCount; ++i ) {
 
-			const drawer = new THREE.Mesh( drawerGeom, material );
-			drawer.name = 'drawer_' + ( i+1 );
-			drawerGroup.add( drawer );
+				const baseHeight = thickness + i * drawerHeight;
+				const open = params.openness * ( depth - 2 * thickness );
+				const back = new ASSETS.RoundedBoxGeometry(
+					backData.x, backData.y, backData.z,
+					undefined, undefined, backData.faces,
+					backData.uvMatrix
+				).translate( 0, drawerHeight/2, -depth/2 + thickness + thickness/2 );
 
-			if ( !simple ) {
+				const bottom = new ASSETS.RoundedBoxGeometry(
+					bottomData.x, bottomData.y, bottomData.z,
+					undefined, undefined, bottomData.faces,
+					bottomData.uvMatrix
+				).translate( 0, thickness/2, 0 );
 
-				const handleGeometry = new ASSETS.SmoothExtrudeGeometry(
-					handleProfileShape, {
-						extrudePath: handleCurve,
-						steps: 10,
-						caps: [ 0, 0 ]
-					}
-				).rotateZ( Math.PI /2 );
+				const sideL = new ASSETS.RoundedBoxGeometry(
+					sideLData.x, sideLData.y, sideLData.z,
+					undefined, undefined, sideLData.faces,
+					sideLData.uvMatrix
+				).translate( -drawerWidth/2 + thickness/2, drawerHeight/2, thickness/2 );
 
-				handleGeometry.uvIndex = 2;
-				const handle = new THREE.Mesh( handleGeometry, material );
-				handle.position.set( 0, drawerHeight * handleHeight, depth/2 - handleThickness/2 );
-				handle.name = 'handle_' + ( i+1 );
+				const sideR = new ASSETS.RoundedBoxGeometry(
+					sideRData.x, sideRData.y, sideRData.z,
+					undefined, undefined, sideRData.faces,
+					sideRData.uvMatrix
+				).translate( drawerWidth/2 - thickness/2, drawerHeight/2, thickness/2 );
 
-				drawerGroup.add( handle );
-				this.drawers.push( handleGeometry );
+				const front = new ASSETS.RoundedBoxGeometry(
+					frontData.x, frontData.y, frontData.z,
+					params.doorRoundDetail, simple ? 0 : params.doorRoundness, undefined,
+					frontData.uvMatrix, undefined, frontData.roundFaces
+				).translate( 0, drawerHeight/2, depth/2 - thickness/2 );
+
+				let meshes = [ back, bottom, sideL, sideR, front ];
+				const drawerGeom = BufferGeometryUtils.mergeGeometries( meshes );
+				drawerGeom.uvIndex = 1;
+				this.drawers.push( drawerGeom );
+
+				for ( const m of meshes ) m.dispose();
+
+				const drawerGroup = new THREE.Group();
+				drawerGroup.position.y = baseHeight;
+				drawerGroup.position.z = open;
+				drawerGroup.name = 'Drawer_' + ( i+1 );
+
+				const drawer = new THREE.Mesh( drawerGeom, material );
+				drawer.name = 'drawer_' + ( i+1 );
+				drawerGroup.add( drawer );
+
+				if ( !simple ) {
+
+					const handleGeometry = new ASSETS.SmoothExtrudeGeometry(
+						handleProfileShape, {
+							extrudePath: handleCurve,
+							steps: 10,
+							caps: [ 0, 0 ]
+						}
+					).rotateZ( Math.PI /2 );
+
+					handleGeometry.uvIndex = 2;
+					const handle = new THREE.Mesh( handleGeometry, material );
+					handle.position.set( 0, drawerHeight * handleHeight, depth/2 - handleThickness/2 );
+					handle.name = 'handle_' + ( i+1 );
+
+					drawerGroup.add( handle );
+					this.drawers.push( handleGeometry );
+
+				}
+
+				this.add( drawerGroup );
 
 			}
-
-			this.add( drawerGroup );
 
 		}
 

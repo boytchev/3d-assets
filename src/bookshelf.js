@@ -78,13 +78,11 @@ class Bookshelf extends ASSETS.Asset {
 		};
 
 		const l = [];
-		const addFaces = ( data ) =>
-			l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( data ) );
 
-		addFaces( sideLData );
-		addFaces( sideRData );
-		addFaces( backData );
-		addFaces( shelfData );
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( sideLData ) );
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( sideRData ) );
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( backData ) );
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( shelfData ) );
 
 		let packer = BP.minimalPacking( l, 1. );
 		packer.generateUV();

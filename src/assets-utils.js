@@ -974,7 +974,7 @@ function transformUVs( geometry, matrix ) {
 
 }
 
-function projectUVs( geometry, dir, up = new Vector3( 0, 1, 0 ) ) {
+function projectUVs( geometry, dir, up = new Vector3( 0, 1, 0 ), offset = new Vector2( 0, 0 ) ) {
 
 	const uv = geometry.getAttribute( 'uv' ).array;
 	const pos = geometry.getAttribute( 'position' ).array;
@@ -988,8 +988,8 @@ function projectUVs( geometry, dir, up = new Vector3( 0, 1, 0 ) ) {
 
 		v.set( pos[ 3 * i ], pos[ 3 * i + 1 ], pos[ 3 * i + 2 ]);
 		v.applyMatrix4( mat );
-		uv[ 2 * i + 0 ] = v.x;
-		uv[ 2 * i + 1 ] = v.y;
+		uv[ 2 * i + 0 ] = v.x + offset.x;
+		uv[ 2 * i + 1 ] = v.y + offset.y;
 
 	}
 

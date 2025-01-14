@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import * as ASSETS from './assets-utils.js';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
+import * as BP from './bin-packing.js';
 
 class Monitor extends ASSETS.Asset {
 
@@ -10,19 +11,19 @@ class Monitor extends ASSETS.Asset {
 	/* eslint-disable */
 	static paramData = {
 		
-		aspectX:        { default: 16   , type: Number , min:   1, max: 40, prec: 0, folder: "Screen", name: "Aspect X"        },
-		aspectY:        { default: 9    , type: Number , min:   1, max: 40, prec: 0, folder: "Screen", name: "Aspect Y"        },
-		diagonal:       { default: 24   , type: 'in'   , min:   5, max: 40, prec: 1, folder: "Screen", name: "Diagonal"        },
-		screenThickness:{ default: 1.5  , type: 'cm'   , min: 0.2, max:  4, prec: 1, folder: "Screen", name: "Thickness"       },
-		baseHeight:     { default: 7    , type: 'cm'   , min:   0, max: 20, prec: 1, folder: "Base"  , name: "Height"          },
-		baseThickness:  { default: 2    , type: 'cm'   , min:  .5, max:  3, prec: 1, folder: "Base"  , name: "Thickness"       },
-		baseWidth:      { default: 20   , type: 'cm'   , min:  10, max: 30, prec: 1, folder: "Base"  , name: "Width"           },
-		baseDepth:      { default: 15   , type: 'cm'   , min:  10, max: 30, prec: 1, folder: "Base"  , name: "Depth"           },
+		aspectX:        { default: 16   , type: Number , min:   1, max: 40, prec: 0, folder: "Screen", name: "Aspect X"  },
+		aspectY:        { default: 9    , type: Number , min:   1, max: 40, prec: 0, folder: "Screen", name: "Aspect Y"  },
+		diagonal:       { default: 24   , type: 'in'   , min:   5, max: 40, prec: 1, folder: "Screen", name: "Diagonal"  },
+		screenThickness:{ default: 1.5  , type: 'cm'   , min: 0.2, max:  4, prec: 1, folder: "Screen", name: "Thickness" },
+		baseHeight:     { default: 7    , type: 'cm'   , min:   0, max: 20, prec: 1, folder: "Base"  , name: "Height"    },
+		baseThickness:  { default: 2    , type: 'cm'   , min:  .5, max:  3, prec: 1, folder: "Base"  , name: "Thickness" },
+		baseWidth:      { default: 20   , type: 'cm'   , min:  10, max: 30, prec: 1, folder: "Base"  , name: "Width"     },
+		baseDepth:      { default: 15   , type: 'cm'   , min:  10, max: 30, prec: 1, folder: "Base"  , name: "Depth"     },
 		handleWidth:    { default: 4    , type: 'cm'   , min:   3, max: 10, prec: 1, folder: "Base"  , name: "Handle"    },
 
-		bevelDetail:    { default: 2    , type: 'n'    , min:   1, max:  6, prec: 0, folder: "Complexity", name: "Bevels"      , exp: true},
-		flat:	        { default: false, type: Boolean, chance: .3                , folder: "Complexity", name: "Flat"        },
-		simple:         { default: false, type: Boolean, chance: .3                , folder: "Complexity", name: "Simple"      },
+		bevelDetail:    { default: 2    , type: 'n'    , min:   1, max:  6, prec: 0, folder: "Complexity", name: "Bevels", exp: true},
+		flat:	        { default: false, type: Boolean, chance: .3                , folder: "Complexity", name: "Flat"  },
+		simple:         { default: false, type: Boolean, chance: .3                , folder: "Complexity", name: "Simple"},
 
 	};
 	/* eslint-enable */
@@ -62,33 +63,62 @@ class Monitor extends ASSETS.Asset {
 		const width = Math.sin( angle ) * diagonal;
 		const height = Math.cos( angle ) * diagonal;
 
+
+		const bodyGeomData = {
+			x: width + 0.002, y: height + 0.002, z: screenThickness,
+			faces: [ 1, !simple, 1, 1, 1, 1 ],
+			roundFaces: [ 1, 0, 1, 1, 1, 1 ],
+		};
+		const bodyGeom2Data = {
+			x: Math.max( width/3, handleWidth ), y: height/3, z: 0.03,
+			faces: [ 1, 0, 1, 1, 1, 1 ],
+			roundFaces: [ 1, 0, 1, 1, 1, 1 ],
+		};
+		const baseGeomData = {
+			x: baseWidth, y: baseThickness, z: baseDepth,
+			faces: undefined,
+			roundFaces: [ 1, 1, 1, 1, 0, 1 ],
+		};
+
+		const v1 = new THREE.Vector3( 0, baseThickness/4, -baseDepth/2 + baseThickness );
+		const v2 = new THREE.Vector3( 0, baseHeight + height/2 - height/8, -screenThickness/2 - 0.015 );
+		const handleLength = v1.distanceTo( v2 );
+		const handleGeomData = {
+			x: handleWidth, y: handleLength, z: baseThickness,
+			faces: [ 1, 1, 1, 1, 0, 0 ],
+			roundFaces: [ 1, 1, 1, 1, 0, 0 ],
+		};
+
+		const l = [];
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( bodyGeomData ) );
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( bodyGeom2Data ) );
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( baseGeomData ) );
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( handleGeomData ) );
+		let binPacker = BP.minimalPacking( l, diagonal/2 );
+		binPacker.generateUV();
+
 		const bodyGeom = new ASSETS.RoundedBoxGeometry(
-			width + 0.002, height + 0.002, screenThickness,
-			bevelDetail, .01 * !simple, [ 1, !simple, 1, 1, 1, 1 ], undefined, [ 1, 0, 1, 1, 1, 1 ],
+			bodyGeomData.x, bodyGeomData.y, bodyGeomData.z,
+			bevelDetail, .01 * !simple, bodyGeomData.faces, bodyGeomData.uvMatrix, bodyGeomData.roundFaces,
 		).translate(
 			0, height/2 + baseHeight, 0
 		);
 
 		const bodyGeom2 = new ASSETS.RoundedBoxGeometry(
-			Math.max( width/3, handleWidth ), height/3, 0.03,
-			bevelDetail, .1 * !simple, [ 1, 0, 1, 1, 1, 1 ], undefined, [ 1, 0, 1, 1, 1, 1 ],
+			bodyGeom2Data.x, bodyGeom2Data.y, bodyGeom2Data.z,
+			bevelDetail, .1 * !simple, bodyGeom2Data.faces, bodyGeom2Data.uvMatrix, bodyGeom2Data.roundFaces,
 		).translate(
 			0, height/2 + baseHeight, -screenThickness/2 - 0.015
 		);
 
 		const baseGeom = new ASSETS.RoundedBoxGeometry(
-			baseWidth, baseThickness, baseDepth,
-			bevelDetail, .1 * !simple, undefined, undefined, [ 1, 1, 1, 1, 0, 1 ],
+			baseGeomData.x, baseGeomData.y, baseGeomData.z,
+			bevelDetail, .1 * !simple, baseGeomData.faces, baseGeomData.uvMatrix, baseGeomData.roundFaces,
 		);
 
-		const v1 = new THREE.Vector3( 0, baseThickness/4, -baseDepth/2 + baseThickness );
-		const v2 = new THREE.Vector3( 0, baseHeight + height/2 - height/8, -screenThickness/2 - 0.015 );
-
-		const handleLength = v1.distanceTo( v2 );
-
 		const handleGeom = new ASSETS.RoundedBoxGeometry(
-			handleWidth, handleLength, baseThickness,
-			bevelDetail, 0.2 * !simple, [ 1, 1, 1, 1, 0, 0 ], undefined, [ 1, 1, 1, 1, 0, 0 ]
+			handleGeomData.x, handleGeomData.y, handleGeomData.z,
+			bevelDetail, 0.2 * !simple, handleGeomData.faces, handleGeomData.uvMatrix, handleGeomData.roundFaces,
 		).translate(
 			0, handleLength/2, 0
 		).rotateX(

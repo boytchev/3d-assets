@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import * as ASSETS from './assets-utils.js';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
+import * as BP from './bin-packing.js';
 
 class Speaker extends ASSETS.Asset {
 
@@ -48,10 +49,23 @@ class Speaker extends ASSETS.Asset {
 		const speakerDepth = ASSETS.cm( params.speakerDepth );
 		const roundness = simple ? 0 : .01;
 
-		const box = new ASSETS.RoundedBoxGeometry( width, height, depth,
-			params.bevelDetail, roundness, [ 1, 1, 1, 1, 1, 1 ],
-			undefined, [ 0, 1, 1, 1, 0, 0 ], false,
-			[ 1, 0, 1, 1, 1, 1 ]
+		const boxData = {
+			x: width, y: height, z: depth,
+			faces: [ 1, 1, 1, 1, 1, 1 ],
+			roundFaces: [ 0, 1, 1, 1, 0, 0 ],
+			fillCenter: [ 1, 0, 1, 1, 1, 1 ],
+		};
+
+		const l = [];
+		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( boxData ) );
+		let binPacker = BP.minimalPacking( l, ( width + depth + height ) * .5 );
+		binPacker.generateUV();
+
+		const box = new ASSETS.RoundedBoxGeometry(
+			boxData.x, boxData.y, boxData.z,
+			params.bevelDetail, roundness, boxData.faces,
+			boxData.uvMatrix, boxData.roundFaces, false,
+			boxData.fillCenter
 		).translate( 0, height/2, 0 );
 
 		const frontFrame = new THREE.Shape([
@@ -72,7 +86,8 @@ class Speaker extends ASSETS.Asset {
 		frontFrame.holes = [ hole1, hole2 ];
 
 		const front = new THREE.ShapeGeometry( frontFrame, params.speakerDetail ).translate( 0, 0, depth/2 );
-		ASSETS.transformUVs( front, new THREE.Matrix3().translate( width/2, width ) );
+		ASSETS.transformUVs( front, new THREE.Matrix3().translate( width/2, 0 ) );
+		ASSETS.transformUVs( front, boxData.uvMatrix[ 1 ]);
 
 		const s1 = new ASSETS.LatheUVGeometry([
 			[ 0, speakerDepth ],
@@ -83,8 +98,8 @@ class Speaker extends ASSETS.Asset {
 			[ r1 * .9, speakerDepth/4 ],
 			[ r1, 0 ],
 		], 2 * params.speakerDetail ).rotateX( -Math.PI/2 ).translate( 0, s1Height, depth/2 );
-		ASSETS.projectUVs( s1, new THREE.Vector3( 0, 0, 1 ) );
-		ASSETS.transformUVs( s1, new THREE.Matrix3().translate( width/2, width ) );
+		ASSETS.projectUVs( s1, new THREE.Vector3( 0, 0, 1 ), undefined, new THREE.Vector2( width/2, 0 ) );
+		ASSETS.transformUVs( s1, boxData.uvMatrix[ 1 ]);
 
 		const s2 = new ASSETS.LatheUVGeometry([
 			[ 0, speakerDepth ],
@@ -95,8 +110,8 @@ class Speaker extends ASSETS.Asset {
 			[ r2 * .9, speakerDepth/4 ],
 			[ r2, 0 ],
 		], 2 * params.speakerDetail ).rotateX( -Math.PI/2 ).translate( 0, s2Height, depth/2 );
-		ASSETS.projectUVs( s2, new THREE.Vector3( 0, 0, 1 ) );
-		ASSETS.transformUVs( s2, new THREE.Matrix3().translate( width/2, width ) );
+		ASSETS.projectUVs( s2, new THREE.Vector3( 0, 0, 1 ), undefined, new THREE.Vector2( width/2, 0 ) );
+		ASSETS.transformUVs( s2, boxData.uvMatrix[ 1 ]);
 
 		const body = BufferGeometryUtils.mergeGeometries([ box, front, s1, s2 ]);
 		const bodyMesh = new THREE.Mesh( body, material );

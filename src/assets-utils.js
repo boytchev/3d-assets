@@ -572,12 +572,26 @@ class RoundedBoxGeometry extends BufferGeometry {
 						let kv = i * ( det[ 1 ] + 1 ) + j + vertexOffset;
 
 						const norm = ( -u * 2 + 1 );
-						indices[ ki * 6 + 5 * u + 0 * norm ] = kv;
-						indices[ ki * 6 + 5 * u + 1 * norm ] = kv + 1;
-						indices[ ki * 6 + 5 * u + 2 * norm ] = kv + det[ 1 ] + 1;
-						indices[ ki * 6 + 5 * u + 3 * norm ] = kv + det[ 1 ] + 1;
-						indices[ ki * 6 + 5 * u + 4 * norm ] = kv + 1;
-						indices[ ki * 6 + 5 * u + 5 * norm ] = kv + det[ 1 ] + 2;
+
+						if ( ( ( _i < seg && _j > seg )|| ( _i > seg && _j < seg ) ) ) {
+
+							indices[ ki * 6 + 5 * u + 0 * norm ] = kv;
+							indices[ ki * 6 + 5 * u + 1 * norm ] = kv + 1;
+							indices[ ki * 6 + 5 * u + 2 * norm ] = kv + det[ 1 ] + 1;
+							indices[ ki * 6 + 5 * u + 3 * norm ] = kv + det[ 1 ] + 1;
+							indices[ ki * 6 + 5 * u + 4 * norm ] = kv + 1;
+							indices[ ki * 6 + 5 * u + 5 * norm ] = kv + det[ 1 ] + 2;
+
+						} else {
+
+							indices[ ki * 6 + 5 * u + 0 * norm ] = kv + det[ 1 ] + 1; // 3
+							indices[ ki * 6 + 5 * u + 1 * norm ] = kv; // 1
+							indices[ ki * 6 + 5 * u + 2 * norm ] = kv + det[ 1 ] + 2; // 4
+							indices[ ki * 6 + 5 * u + 3 * norm ] = kv + det[ 1 ] + 2; // 4
+							indices[ ki * 6 + 5 * u + 4 * norm ] = kv; // 1
+							indices[ ki * 6 + 5 * u + 5 * norm ] = kv + 1; // 2
+
+						}
 
 					}
 

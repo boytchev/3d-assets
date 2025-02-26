@@ -80,6 +80,7 @@ class Chair extends ASSETS.Asset {
 			y: upholstery ? 1. : cussionThickness,
 			z: seatCussionDepth,
 			faces: [ !upholstery, !upholstery, !upholstery, !upholstery, 0, 1 ],
+			segments: simple ? undefined : cussionDetail,
 			roundness: simple ? undefined : cussionRoundness,
 		};
 		const r1 = ASSETS.RoundedBoxGeometry.computeCurveRadius(
@@ -101,6 +102,7 @@ class Chair extends ASSETS.Asset {
 			y: backrestHeight,
 			z: upholstery ? 1 : cussionThickness,
 			faces: [ !upholstery, 1, !upholstery, !upholstery, 0, !upholstery ],
+			segments: simple ? undefined : cussionDetail,
 			roundness: simple ? undefined : cussionRoundness,
 		};
 		const r2 = ASSETS.RoundedBoxGeometry.computeCurveRadius(
@@ -132,20 +134,12 @@ class Chair extends ASSETS.Asset {
 		binPacker.generateUV();
 
 		const seat = new ASSETS.RoundedBoxGeometry(
-			seatData.x, seatData.y, seatData.z,
-			undefined, undefined, undefined,
-			seatData.uvMatrix
+			seatData
 		).translate(
 			0, seatHeight - seatThickness / 2, 0
 		);
 
-		const cussion1 = new ASSETS.RoundedBoxGeometry(
-			cussion1Data.x, cussion1Data.y, cussion1Data.z,
-			simple ? undefined : cussionDetail,
-			simple ? undefined : cussionRoundness,
-			cussion1Data.faces,
-			cussion1Data.uvMatrix
-		);
+		const cussion1 = new ASSETS.RoundedBoxGeometry( cussion1Data );
 		if ( upholstery )
 			cussion1.translate(
 				0,
@@ -169,12 +163,7 @@ class Chair extends ASSETS.Asset {
 		];
 		for ( let i = 0; i < 4; ++i ) {
 
-			legs[ i ] = new ASSETS.RoundedBoxGeometry(
-				legsData.x, legsData.y, legsData.z,
-				undefined, undefined,
-				legsData.faces,
-				legsData.uvMatrix
-			).translate(
+			legs[ i ] = new ASSETS.RoundedBoxGeometry( legsData ).translate(
 				legPositions[ i ].x, seatHeight / 2 - seatThickness / 2, legPositions[ i ].y
 			);
 
@@ -193,12 +182,7 @@ class Chair extends ASSETS.Asset {
 		let backrestSideL = null;
 		let backrestSideR = null;
 
-		backrestSideL = new ASSETS.RoundedBoxGeometry(
-			backrestData.x, backrestData.y, backrestData.z,
-			undefined, undefined,
-			backrestData.faces,
-			backrestData.uvMatrix
-		);
+		backrestSideL = new ASSETS.RoundedBoxGeometry( backrestData );
 
 		if ( upholstery )
 			backrestSideL.translate( 0, backrestHeight / 2, 0 ).applyMatrix4( backrestMatrix );
@@ -208,24 +192,13 @@ class Chair extends ASSETS.Asset {
 				seatWidth / 2 - backrestSidesThickness / 2 - 0.001, backrestHeight / 2, 0
 			).applyMatrix4( backrestMatrix );
 
-			backrestSideR = new ASSETS.RoundedBoxGeometry(
-				backrestData.x, backrestData.y, backrestData.z,
-				undefined, undefined,
-				backrestData.faces,
-				backrestData.uvMatrix
-			).translate(
+			backrestSideR = new ASSETS.RoundedBoxGeometry( backrestData ).translate(
 				-seatWidth / 2 + backrestSidesThickness / 2 + 0.001, backrestHeight / 2, 0
 			).applyMatrix4( backrestMatrix );
 
 		}
 
-		const cussion2 = new ASSETS.RoundedBoxGeometry(
-			cussion2Data.x, cussion2Data.y, cussion2Data.z,
-			simple ? undefined : cussionDetail,
-			simple ? undefined : cussionRoundness,
-			cussion2Data.faces,
-			cussion2Data.uvMatrix
-		);
+		const cussion2 = new ASSETS.RoundedBoxGeometry( cussion2Data );
 		if ( upholstery )
 			cussion2.translate(
 				0,

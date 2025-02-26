@@ -56,33 +56,38 @@ class Doorframe extends ASSETS.Asset {
 		const r = simple ? 0 : Math.min( ASSETS.cm( params.roundness ), thickness );
 		const d = params.roundDetail;
 
+		const leftData = {
+			x: frameThickness, y: height + frameThickness, z: thickness,
+			segments: d, roundness: r, faces: [ 0, 1, 1, 1, 0, 0 ],
+			roundFaces: [ 0, 1, 1, 1, 0, 0 ],
+			relativeRoundness: false
+		}
+		const topData = {
+			x: width + 2 * frameThickness, y: frameThickness, z: thickness,
+			segments: d, roundness: r, faces: [ 0, 1, 0, 0, 1, 1 ],
+			roundFaces: [ 0, 1, 0, 0, 1, 1 ],
+			relativeRoundness: false,
+		};
 
-		const left = new ASSETS.RoundedBoxGeometry(
-			frameThickness, height + frameThickness, thickness,
-			d, r, [ 0, 1, 1, 1, 0, 0 ], undefined, [ 0, 1, 1, 1, 0, 0 ], false
-		).translate( -width/2 - frameThickness/2, frameThickness/2, 0 );
+		const left = new ASSETS.RoundedBoxGeometry( leftData )
+			.translate( -width/2 - frameThickness/2, frameThickness/2, 0 );
+		const right = new ASSETS.RoundedBoxGeometry( leftData )
+			.translate( width/2 + frameThickness/2, frameThickness/2, 0 );
+		const top = new ASSETS.RoundedBoxGeometry( topData )
+			.translate( 0, height/2 + frameThickness/2, 0 );
 
-		const right = new ASSETS.RoundedBoxGeometry(
-			frameThickness, height + frameThickness, thickness,
-			d, r, [ 0, 1, 1, 1, 0, 0 ], undefined, [ 0, 1, 1, 1, 0, 0 ], false
-		).translate( width/2 + frameThickness/2, frameThickness/2, 0 );
-		const top = new ASSETS.RoundedBoxGeometry(
-			width + 2*frameThickness, frameThickness, thickness,
-			d, r, [ 0, 1, 0, 0, 1, 1 ], undefined, [ 0, 1, 0, 0, 1, 1 ], false
-		).translate( 0, height/2 + frameThickness/2, 0 );
-
-		const leftMid = new ASSETS.RoundedBoxGeometry(
-			thickness, height, wallThickness,
-			undefined, undefined, [ 0, 0, 0, 1, 0, 0 ]
-		).translate( -width/2-thickness/2, 0, 0 );
-		const rightMid = new ASSETS.RoundedBoxGeometry(
-			thickness, height, wallThickness,
-			undefined, undefined, [ 0, 0, 1, 0, 0, 0 ]
-		).translate( width/2+thickness/2, 0, 0 );
-		const topMid = new ASSETS.RoundedBoxGeometry(
-			width + 2*thickness, thickness, wallThickness,
-			undefined, undefined, [ 0, 0, 0, 0, 1, 0 ]
-		).translate( 0, height/2+thickness/2, 0 );
+		const leftMid = new ASSETS.RoundedBoxGeometry({
+			x: thickness, y: height, z: wallThickness,
+			faces: [ 0, 0, 0, 1, 0, 0 ] } )
+			.translate( -width/2-thickness/2, 0, 0 );
+		const rightMid = new ASSETS.RoundedBoxGeometry({
+			x: thickness, y: height, z: wallThickness,
+			faces: [ 0, 0, 1, 0, 0, 0 ] } )
+			.translate( width/2+thickness/2, 0, 0 );
+		const topMid = new ASSETS.RoundedBoxGeometry({
+			x: width + 2*thickness, y: thickness, z: wallThickness,
+			faces: [ 0, 0, 0, 0, 1, 0 ] } )
+			.translate( 0, height/2+thickness/2, 0 );
 
 		const planes = [
 			new THREE.Plane( new THREE.Vector3( 1, 1, 0 ), 0 ).normalize().translate( new THREE.Vector3( 0, height/2 - width / 2, 0 ) ),
@@ -110,9 +115,9 @@ class Doorframe extends ASSETS.Asset {
 		this.add( frameMesh );
 
 		const hingeOffset = .01;
-		const door0 = new ASSETS.RoundedBoxGeometry( width, height, thickness/2 )
+		const door0 = new ASSETS.RoundedBoxGeometry( { x: width, y: height, z: thickness/2 } )
 			.translate( width/2 + frameThickness/4 + hingeOffset, 0, thickness/2 );
-		const door1 = new ASSETS.RoundedBoxGeometry( width + frameThickness/2, height + frameThickness/4, thickness/2 )
+		const door1 = new ASSETS.RoundedBoxGeometry( { x: width + frameThickness/2, y: height + frameThickness/4, z: thickness/2 } )
 			.translate( width/2 + frameThickness/4 + hingeOffset, frameThickness/8, 0 );
 		const hinge0 = new ASSETS.UVCylinderGeometry( hingeOffset, hingeOffset, .07, params.hingeDetail, 1 ).translate( 0, height/4, 0 );
 		const hinge1 = new ASSETS.UVCylinderGeometry( hingeOffset, hingeOffset, .07, params.hingeDetail, 1 ).translate( 0, -height/4, 0 );

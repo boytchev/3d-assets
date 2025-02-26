@@ -300,15 +300,21 @@ class RoundedBoxGeometry extends BufferGeometry {
 
 
 	constructor(
-		x, y, z,
-		segments = 2, roundness = 0, faces = [ 1, 1, 1, 1, 1, 1 ],
-		uvMatrix = new Matrix3(),
-		roundFaces = [ 1, 1, 1, 1, 1, 1 ], relativeRoundness = true,
-		fillCenter = [ 1, 1, 1, 1, 1, 1 ]
+		params
 	) {
 
 		super();
 
+		let x = params.x;
+		let y = params.y;
+		let z = params.z;
+		const segments = params.segments ?? 2;
+		const roundness = params.roundness ?? 0;
+		const faces = params.faces ?? [ 1, 1, 1, 1, 1, 1 ];
+		const uvMatrix = params.uvMatrix ?? new Matrix3();
+		const roundFaces = params.roundFaces ?? [ 1, 1, 1, 1, 1, 1 ];
+		const relativeRoundness = params.relativeRoundness ?? true;
+		const fillCenter = params.fillCenter ?? [ 1, 1, 1, 1, 1, 1 ];
 
 		// switch face order depending on size so that the UV unwrap is more efficient
 		let perm;

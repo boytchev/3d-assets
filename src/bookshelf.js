@@ -10,7 +10,7 @@ class Bookshelf extends ASSETS.Asset {
 
 	/* eslint-disable */
 	static paramData = {
-		
+
 		width:        { default: 90, type: 'cm'  , min: 30, max: 120, prec: 1, folder: "General", name: "Width" },
 		depth:        { default: 20, type: 'cm'  , min: 10, max:  40, prec: 1, folder: "General", name: "Depth" },
 		thickness:    { default:  2, type: 'cm'  , min:  1, max:   3, prec: 1, folder: "General", name: "Thickness" },
@@ -61,20 +61,32 @@ class Bookshelf extends ASSETS.Asset {
 		const sideLData = {
 			x: thickness, y: height, z: depth,
 			roundFaces: [ 1, 1, 1, 0, 0, 1 ],
+			segments: detail,
+			roundness: roundness,
+			relativeRoundness: false
 		};
 		const sideRData = {
 			x: thickness, y: height, z: depth,
 			roundFaces: [ 1, 1, 0, 1, 0, 1 ],
+			segments: detail,
+			roundness: roundness,
+			relativeRoundness: false
 		};
 		const backData = {
 			x: width - 2 * thickness, y: height, z: thickness,
 			faces: [ 1, 1, 0, 0, 1, 1 ],
 			roundFaces: [ 1, 0, 0, 0, 0, 1 ],
+			segments: detail,
+			roundness: roundness,
+			relativeRoundness: false
 		};
 		const shelfData = {
 			x: width - 2 * thickness, y: thickness, z: depth - thickness,
 			faces: [ 0, 1, 0, 0, 1, 1 ],
 			roundFaces: [ 0, 1, 0, 0, 1, 1 ],
+			segments: detail,
+			roundness: roundness,
+			relativeRoundness: false
 		};
 
 		const l = [];
@@ -87,32 +99,15 @@ class Bookshelf extends ASSETS.Asset {
 		let packer = BP.minimalPacking( l, 1. );
 		packer.generateUV();
 
-		const sideL = new ASSETS.RoundedBoxGeometry(
-			sideLData.x, sideLData.y, sideLData.z,
-			detail, roundness, sideLData.faces,
-			sideLData.uvMatrix, sideLData.roundFaces, false
-		).translate( -width/2 + thickness/2, height/2, 0 );
-
-		const sideR = new ASSETS.RoundedBoxGeometry(
-			sideRData.x, sideRData.y, sideRData.z,
-			detail, roundness, undefined,
-			sideRData.uvMatrix, sideRData.roundFaces, false
-		).translate( width/2 - thickness/2, height/2, 0 );
-
-		const back = new ASSETS.RoundedBoxGeometry(
-			backData.x, backData.y, backData.z,
-			detail, roundness, backData.faces,
-			backData.uvMatrix, backData.roundFaces, false
-		).translate( 0, height/2, -depth/2 +thickness/2 );
+		const sideL = new ASSETS.RoundedBoxGeometry( sideLData ).translate( -width/2 + thickness/2, height/2, 0 );
+		const sideR = new ASSETS.RoundedBoxGeometry( sideRData ).translate( width/2 - thickness/2, height/2, 0 );
+		const back = new ASSETS.RoundedBoxGeometry( backData ).translate( 0, height/2, -depth/2 +thickness/2 );
 
 		const shelves = [];
 		for ( let i = 0; i < shelvesCount; ++i ) {
 
-			const shelf = new ASSETS.RoundedBoxGeometry(
-				shelfData.x, shelfData.y, shelfData.z,
-				detail, roundness, shelfData.faces,
-				shelfData.uvMatrix, shelfData.roundFaces, false
-			).translate( 0, i * shelfHeight + legs + thickness/2, thickness/2 );
+			const shelf = new ASSETS.RoundedBoxGeometry( shelfData )
+				.translate( 0, i * shelfHeight + legs + thickness/2, thickness/2 );
 			shelves.push( shelf );
 
 		}

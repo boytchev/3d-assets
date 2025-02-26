@@ -122,24 +122,30 @@ class Table extends ASSETS.Asset {
 			roundness: simple ? 0 : params.topRoundness,
 		};
 
-		const l = [];
-		l.push( ...ASSETS.RoundedBoxGeometry.getRectangles( topGeomData ) );
-		const binPacker = BP.minimalPacking( l, 1 );
+		const l1 = [];
+		l1.push( ...ASSETS.RoundedBoxGeometry.getRectangles( topGeomData ) );
+		let binPacker = BP.minimalPacking( l1, 1 );
 		binPacker.generateUV();
+
+		const legData = {
+			curveSegments: 1,
+			steps: params.legDetail,
+			bevelEnabled: false,
+			extrudePath: curve,
+			caps: [ !simple, 1 ],
+			uvMatrix: new THREE.Matrix3().makeScale( 0.79, 0.79 ).translate( 0.01, 0.01 ),
+			topUVMatrix: new THREE.Matrix3().makeScale( 0.18, 0.18 ).translate( 0.81, 0.01 ),
+			bottomUVMatrix: new THREE.Matrix3().makeScale( 0.18, 0.18 ).translate( 0.81, 0.2 ),
+		};
+		const l2 = ASSETS.SmoothExtrudeGeometry.getRectangles( legProfileShape, legData );
+		binPacker = BP.minimalPacking( l2, 1 );
+		binPacker.generateUV();
+
 
 		this.legs = [];
 		for ( let i = 0; i < 4; ++i ) {
 
-			let geom = new ASSETS.SmoothExtrudeGeometry( legProfileShape, {
-				curveSegments: 1,
-				steps: params.legDetail,
-				bevelEnabled: false,
-				extrudePath: curve,
-				caps: [ !simple, 1 ],
-				uvMatrix: new THREE.Matrix3().makeScale( 0.79, 0.79 ).translate( 0.01, 0.01 ),
-				topUVMatrix: new THREE.Matrix3().makeScale( 0.18, 0.18 ).translate( 0.81, 0.01 ),
-				bottomUVMatrix: new THREE.Matrix3().makeScale( 0.18, 0.18 ).translate( 0.81, 0.2 ),
-			} );
+			let geom = new ASSETS.SmoothExtrudeGeometry( legProfileShape, legData );
 			geom.uvIndex = 0;
 			this.legs.push( geom );
 

@@ -336,8 +336,9 @@ class BinPack {
 
 			rect.data.src.uvMatrix ??= [];
 			if ( rect.rotated )
-				rect.data.src.uvMatrix[ rect.data.i ] = uvRemap( rect.x + this.padding/2, rect.y + this.padding/2, 1./this.binWidth, true, rect.height );
+				rect.data.src.uvMatrix[ rect.data.i ] = uvRemap( rect.x + this.padding/2, rect.y - this.padding/2, 1./this.binWidth, true, rect.height );
 			else rect.data.src.uvMatrix[ rect.data.i ] = uvRemap( rect.x + this.padding/2, rect.y + this.padding/2, 1./this.binWidth );
+			rect.data.src.autouv = true;
 
 		}
 

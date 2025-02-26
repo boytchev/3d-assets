@@ -10,7 +10,7 @@ class Monitor extends ASSETS.Asset {
 
 	/* eslint-disable */
 	static paramData = {
-		
+
 		aspectX:        { default: 16   , type: Number , min:   1, max: 40, prec: 0, folder: "Screen", name: "Aspect X"  },
 		aspectY:        { default: 9    , type: Number , min:   1, max: 40, prec: 0, folder: "Screen", name: "Aspect Y"  },
 		diagonal:       { default: 24   , type: 'in'   , min:   5, max: 40, prec: 1, folder: "Screen", name: "Diagonal"  },
@@ -68,16 +68,22 @@ class Monitor extends ASSETS.Asset {
 			x: width + 0.002, y: height + 0.002, z: screenThickness,
 			faces: [ 1, !simple, 1, 1, 1, 1 ],
 			roundFaces: [ 1, 0, 1, 1, 1, 1 ],
+			segments: bevelDetail,
+			roundness: .01 * !simple
 		};
 		const bodyGeom2Data = {
 			x: Math.max( width/3, handleWidth ), y: height/3, z: 0.03,
 			faces: [ 1, 0, 1, 1, 1, 1 ],
 			roundFaces: [ 1, 0, 1, 1, 1, 1 ],
+			segments: bevelDetail,
+			roundness: .1 * !simple,
 		};
 		const baseGeomData = {
 			x: baseWidth, y: baseThickness, z: baseDepth,
 			faces: undefined,
 			roundFaces: [ 1, 1, 1, 1, 0, 1 ],
+			segments: bevelDetail,
+			roundness: .1 * !simple,
 		};
 
 		const v1 = new THREE.Vector3( 0, baseThickness/4, -baseDepth/2 + baseThickness );
@@ -87,6 +93,8 @@ class Monitor extends ASSETS.Asset {
 			x: handleWidth, y: handleLength, z: baseThickness,
 			faces: [ 1, 1, 1, 1, 0, 0 ],
 			roundFaces: [ 1, 1, 1, 1, 0, 0 ],
+			segments: bevelDetail,
+			roundness: 0.2 * !simple
 		};
 
 		const l = [];
@@ -97,33 +105,24 @@ class Monitor extends ASSETS.Asset {
 		let binPacker = BP.minimalPacking( l, diagonal/2 );
 		binPacker.generateUV();
 
-		const bodyGeom = new ASSETS.RoundedBoxGeometry(
-			bodyGeomData.x, bodyGeomData.y, bodyGeomData.z,
-			bevelDetail, .01 * !simple, bodyGeomData.faces, bodyGeomData.uvMatrix, bodyGeomData.roundFaces,
-		).translate(
-			0, height/2 + baseHeight, 0
-		);
+		const bodyGeom = new ASSETS.RoundedBoxGeometry( bodyGeomData )
+			.translate(
+				0, height/2 + baseHeight, 0
+			);
 
-		const bodyGeom2 = new ASSETS.RoundedBoxGeometry(
-			bodyGeom2Data.x, bodyGeom2Data.y, bodyGeom2Data.z,
-			bevelDetail, .1 * !simple, bodyGeom2Data.faces, bodyGeom2Data.uvMatrix, bodyGeom2Data.roundFaces,
-		).translate(
-			0, height/2 + baseHeight, -screenThickness/2 - 0.015
-		);
+		const bodyGeom2 = new ASSETS.RoundedBoxGeometry( bodyGeom2Data )
+			.translate(
+				0, height/2 + baseHeight, -screenThickness/2 - 0.015
+			);
 
-		const baseGeom = new ASSETS.RoundedBoxGeometry(
-			baseGeomData.x, baseGeomData.y, baseGeomData.z,
-			bevelDetail, .1 * !simple, baseGeomData.faces, baseGeomData.uvMatrix, baseGeomData.roundFaces,
-		);
+		const baseGeom = new ASSETS.RoundedBoxGeometry( baseGeomData );
 
-		const handleGeom = new ASSETS.RoundedBoxGeometry(
-			handleGeomData.x, handleGeomData.y, handleGeomData.z,
-			bevelDetail, 0.2 * !simple, handleGeomData.faces, handleGeomData.uvMatrix, handleGeomData.roundFaces,
-		).translate(
-			0, handleLength/2, 0
-		).rotateX(
-			Math.atan2( v2.z-v1.z, v2.y - v1.y )
-		).translate( v1 );
+		const handleGeom = new ASSETS.RoundedBoxGeometry( handleGeomData )
+			.translate(
+				0, handleLength/2, 0
+			).rotateX(
+				Math.atan2( v2.z-v1.z, v2.y - v1.y )
+			).translate( v1 );
 
 		const monitorGeometry = BufferGeometryUtils.mergeGeometries(
 			[ bodyGeom, bodyGeom2, baseGeom, handleGeom ]

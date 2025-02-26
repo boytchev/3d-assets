@@ -9,7 +9,7 @@ class Wardrobe extends ASSETS.Asset {
 
 	/* eslint-disable */
 	static paramData = {
-			
+
 		wings:            { default:     2, type: 'n'   , min:  1, max:   4, prec: 0, folder: "General", name: "Wings"},
 		wingWidth:        { default:    40, type: 'cm'  , min: 20, max:  80, prec: 1, folder: "General", name: "Wing width"},
 		height:           { default:   150, type: 'cm'  , min: 60, max: 210, prec: 1, folder: "General", name: "Height"},
@@ -68,43 +68,51 @@ class Wardrobe extends ASSETS.Asset {
 		const handleHeight = params.handleHeight;
 		const handleOffset = ASSETS.cm( params.handleOffset );
 		const hangerRailHeight = ASSETS.cm( params.hangerRailHeight );
-
 		const doorHeight = height - 2 * thickness;
 
-		const bottom = new ASSETS.RoundedBoxGeometry(
-			wingWidth * wings, thickness, depth
-		).translate( 0, thickness/2, 0 );
+		const bottomData = {
+			x: wingWidth * wings, y: thickness, z: depth
+		};
+		const topData = structuredClone( bottomData );
+		const sideLData = {
+			x: thickness, y: height - 2*thickness, z: depth - thickness,
+			faces: [ 1, 1, 1, 1, 0, 0 ]
+		};
+		const sideRData = structuredClone( sideLData );
+		const backData = {
+			x: wingWidth * wings - 2 * thickness, y: height - 2 * thickness, z: thickness
+		};
+		const splitterData = {
+			x: thickness, y: height - 2 * thickness, z: depth - 2 * thickness,
+			faces: [ 1, 1, 1, 1, 0, 0 ]
+		};
+		const doorData = {
+			x: wingWidth, y: doorHeight, z: thickness,
+			segments: params.doorRoundDetail,
+			roundness: simple ? 0 : params.doorRoundness
+		};
 
-		const top = new ASSETS.RoundedBoxGeometry(
-			wingWidth * wings, thickness, depth
-		).translate( 0, height - thickness/2, 0 );
-
-		const sideL = new ASSETS.RoundedBoxGeometry(
-			thickness, height - 2*thickness, depth - thickness,
-			undefined, undefined, [ 1, 1, 1, 1, 0, 0 ]
-		).translate( -wingWidth/2 * wings + thickness / 2, height/2, -thickness/2 );
-
-		const sideR = new ASSETS.RoundedBoxGeometry(
-			thickness, height - 2*thickness, depth - thickness,
-			undefined, undefined, [ 1, 1, 1, 1, 0, 0 ]
-		).translate( wingWidth/2 * wings - thickness/2, height/2, -thickness/2 );
-
-		const back = new ASSETS.RoundedBoxGeometry(
-			wingWidth * wings - 2 * thickness, height - 2 * thickness, thickness
-		).translate( 0, height/2, -depth/2+thickness/2 );
+		const bottom = new ASSETS.RoundedBoxGeometry( bottomData )
+			.translate( 0, thickness/2, 0 );
+		const top = new ASSETS.RoundedBoxGeometry( topData )
+			.translate( 0, height - thickness/2, 0 );
+		const sideL = new ASSETS.RoundedBoxGeometry( sideLData )
+			.translate( -wingWidth/2 * wings + thickness / 2, height/2, -thickness/2 );
+		const sideR = new ASSETS.RoundedBoxGeometry( sideRData )
+			.translate( wingWidth/2 * wings - thickness/2, height/2, -thickness/2 );
+		const back = new ASSETS.RoundedBoxGeometry( backData )
+			.translate( 0, height/2, -depth/2+thickness/2 );
 
 		const splitters = [];
 		if ( params.separateWings )
 			for ( let i = 0; i < wings-1; ++i ) {
 
-				const splitter = new ASSETS.RoundedBoxGeometry(
-					thickness, height - 2 * thickness, depth - 2 * thickness,
-					undefined, undefined, [ 1, 1, 1, 1, 0, 0 ]
-				).translate(
-					-wingWidth * wings/2 + ( i+1 ) * wingWidth,
-					height/2,
-					0
-				);
+				const splitter = new ASSETS.RoundedBoxGeometry( splitterData )
+					.translate(
+						-wingWidth * wings/2 + ( i+1 ) * wingWidth,
+						height/2,
+						0
+					);
 				splitters.push( splitter );
 
 			}
@@ -162,9 +170,7 @@ class Wardrobe extends ASSETS.Asset {
 			const doorGroup = new THREE.Group();
 			doorGroup.name = 'Door_' + ( i+1 );
 
-			const doorGeometry = new ASSETS.RoundedBoxGeometry(
-				wingWidth, doorHeight, thickness, params.doorRoundDetail, simple ? 0 : params.doorRoundness
-			);
+			const doorGeometry = new ASSETS.RoundedBoxGeometry( doorData );
 			this.doors.push( doorGeometry );
 			const door = new THREE.Mesh(
 				doorGeometry,

@@ -51,27 +51,32 @@ class PhotoFrame extends ASSETS.Asset {
 		const r = simple ? 0 : Math.min( ASSETS.cm( params.roundness ), thickness );
 		const d = params.roundDetail;
 
+		const leftData = {
+			x: frameThickness, y: height + 2 * frameThickness, z: thickness,
+			segments: d,
+			roundness: r,
+			faces: [ 1, 1, 1, 1, 0, 0 ],
+			roundFaces: [ 0, 1, 1, 1, 0, 0 ],
+			relativeRoundness: false
+		};
 
-		const left = new ASSETS.RoundedBoxGeometry(
-			frameThickness, height + 2*frameThickness, thickness,
-			d, r, [ 1, 1, 1, 1, 0, 0 ], undefined, [ 0, 1, 1, 1, 0, 0 ], false
-		).translate( -width/2 - frameThickness/2, 0, 0 );
+		const topData = {
+			x: width + 2*frameThickness, y: frameThickness, z: thickness,
+			segments: d,
+			roundness: r,
+			faces: [ 1, 1, 0, 0, 1, 1 ],
+		 	roundFaces: [ 0, 1, 0, 0, 1, 1 ],
+			relativeRoundness: false
+		};
 
-		const right = new ASSETS.RoundedBoxGeometry(
-			frameThickness, height + 2*frameThickness, thickness,
-			d, r, [ 1, 1, 1, 1, 0, 0 ], undefined, [ 0, 1, 1, 1, 0, 0 ], false
-		).translate( width/2 + frameThickness/2, 0, 0 );
-
-		const top = new ASSETS.RoundedBoxGeometry(
-			width + 2*frameThickness, frameThickness, thickness,
-			d, r, [ 1, 1, 0, 0, 1, 1 ], undefined, [ 0, 1, 0, 0, 1, 1 ], false
-		).translate( 0, height/2 + frameThickness/2, 0 );
-
-		const bottom = new ASSETS.RoundedBoxGeometry(
-			width + 2*frameThickness, frameThickness, thickness,
-			d, r, [ 1, 1, 0, 0, 1, 1 ], undefined, [ 0, 1, 0, 0, 1, 1 ], false
-		).translate( 0, -height/2 - frameThickness/2, 0 );
-
+		const left = new ASSETS.RoundedBoxGeometry( leftData )
+			.translate( -width/2 - frameThickness/2, 0, 0 );
+		const right = new ASSETS.RoundedBoxGeometry( leftData )
+			.translate( width/2 + frameThickness/2, 0, 0 );
+		const top = new ASSETS.RoundedBoxGeometry( topData )
+			.translate( 0, height/2 + frameThickness/2, 0 );
+		const bottom = new ASSETS.RoundedBoxGeometry( topData )
+			.translate( 0, -height/2 - frameThickness/2, 0 );
 
 		const planes = [
 			new THREE.Plane( new THREE.Vector3( 1, 1, 0 ), 0 ).normalize().translate( new THREE.Vector3( 0, height/2 - width / 2, 0 ) ),

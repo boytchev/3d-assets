@@ -118,6 +118,8 @@ class Table extends ASSETS.Asset {
 			x: width, y: thickness, z: depth,
 			faces: undefined,
 			roundFaces: undefined,
+			segments: params.topRoundDetail,
+			roundness: simple ? 0 : params.topRoundness,
 		};
 
 		const l = [];
@@ -150,18 +152,7 @@ class Table extends ASSETS.Asset {
 
 		}
 
-
-		const uvXSize = 2 * width + 2 * thickness;
-		const uvYSize = depth + 2 * thickness;
-		const uvScale = 1 / Math.max( uvXSize, uvYSize );
-
-		const topGeom = new ASSETS.RoundedBoxGeometry(
-			topGeomData.x, topGeomData.y, topGeomData.z,
-			params.topRoundDetail,
-			simple ? 0 : params.topRoundness,
-			undefined,
-			topGeomData.uvMatrix,
-		);
+		const topGeom = new ASSETS.RoundedBoxGeometry( topGeomData );
 		topGeom.uvIndex = 1;
 		this.topGeom = topGeom;
 

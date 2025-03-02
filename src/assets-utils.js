@@ -4,7 +4,7 @@
 
 
 
-import { BufferAttribute, BufferGeometry, Group, LatheGeometry, Line3, MathUtils, Matrix3, Matrix4, MeshPhysicalMaterial, Shape, ShapeGeometry, Vector2, Vector3 } from 'three';
+import { Box2, BufferAttribute, BufferGeometry, Group, LatheGeometry, Line3, MathUtils, Matrix3, Matrix4, MeshPhysicalMaterial, RGBA_ASTC_10x5_Format, Shape, ShapeGeometry, Vector2, Vector3 } from 'three';
 //import { MeshPhysicalNodeMaterial } from 'three/nodes';
 //import { marble } from "tsl-textures/marble.js";
 
@@ -192,7 +192,6 @@ class RoundedShape extends Shape {
 		for ( var i=1; i<points.length; i++ )
 			lengths[ i ] = lengths[ i-1 ]+ points[ i ].distanceTo( points[ i-1 ]);
 
-		//console.table(lengths)
 
 		var j = 0; // next non-null uv index
 		for ( var i=1; i<points.length-1; i++ ) {
@@ -623,6 +622,50 @@ class RoundedBoxGeometry extends BufferGeometry {
 
 class SmoothExtrudeGeometry extends BufferGeometry {
 
+	static getRectangles( shape, properties ) {
+
+		const res =[];
+		const shapePoints = shape.getPoints();
+		let len = 0;
+		for ( let i = 0; i < shapePoints.length - 1; ++i ) {
+
+			len += Math.sqrt(
+				( shapePoints[ i ].x - shapePoints[ i + 1 ].x ) ** 2 +
+				( shapePoints[ i ].y - shapePoints[ i + 1 ].y ) ** 2 );
+
+		}
+
+		let height = 0;
+		const pathPoints = properties.extrudePath.getPoints( properties.steps );
+		for ( let i = 0; i < pathPoints.length - 1; ++i ) {
+
+			height += Math.sqrt(
+				( pathPoints[ i ].x - pathPoints[ i + 1 ].x ) ** 2 +
+				( pathPoints[ i ].y - pathPoints[ i + 1 ].y ) ** 2 +
+				( pathPoints[ i ].z - pathPoints[ i + 1 ].z ) ** 2
+			);
+
+		}
+
+		res.push( { width: height, height: len, i: 0, src: properties } );
+
+		let caps = properties.caps ?? [ 1, 1 ];
+		if ( caps[ 0 ] || caps[ 1 ]) {
+
+			let box = new Box2();
+			for ( let i = 0; i < shapePoints.length; ++i )
+				box.expandByPoint( shapePoints[ i ]);
+			let size = new Vector2();
+			box.getSize( size );
+			if ( caps[ 0 ]) res.push( { width: size.x, height: size.y, i: 1, src: properties } );
+			if ( caps[ 1 ]) res.push( { width: size.x, height: size.y, i: 2, src: properties } );
+
+		}
+
+		return res;
+
+	}
+
 	constructor( shape, properties ) {
 
 		super();
@@ -630,9 +673,9 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 		const steps = properties.steps;
 		const extrudePath = properties.extrudePath;
 		const caps = properties.caps ?? [ 1, 1 ];
-		const uvMatrix = properties.uvMatrix ?? new Matrix3();
-		const topUVMatrix = properties.topUVMatrix ?? new Matrix3();
-		const bottomUVMatrix = properties.bottomUVMatrix ?? new Matrix3();
+		const uvMatrix = properties.autouv ? properties.uvMatrix[ 0 ] ?? new Matrix3() : properties.uvMatrix ?? new Matrix3();
+		const topUVMatrix = properties.autouv ? properties.uvMatrix[ 1 ] ?? new Matrix3() : properties.topUVMatrix ?? new Matrix3();
+		const bottomUVMatrix = properties.autouv ? properties.uvMatrix[ 2 ] ?? new Matrix3() : properties.bottomUVMatrix ?? new Matrix3();
 
 		const shapePoints = shape.getPoints();
 		const shapeNormals = new Float32Array( shapePoints.length * 2 );
@@ -640,7 +683,7 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 		const n0 = new Vector2(), n1 = new Vector2();
 		for ( let i = 0; i < shapePoints.length; ++i ) {
 
-			const v0 = shapePoints[ i-1 ], v1 = shapePoints[ i ], v2 = shapePoints[ i+1 ];
+			const v0 = shapePoints[ i - 1 ], v1 = shapePoints[ i ], v2 = shapePoints[ i + 1 ];
 			if ( v0 ) n0.set( ( v1.y - v0.y ), -( v1.x - v0.x ) );
 			if ( v2 ) n1.set( ( v2.y - v1.y ), -( v2.x - v1.x ) );
 
@@ -660,7 +703,7 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 		const frames = extrudePath.computeFrenetFrames( steps, false );
 		const cap = new ShapeGeometry( shape );
 		const vertexCount =
-			( steps+1 ) * shapePoints.length +
+			( steps + 1 ) * shapePoints.length +
 			( caps[ 0 ] + caps[ 1 ]) * cap.getAttribute( "position" ).count;
 
 		const vertices = new Float32Array( vertexCount * 3 );
@@ -668,7 +711,7 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 		const uvs = new Float32Array( vertexCount * 2 );
 
 		const indexCount =
-			steps * ( shapePoints.length-1 ) * 6 +
+			steps * ( shapePoints.length - 1 ) * 6 +
 			( caps[ 0 ] + caps[ 1 ]) * cap.getIndex().count;
 		const indices = new Uint16Array( indexCount );
 
@@ -677,6 +720,24 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 		const n = new Vector3();
 		const uv = new Vector2();
 		const matrix = new Matrix4();
+
+		let scaleX = 1;
+		let scaleY = 1;
+		let scaleCapX = 1;
+		let scaleCapY = 1;
+		if ( properties.autouv ) {
+
+			const rects = SmoothExtrudeGeometry.getRectangles( shape, properties );
+			scaleX = rects[ 0 ].width;
+			scaleY = rects[ 0 ].height;
+			if ( caps[ 0 ] || caps[ 1 ]) {
+
+				scaleCapX = rects[ 1 ].width;
+				scaleCapY = rects[ 1 ].height;
+
+			}
+
+		}
 
 		for ( let i = 0; i < steps+1; ++i ) {
 
@@ -692,8 +753,9 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 				vertices[ 3 * vOffset + 2 ] = p.z;
 
 				uv.set(
-					i / steps,
-					shapePoints[ j ].t ?? ( j / ( shapePoints.length - 1 ) ) ).applyMatrix3( uvMatrix );
+					i / steps * scaleX,
+					( shapePoints[ j ].t ?? ( j / ( shapePoints.length - 1 ) ) ) * scaleY
+				).applyMatrix3( uvMatrix );
 				uvs[ 2 * vOffset + 0 ] = uv.x;
 				uvs[ 2 * vOffset + 1 ] = uv.y;
 
@@ -761,7 +823,10 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 				normals[ 3 * vOffset + 1 ] = n.y;
 				normals[ 3 * vOffset + 2 ] = n.z;
 
-				uv.set( capPos[ i ] / capSize.x + 0.5, capPos[ i+1 ] / capSize.y + 0.5 ).applyMatrix3( uvMatrix );
+				uv.set(
+					( capPos[ i ] / capSize.x+ 0.5 ) * scaleCapX,
+					( capPos[ i+1 ] / capSize.y + 0.5 ) * scaleCapY
+				).applyMatrix3( uvMatrix );
 				uvs[ 2 * vOffset + 0 ] = uv.x;
 				uvs[ 2 * vOffset + 1 ] = uv.y;
 				++vOffset;
@@ -814,17 +879,34 @@ class SmoothExtrudeGeometry extends BufferGeometry {
 
 class UVCylinderGeometry extends BufferGeometry {
 
+	static getRectangles( properties ) {
 
-	constructor( radiusTop = 1, radiusBottom = 1, height = 1, radialSegments = 32, heightSegments = 1, openEnded = false, properties = {} ) {
+		const { radiusTop = 1, radiusBottom = 1, height = 1, openEnded = false } = properties;
+
+		const res = [];
+		res.push( { width: Math.PI * Math.max( radiusTop, radiusBottom ), height: height, i: 0, src: properties } );
+		if ( !openEnded ) {
+
+			res.push( { width: 2*radiusTop, height: 2*radiusTop, i: 1, src: properties } );
+			res.push( { width: 2*radiusBottom, height: 2*radiusBottom, i: 2, src: properties } );
+
+		}
+
+		return res;
+
+	}
+
+	constructor( properties ) {
 
 		super();
 
-		const bodyUVMatrix = properties.bodyUVMatrix ?? new Matrix3();
-		const capsUVMatrix = [
-			properties.topUVMatrix ?? new Matrix3(),
-			properties.bottomUVMatrix ?? new Matrix3()
-		];
+		const { radiusTop = 1, radiusBottom = 1, height = 1, radialSegments = 32, heightSegments = 1, openEnded = false } = properties;
 
+		const bodyUVMatrix = properties.autouv ? properties.uvMatrix[ 0 ] ?? new Matrix3() : properties.bodyUVMatrix ?? new Matrix3();
+		const capsUVMatrix = [
+			properties.autouv ? properties.uvMatrix[ 1 ] ?? new Matrix3() : properties.topUVMatrix ?? new Matrix3(),
+			properties.autouv ? properties.uvMatrix[ 2 ] ?? new Matrix3() : properties.bottomUVMatrix ?? new Matrix3()
+		];
 
 		const vertexCount = ( heightSegments+1 ) * ( radialSegments+1 ) + !openEnded * 2 * ( radialSegments+2 );
 		const triangleCount = 2 * heightSegments * radialSegments + !openEnded * 2 * radialSegments;
@@ -837,9 +919,28 @@ class UVCylinderGeometry extends BufferGeometry {
 
 		const uv = new Vector2();
 
+		let scaleBodyX = 1;
+		let scaleBodyY = 1;
+		let scaleCapsX = 1;
+		let scaleCapsY = 1;
+		if ( properties.autouv ) {
+
+			const rects = UVCylinderGeometry.getRectangles( properties );
+			scaleBodyX = rects[ 0 ].width * 2;
+			scaleBodyY = rects[ 0 ].height;
+			if ( !openEnded ) {
+
+				scaleCapsX = rects[ 1 ].width;
+				scaleCapsY = rects[ 1 ].height;
+
+			}
+
+		}
+
 		let vIndex = 0;
 		// body
-		for ( let i = 0; i < heightSegments + 1; ++i ) {
+		let i = 0;
+		for ( ; i < heightSegments / 2 + 1; ++i ) {
 
 			const w = i / heightSegments;
 			const r = w * radiusTop + ( 1-w ) * radiusBottom;
@@ -858,7 +959,7 @@ class UVCylinderGeometry extends BufferGeometry {
 				normals[ 3 * vIndex + 1 ] = 0;
 				normals[ 3 * vIndex + 2 ] = c;
 
-				uv.set( j / radialSegments, i / heightSegments ).applyMatrix3( bodyUVMatrix );
+				uv.set( j / radialSegments * scaleBodyX, i / heightSegments * scaleBodyY ).applyMatrix3( bodyUVMatrix );
 				uvs[ 2 * vIndex + 0 ] = uv.x;
 				uvs[ 2 * vIndex + 1 ] = uv.y;
 
@@ -883,7 +984,7 @@ class UVCylinderGeometry extends BufferGeometry {
 			normals[ 3 * vIndex + 1 ] = 2*i - 1;
 			normals[ 3 * vIndex + 2 ] = 0;
 
-			uv.set( 0.5, 0.5 ).applyMatrix3( capsUVMatrix[ i ]);
+			uv.set( 0.5 * scaleCapsX, 0.5 * scaleCapsY ).applyMatrix3( capsUVMatrix[ i ]);
 			uvs[ 2 * vIndex + 0 ] = uv.x;
 			uvs[ 2 * vIndex + 1 ] = uv.y;
 			++vIndex;
@@ -902,7 +1003,7 @@ class UVCylinderGeometry extends BufferGeometry {
 				normals[ 3 * vIndex + 1 ] = 2*i - 1;
 				normals[ 3 * vIndex + 2 ] = 0;
 
-				uv.set( .5 * s + .5, .5 * c + .5 ).applyMatrix3( capsUVMatrix[ i ]);
+				uv.set( ( .5 * s + .5 ) * scaleCapsX, ( .5 * c + .5 ) * scaleCapsY ).applyMatrix3( capsUVMatrix[ i ]);
 				uvs[ 2 * vIndex + 0 ] = uv.x;
 				uvs[ 2 * vIndex + 1 ] = uv.y;
 				++vIndex;

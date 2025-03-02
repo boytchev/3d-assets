@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import * as ASSETS from './assets-utils.js';
+import * as BP from './bin-packing.js';
 
 class Stool extends ASSETS.Asset {
 
@@ -19,7 +20,7 @@ class Stool extends ASSETS.Asset {
 		seatSize:       { default: 50  , type: 'cm'  , min: 10, max: 100, prec: 2, folder: "Seat", name: "Size"      },
 		seatHeight:     { default: 100 , type: 'cm'  , min: 10, max: 100, prec: 2, folder: "Seat", name: "Height"    },
 		seatThickness:  { default: 10  , type: 'cm'  , min: 10, max: 100, prec: 2, folder: "Seat", name: "Thickness" },
-                                                                        
+
 		legDetail:      { default: 10  , type: 'n'   , min: 5 , max: 30 , prec: 0, folder: "Complexity", name: "Legs"      , exp: true},
 		legRoundDetail: { default:  3  , type: 'n'   , min: 1 , max: 10 , prec: 0, folder: "Complexity", name: "Legs Bevel", exp: true},
 		seatDetail:     { default: 30  , type: 'n'   , min: 6 , max: 50 , prec: 0, folder: "Complexity", name: "Seat"      , exp: true},
@@ -94,19 +95,24 @@ class Stool extends ASSETS.Asset {
 			)
 		);
 
+		const legData = {
+			curveSegments: 1,
+			steps: params.legDetail,
+			bevelEnabled: false,
+			extrudePath: curve,
+			caps: [ 1, 1 ],
+		};
+
+
+		const l1 = [];
+		l1.push( ...ASSETS.SmoothExtrudeGeometry.getRectangles( legProfileShape, legData ) );
+		let binPacker = BP.minimalPacking( l1, 1. );
+		binPacker.generateUV();
 
 		for ( let i = 0; i < legCount; ++i ) {
 
-			let geom = new ASSETS.SmoothExtrudeGeometry( legProfileShape, {
-				curveSegments: 1,
-				steps: params.legDetail,
-				bevelEnabled: false,
-				extrudePath: curve,
-				caps: [ 1, 1 ],
-				uvMatrix: new THREE.Matrix3().makeScale( 0.79, 0.79 ).translate( 0.01, 0.01 ),
-				topUVMatrix: new THREE.Matrix3().makeScale( 0.18, 0.18 ).translate( 0.81, 0.01 ),
-				bottomUVMatrix: new THREE.Matrix3().makeScale( 0.18, 0.18 ).translate( 0.81, 0.2 ),
-			} );
+
+			let geom = new ASSETS.SmoothExtrudeGeometry( legProfileShape, legData );
 			geom.uvIndex = 0;
 
 			const mesh = new THREE.Mesh( geom, material );
@@ -116,11 +122,25 @@ class Stool extends ASSETS.Asset {
 
 		}
 
-		const seatGeom = new ASSETS.UVCylinderGeometry( size, size, thickness, params.seatDetail, 1, false, {
-			bodyUVMatrix: new THREE.Matrix3().makeScale( 0.98, 0.28 ).translate( .01, .01 ),
-			topUVMatrix: new THREE.Matrix3().makeScale( 0.48, 0.48 ).translate( 0.01, 0.31 ),
-			bottomUVMatrix: new THREE.Matrix3().makeScale( 0.48, 0.48 ).translate( 0.51, 0.31 ),
-		} );
+		const seatData = {
+			radiusTop: size,
+			radiusBottom: size,
+			height: thickness,
+			radialSegments: params.seatDetail,
+			heightSegments: 1,
+			openEnded: false,
+			uvMatrix: [
+				new THREE.Matrix3().makeScale( 0.98, 0.28 ).translate( .01, .01 ),
+				new THREE.Matrix3().makeScale( 0.48, 0.48 ).translate( 0.01, 0.31 ),
+				new THREE.Matrix3().makeScale( 0.48, 0.48 ).translate( 0.51, 0.31 ) ]
+		};
+
+		const l2 = [];
+		l2.push( ...ASSETS.UVCylinderGeometry.getRectangles( seatData ) );
+		binPacker = BP.minimalPacking( l2, 1 );
+		binPacker.generateUV();
+
+		const seatGeom = new ASSETS.UVCylinderGeometry( seatData );
 		seatGeom.uvIndex = 1;
 
 		const seat = new THREE.Mesh(

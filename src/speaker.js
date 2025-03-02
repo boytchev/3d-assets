@@ -14,7 +14,7 @@ class Speaker extends ASSETS.Asset {
 		height:        {default: 30, type: 'cm', min: 5, max: 100 ,prec: 2, folder: "Box", name: "Height"},
 		depth:         {default: 20, type: 'cm', min: 5, max: 40  ,prec: 2, folder: "Box", name: "Depth"},
 		speakerDepth:  {default:  2, type: 'cm', min: 1, max: 5  ,prec: 2, folder: "Speakers", name: "Depth"},
-	
+
 		speakerDetail: {default: 12, type: 'n' , min: 6, max: 20  ,prec: 0, folder: "Complexity", name: "Speakers"},
 		bevelDetail:   {default:  2, type: 'n' , min: 1, max: 10  ,prec: 0, folder: "Complexity", name: "Bevel"},
 
@@ -54,6 +54,9 @@ class Speaker extends ASSETS.Asset {
 			faces: [ 1, 1, 1, 1, 1, 1 ],
 			roundFaces: [ 0, 1, 1, 1, 0, 0 ],
 			fillCenter: [ 1, 0, 1, 1, 1, 1 ],
+			segments: params.bevelDetail,
+			roundness: roundness,
+			relativeRoundness: false
 		};
 
 		const l = [];
@@ -61,12 +64,7 @@ class Speaker extends ASSETS.Asset {
 		let binPacker = BP.minimalPacking( l, ( width + depth + height ) * .5 );
 		binPacker.generateUV();
 
-		const box = new ASSETS.RoundedBoxGeometry(
-			boxData.x, boxData.y, boxData.z,
-			params.bevelDetail, roundness, boxData.faces,
-			boxData.uvMatrix, boxData.roundFaces, false,
-			boxData.fillCenter
-		).translate( 0, height/2, 0 );
+		const box = new ASSETS.RoundedBoxGeometry( boxData ).translate( 0, height/2, 0 );
 
 		const frontFrame = new THREE.Shape([
 			new THREE.Vector2( -( width )/2+roundness, 0 ),

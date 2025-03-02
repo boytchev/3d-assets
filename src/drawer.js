@@ -71,28 +71,42 @@ class Drawer extends ASSETS.Asset {
 		const rd = params.roundDetail;
 		const bottomData = {
 			x: width, y: thickness, z: depth,
+			roundness: r,
+			segments: rd,
 			roundFaces: [ 1, 1, 1, 1, 1, 0 ]
 		};
 
 		const topData = {
 			x: width, y: thickness, z: depth,
+			roundness: r,
+			segments: rd,
+			relativeRoundness: false,
 			roundFaces: [ 1, 1, 1, 1, 0, 1 ]
 		};
 
 		const sideLData = {
 			x: thickness, y: height - 2*thickness, z: depth - thickness,
+			roundness: r,
+			segments: rd,
+			relativeRoundness: false,
 			faces: [ 1, 1, 1, 1, 0, 0 ],
 			roundFaces: [ 1, 1, 1, 0, 0, 0 ],
 		};
 
 		const sideRData = {
 			x: thickness, y: height - 2*thickness, z: depth - thickness,
+			roundness: r,
+			segments: rd,
+			relativeRoundness: false,
 			faces: [ 1, 1, 1, 1, 0, 0 ],
 			roundFaces: [ 1, 1, 0, 1, 0, 0 ],
 		};
 
 		const backData = {
 			x: width - 2 * thickness, y: height - 2 * thickness, z: thickness,
+			roundness: r,
+			segments: rd,
+			relativeRoundness: false,
 		};
 
 		const l = [];
@@ -106,35 +120,15 @@ class Drawer extends ASSETS.Asset {
 		packer.generateUV();
 
 
-		const bottom = new ASSETS.RoundedBoxGeometry(
-			bottomData.x, bottomData.y, bottomData.z,
-			rd, r, undefined,
-			bottomData.uvMatrix, bottomData.roundFaces, false
-		).translate( 0, thickness/2, 0 );
+		const bottom = new ASSETS.RoundedBoxGeometry( bottomData ).translate( 0, thickness/2, 0 );
 
-		const top = new ASSETS.RoundedBoxGeometry(
-			topData.x, topData.y, topData.z,
-			rd, r, undefined,
-			topData.uvMatrix, topData.roundFaces, false
-		).translate( 0, height - thickness/2, 0 );
+		const top = new ASSETS.RoundedBoxGeometry( topData ).translate( 0, height - thickness/2, 0 );
 
-		const sideL = new ASSETS.RoundedBoxGeometry(
-			sideLData.x, sideLData.y, sideLData.z,
-			rd, r, sideLData.faces,
-			sideLData.uvMatrix, sideLData.roundFaces, false
-		).translate( -width/2 + thickness / 2, height/2, -thickness/2 );
+		const sideL = new ASSETS.RoundedBoxGeometry( sideLData ).translate( -width/2 + thickness / 2, height/2, -thickness/2 );
 
-		const sideR = new ASSETS.RoundedBoxGeometry(
-			sideRData.x, sideRData.y, sideRData.z,
-			rd, r, sideRData.faces,
-			sideRData.uvMatrix, sideRData.roundFaces, false
-		).translate( width/2 - thickness/2, height/2, -thickness/2 );
+		const sideR = new ASSETS.RoundedBoxGeometry( sideRData ).translate( width/2 - thickness/2, height/2, -thickness/2 );
 
-		const back = new ASSETS.RoundedBoxGeometry(
-			backData.x, backData.y, backData.z,
-			rd, 0, undefined,
-			backData.uvMatrix, undefined, false
-		).translate( 0, height/2, -depth/2+thickness/2 );
+		const back = new ASSETS.RoundedBoxGeometry( backData ).translate( 0, height/2, -depth/2+thickness/2 );
 
 		const bodyGeom = BufferGeometryUtils.mergeGeometries(
 			[ top, bottom, sideL, sideR, back ]
@@ -189,7 +183,9 @@ class Drawer extends ASSETS.Asset {
 
 			const frontData = {
 				x: width, y: drawerHeight, z: thickness,
-				roundFaces: [ 1, 1, 1, 1, 1, 1 ]
+				roundFaces: [ 1, 1, 1, 1, 1, 1 ],
+				segments: params.doorRoundDetail,
+				roundness: simple? 0: params.doorRoundness,
 			};
 
 			const l = [];
@@ -207,35 +203,11 @@ class Drawer extends ASSETS.Asset {
 
 				const baseHeight = thickness + i * drawerHeight;
 				const open = params.openness * ( depth - 2 * thickness );
-				const back = new ASSETS.RoundedBoxGeometry(
-					backData.x, backData.y, backData.z,
-					undefined, undefined, backData.faces,
-					backData.uvMatrix
-				).translate( 0, drawerHeight/2, -depth/2 + thickness + thickness/2 );
-
-				const bottom = new ASSETS.RoundedBoxGeometry(
-					bottomData.x, bottomData.y, bottomData.z,
-					undefined, undefined, bottomData.faces,
-					bottomData.uvMatrix
-				).translate( 0, thickness/2, 0 );
-
-				const sideL = new ASSETS.RoundedBoxGeometry(
-					sideLData.x, sideLData.y, sideLData.z,
-					undefined, undefined, sideLData.faces,
-					sideLData.uvMatrix
-				).translate( -drawerWidth/2 + thickness/2, drawerHeight/2, thickness/2 );
-
-				const sideR = new ASSETS.RoundedBoxGeometry(
-					sideRData.x, sideRData.y, sideRData.z,
-					undefined, undefined, sideRData.faces,
-					sideRData.uvMatrix
-				).translate( drawerWidth/2 - thickness/2, drawerHeight/2, thickness/2 );
-
-				const front = new ASSETS.RoundedBoxGeometry(
-					frontData.x, frontData.y, frontData.z,
-					params.doorRoundDetail, simple ? 0 : params.doorRoundness, undefined,
-					frontData.uvMatrix, undefined, frontData.roundFaces
-				).translate( 0, drawerHeight/2, depth/2 - thickness/2 );
+				const back = new ASSETS.RoundedBoxGeometry( backData ).translate( 0, drawerHeight/2, -depth/2 + thickness + thickness/2 );
+				const bottom = new ASSETS.RoundedBoxGeometry( bottomData ).translate( 0, thickness/2, 0 );
+				const sideL = new ASSETS.RoundedBoxGeometry( sideLData ).translate( -drawerWidth/2 + thickness/2, drawerHeight/2, thickness/2 );
+				const sideR = new ASSETS.RoundedBoxGeometry( sideRData ).translate( drawerWidth/2 - thickness/2, drawerHeight/2, thickness/2 );
+				const front = new ASSETS.RoundedBoxGeometry( frontData ).translate( 0, drawerHeight/2, depth/2 - thickness/2 );
 
 				let meshes = [ back, bottom, sideL, sideR, front ];
 				const drawerGeom = BufferGeometryUtils.mergeGeometries( meshes );
@@ -295,4 +267,3 @@ class Drawer extends ASSETS.Asset {
 } // Drawer
 
 export { Drawer };
-

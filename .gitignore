@@ -10,3 +10,4 @@ online/temp.html
 
 paper/*
 !paper/paper.tex
+!paper/resume.tex

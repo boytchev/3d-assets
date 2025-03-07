@@ -1,6 +1,10 @@
 # 3D Assets
 
 
+## x.x.x
+* Fixed "Demo mugs"
+
+
 ## 0.8.0
 * Added "Bookshelf" in *bookshelf.js*
 * Added "Doorframe" in *doorframe.js*

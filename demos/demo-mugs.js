@@ -1,4 +1,5 @@
 ﻿import * as THREE from "three";
+import { uniform } from "three/tsl";
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import * as lil from "three/addons/libs/lil-gui.module.min.js";
 
@@ -59,14 +60,14 @@ var marbleParams = {
 	...marble.defaults,
 	scale: 3,
 	color: new THREE.Color( 'navy' ),
-	seed: THREE.uniform( 0 )
+	seed: uniform( 0 )
 };
 
 var camouflageParams = {
 	...camouflage.defaults,
 	scale: 4,
 	color: new THREE.Color( 'tomato' ),
-	seed: THREE.uniform( 0 )
+	seed: uniform( 0 )
 };
 
 var circlesParams = {
@@ -74,7 +75,7 @@ var circlesParams = {
 	scale: 2,
 	color: new THREE.Color( 'lightsalmon' ),
 	variety: 0.15,
-	seed: THREE.uniform( 0 )
+	seed: uniform( 0 )
 };
 
 var entangledParams = {
@@ -83,7 +84,7 @@ var entangledParams = {
 	density: 15,
 	color: new THREE.Color( 'white' ),
 	background: new THREE.Color( 'black' ),
-	seed: THREE.uniform( 0 )
+	seed: uniform( 0 )
 };
 
 

@@ -6,9 +6,12 @@ import { SimplexNoise } from "three/addons/math/SimplexNoise.js";
 // 3D assets
 import { Drawer } from "3d-assets/drawer.js";
 import { Wardrobe } from "3d-assets/wardrobe.js";
+import { RoundBox } from "3d-assets/round-box.js";
 
 // TSL textures
+import { karstRock } from "tsl-textures/karst-rock.js";
 import { processedWood } from "tsl-textures/processed-wood.js";
+import { caveArt } from "tsl-textures/cave-art.js";
 
 
 
@@ -99,6 +102,8 @@ for( var i=1; i<=4; i++ ) {
 	drawer[i] = drawer.getObjectByName(`Drawer_${i}`);
 }
 
+drawer.position.set( 0-0.43, -0.315, -0.2 );
+
 scene.add( drawer );
 
 var wardrobe =  new Wardrobe( {
@@ -114,9 +119,30 @@ for( var i=1; i<=2; i++ ) {
 	wardrobe[i] = wardrobe.getObjectByName(`Door_${i}`);
 }
 
-wardrobe.position.set( 0.65, -0.315, 0 );
+wardrobe.position.set( 0.65-0.43, -0.315, -0.2 );
 
 scene.add( wardrobe );
+
+
+// floor
+
+var floor = new RoundBox ({...RoundBox.defaults, x:2.5, y:0.05, z:1.5, r4: false, roundness: 0.41});
+var floorMaterial = new THREE.MeshPhysicalNodeMaterial({
+	roughness: 0.6,
+	metalness: 0.2,
+	colorNode: caveArt( {scale: 5, color:new THREE.Color('gray'), thinness: 3} ),
+});
+
+floor.traverse( e=>{
+	if( e.isMesh ) e.material = floorMaterial;
+});
+
+scene.add( floor );
+
+floor.position.y = -0.34;
+
+scene.add( floor );
+
 
 
 

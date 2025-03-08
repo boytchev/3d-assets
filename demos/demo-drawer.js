@@ -18,19 +18,38 @@ import { caveArt } from "tsl-textures/cave-art.js";
 // general setup, nothing interesting here
 
 var scene = new THREE.Scene();
-scene.background = new THREE.Color( 0x303030 );
+scene.background = new THREE.Color( 0x3030310 );
 
 var camera = new THREE.PerspectiveCamera( 30, innerWidth / innerHeight );
-camera.position.set( 1, 1.5, 3 );
+camera.position.set( 1, 1, 4 );
 
 var renderer = new THREE.WebGPURenderer( { antialias: true } );
 renderer.setSize( innerWidth, innerHeight );
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.VSMShadowMap;
 document.body.appendChild( renderer.domElement );
 
-var light = new THREE.DirectionalLight( "white", 2 );
-light.position.set( 1, 1, 1 );
-scene.add( light );
+var ambientLight = new THREE.AmbientLight( "white", 0.05 );
+scene.add( ambientLight );
 
+var light = new THREE.SpotLight( 'white', 2 );
+light.position.set( 1/2, 2, 2 );
+light.angle = 0.4;
+light.penumbra = 1;
+light.decay = 0.1;
+light.castShadow = true;
+light.shadow.intensity = 5;
+light.shadow.bias = -0.003;
+light.shadow.normalBias = 0.005;
+light.shadow.blurSamples = 10;
+light.shadow.radius = 1;
+
+light.shadow.mapSize.width = 1024;
+light.shadow.mapSize.height = 1024;
+light.shadow.camera.near = 2;
+light.shadow.camera.far = 4;
+scene.add( light );
+	
 var simplex = new SimplexNoise( );
 
 
@@ -102,7 +121,14 @@ for( var i=1; i<=4; i++ ) {
 	drawer[i] = drawer.getObjectByName(`Drawer_${i}`);
 }
 
-drawer.position.set( 0-0.43, -0.315, -0.2 );
+drawer.traverse( e=>{
+	if( e.isMesh ) {
+		e.castShadow = true;
+		e.receiveShadow = true;
+	}
+});
+
+drawer.position.set( 0-0.43, -0.515, -0.2 );
 
 scene.add( drawer );
 
@@ -119,7 +145,14 @@ for( var i=1; i<=2; i++ ) {
 	wardrobe[i] = wardrobe.getObjectByName(`Door_${i}`);
 }
 
-wardrobe.position.set( 0.65-0.43, -0.315, -0.2 );
+wardrobe.position.set( 0.65-0.43, -0.515, -0.2 );
+
+wardrobe.traverse( e=>{
+	if( e.isMesh ) {
+		e.castShadow = true;
+		e.receiveShadow = true;
+	}
+});
 
 scene.add( wardrobe );
 
@@ -134,12 +167,15 @@ var floorMaterial = new THREE.MeshPhysicalNodeMaterial({
 });
 
 floor.traverse( e=>{
-	if( e.isMesh ) e.material = floorMaterial;
+	if( e.isMesh ) {
+		e.material = floorMaterial;
+		e.receiveShadow = true;
+	}
 });
 
 scene.add( floor );
 
-floor.position.y = -0.34;
+floor.position.y = -0.54;
 
 scene.add( floor );
 
@@ -149,9 +185,6 @@ scene.add( floor );
 function animationLoop( t ) {
 
 	controls.update( );
-
-	light.position.copy( camera.position );
-	light.position.y += 0.1;
 
 	for( var i=1; i<=4; i++ ) {
 		drawer[i].position.z = (2-0.4*i)*Math.max(0, 0.3*simplex.noise(i,t/2000)-0.1);

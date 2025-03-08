@@ -1,6 +1,7 @@
 ﻿import * as THREE from "three";
 import { uniform } from "three/tsl";
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { SimplexNoise } from "three/addons/math/SimplexNoise.js";
 
 // 3D assets
 import { Drawer } from "3d-assets/drawer.js";
@@ -26,6 +27,8 @@ document.body.appendChild( renderer.domElement );
 var light = new THREE.DirectionalLight( "white", 2 );
 light.position.set( 1, 1, 1 );
 scene.add( light );
+
+var simplex = new SimplexNoise( );
 
 
 
@@ -93,14 +96,14 @@ drawer.getObjectByName( 'body' ).material = darkWood;
 for( var i=1; i<=4; i++ ) {
 	drawer.getObjectByName(`drawer_${i}`).material = brightWood();
 	drawer.getObjectByName(`handle_${i}`).material = darkMetal;
-	drawer.getObjectByName(`Drawer_${i}`).position.z = 0.25-0.05*i;
+	drawer[i] = drawer.getObjectByName(`Drawer_${i}`);
 }
 
 scene.add( drawer );
 
 var wardrobe =  new Wardrobe( {
 	...Wardrobe.defaults,
-	doorAngle: 75,
+	handleThickness: 1,
 } );
 
 wardrobe.getObjectByName( 'body' ).material = darkWood;
@@ -108,10 +111,10 @@ wardrobe.getObjectByName( 'body' ).material = darkWood;
 for( var i=1; i<=2; i++ ) {
 	wardrobe.getObjectByName(`door_${i}`).material = brightWood();
 	wardrobe.getObjectByName(`handle_${i}`).material = darkMetal;
-	wardrobe.getObjectByName(`Door_${i}`).position.z = 0.25-0.05*i;
+	wardrobe[i] = wardrobe.getObjectByName(`Door_${i}`);
 }
 
-wardrobe.position.set( 0.8, -0.315, 0 );
+wardrobe.position.set( 0.65, -0.315, 0 );
 
 scene.add( wardrobe );
 
@@ -123,6 +126,14 @@ function animationLoop( t ) {
 
 	light.position.copy( camera.position );
 	light.position.y += 0.1;
+
+	for( var i=1; i<=4; i++ ) {
+		drawer[i].position.z = (2-0.4*i)*Math.max(0, 0.3*simplex.noise(i,t/2000)-0.1);
+	}
+
+	for( var i=1; i<=2; i++ ) {
+		wardrobe[i].rotation.y = (i-1.5)*Math.max(0, 3*simplex.noise(-i,t/4000)+0.5);
+	}
 
 	renderer.render( scene, camera );
 

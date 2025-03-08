@@ -32,4 +32,17 @@ Textures work well on Chromium-based browsers or browsers that support WebGPU
 
 [<img src="https://boytchev.github.io/3d-assets/demos/demo-mugs.jpg">](https://boytchev.github.io/3d-assets/demos/demo-mugs.html)
 
+#### Demo with a drawer and a wardrobe
+
+Uses [drawer.js](https://boytchev.github.io/3d-assets/docs/drawer.html), 
+[wardrobe.js](https://boytchev.github.io/3d-assets/docs/wardrobe.html) and
+[round-box.js](https://boytchev.github.io/3d-assets/docs/round-box.html)
+to make a diorama scene. Floor and wood materials are
+[TSL Textures](https://boytchev.github.io/tsl-textures/).
+
+Textures work well on Chromium-based browsers or browsers that support WebGPU
+(at the time of writing this sentence, Firefox chokes on textures).
+
+[<img src="https://boytchev.github.io/3d-assets/demos/demo-drawer.jpg">](https://boytchev.github.io/3d-assets/demos/demo-drawer.html)
+
 

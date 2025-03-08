@@ -3,6 +3,7 @@
 
 ## x.x.x
 * Fixed "Demo mugs"
+* Added "Demo drawer"
 
 
 ## 0.8.0

@@ -90,13 +90,14 @@ class RoundBox extends ASSETS.Asset {
 			params.c5,
 		];
 
-		params.segments = simple ? 0 : params.roundDetail;
-		params.relativeRoundness = true;
-		params.faces = f;
-		params.roundFaces = r;
-		params.fillCenter = c;
-
-		this.box = new ASSETS.RoundedBoxGeometry( params );
+		this.box = new ASSETS.RoundedBoxGeometry( {
+			...params,
+			segments: simple ? 0 : params.roundDetail,
+			relativeRoundness: true,
+			faces: f,
+			roundFaces: r,
+			fillCenter: c,
+		} );
 
 		this.add( new THREE.Mesh( this.box, material ) );
 

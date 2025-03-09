@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import * as ASSETS from './assets-utils.js';
+import * as BP from './bin-packing.js';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 
 class Wardrobe extends ASSETS.Asset {
@@ -82,68 +83,20 @@ class Wardrobe extends ASSETS.Asset {
 		const backData = {
 			x: wingWidth * wings - 2 * thickness, y: height - 2 * thickness, z: thickness
 		};
-		const splitterData = {
-			x: thickness, y: height - 2 * thickness, z: depth - 2 * thickness,
-			faces: [ 1, 1, 1, 1, 0, 0 ]
-		};
-		const doorData = {
-			x: wingWidth, y: doorHeight, z: thickness,
-			segments: params.doorRoundDetail,
-			roundness: simple ? 0 : params.doorRoundness
-		};
-
-		const bottom = new ASSETS.RoundedBoxGeometry( bottomData )
-			.translate( 0, thickness/2, 0 );
-		const top = new ASSETS.RoundedBoxGeometry( topData )
-			.translate( 0, height - thickness/2, 0 );
-		const sideL = new ASSETS.RoundedBoxGeometry( sideLData )
-			.translate( -wingWidth/2 * wings + thickness / 2, height/2, -thickness/2 );
-		const sideR = new ASSETS.RoundedBoxGeometry( sideRData )
-			.translate( wingWidth/2 * wings - thickness/2, height/2, -thickness/2 );
-		const back = new ASSETS.RoundedBoxGeometry( backData )
-			.translate( 0, height/2, -depth/2+thickness/2 );
-
-		const splitters = [];
+		const splitterData = [];
 		if ( params.separateWings )
-			for ( let i = 0; i < wings-1; ++i ) {
-
-				const splitter = new ASSETS.RoundedBoxGeometry( splitterData )
-					.translate(
-						-wingWidth * wings/2 + ( i+1 ) * wingWidth,
-						height/2,
-						0
-					);
-				splitters.push( splitter );
-
-			}
-
-		if ( params.hangerRail ) {
-
-			const rail = new ASSETS.UVCylinderGeometry(
-				.01, .01, wings * wingWidth - 2 * thickness, 10, 1, true
-			).rotateZ( Math.PI/2 ).translate(
-				0, thickness + Math.min( hangerRailHeight, ( height - thickness ) * 0.9 ), 0
-			);
-			rail.uvIndex = 2;
-			this.rail = rail;
-
-			this.add( new THREE.Mesh( rail, material ) );
-
-		}
-
-		const bodyGeom = BufferGeometryUtils.mergeGeometries(
-			[ top, bottom, sideL, sideR, back ].concat( splitters )
-		);
-		this.bodyGeom = bodyGeom;
-		const body = new THREE.Mesh( bodyGeom, material );
-		body.name = 'body';
-		this.add( body );
-
-		top.dispose();
-		bottom.dispose();
-		sideL.dispose();
-		sideR.dispose();
-		for ( let s of splitters ) s.dispose();
+			for ( let i = 0; i < wings-1; ++i )
+				splitterData.push( {
+					x: thickness, y: height - 2 * thickness, z: depth - 2 * thickness,
+					faces: [ 1, 1, 1, 1, 0, 0 ]
+				} );
+		const doorData = [];
+		for ( let i = 0; i < wings; ++i )
+			doorData.push( {
+				x: wingWidth, y: doorHeight, z: thickness,
+				segments: params.doorRoundDetail,
+				roundness: simple ? 0 : params.doorRoundness
+			} );
 
 		const handleProfileShape = new ASSETS.RoundedShape([
 			[ 0, handleThickness ],
@@ -161,6 +114,87 @@ class Wardrobe extends ASSETS.Asset {
 			new THREE.Vector3( 0, -handleSize / 2, 0 )
 		);
 
+		const handleData ={
+			extrudePath: handleCurve,
+			steps: 10,
+			caps: [ 0, 0 ]
+		};
+
+		const railData = {
+			radiusTop: .01, radiusBottom: .01, height: wings * wingWidth - 2 * thickness,
+			radialSegments: 10, heightSegments: 1, openEnded: true
+		};
+
+
+		const l0 = [];
+		l0.push( ... ASSETS.RoundedBoxGeometry.getRectangles( topData ) );
+		l0.push( ... ASSETS.RoundedBoxGeometry.getRectangles( bottomData ) );
+		l0.push( ... ASSETS.RoundedBoxGeometry.getRectangles( sideLData ) );
+		l0.push( ... ASSETS.RoundedBoxGeometry.getRectangles( sideRData ) );
+		l0.push( ... ASSETS.RoundedBoxGeometry.getRectangles( backData ) );
+		for ( let d of doorData )
+			l0.push( ... ASSETS.RoundedBoxGeometry.getRectangles( d ) );
+		for ( let s of splitterData )
+			l0.push( ... ASSETS.RoundedBoxGeometry.getRectangles( s ) );
+
+		const packer = BP.minimalPacking( l0, 1 );
+		packer.generateUV();
+
+		const bottom = new ASSETS.RoundedBoxGeometry( bottomData )
+			.translate( 0, thickness/2, 0 );
+		const top = new ASSETS.RoundedBoxGeometry( topData )
+			.translate( 0, height - thickness/2, 0 );
+		const sideL = new ASSETS.RoundedBoxGeometry( sideLData )
+			.translate( -wingWidth/2 * wings + thickness / 2, height/2, -thickness/2 );
+		const sideR = new ASSETS.RoundedBoxGeometry( sideRData )
+			.translate( wingWidth/2 * wings - thickness/2, height/2, -thickness/2 );
+		const back = new ASSETS.RoundedBoxGeometry( backData )
+			.translate( 0, height/2, -depth/2+thickness/2 );
+
+		const splitters = [];
+		if ( params.separateWings )
+			for ( let i = 0; i < wings-1; ++i ) {
+
+				const splitter = new ASSETS.RoundedBoxGeometry( splitterData[ i ])
+					.translate(
+						-wingWidth * wings/2 + ( i+1 ) * wingWidth,
+						height/2,
+						0
+					);
+				splitters.push( splitter );
+
+			}
+
+		if ( params.hangerRail ) {
+
+			const rail = new ASSETS.UVCylinderGeometry(
+				railData
+			).rotateZ( Math.PI/2 ).translate(
+				0, thickness + Math.min( hangerRailHeight, ( height - thickness ) * 0.9 ), 0
+			);
+			rail.uvIndex = 2;
+			this.rail = rail;
+
+			this.add( new THREE.Mesh( rail, material ) );
+
+		}
+
+
+		const bodyGeom = BufferGeometryUtils.mergeGeometries(
+			[ top, bottom, sideL, sideR, back ].concat( splitters )
+		);
+		this.bodyGeom = bodyGeom;
+		const body = new THREE.Mesh( bodyGeom, material );
+		body.name = 'body';
+		this.add( body );
+
+		top.dispose();
+		bottom.dispose();
+		sideL.dispose();
+		sideR.dispose();
+		for ( let s of splitters ) s.dispose();
+
+
 		this.doors = [];
 		for ( let i = 0; i < wings; ++i ) {
 
@@ -170,7 +204,7 @@ class Wardrobe extends ASSETS.Asset {
 			const doorGroup = new THREE.Group();
 			doorGroup.name = 'Door_' + ( i+1 );
 
-			const doorGeometry = new ASSETS.RoundedBoxGeometry( doorData );
+			const doorGeometry = new ASSETS.RoundedBoxGeometry( doorData[ i ]);
 			this.doors.push( doorGeometry );
 			const door = new THREE.Mesh(
 				doorGeometry,
@@ -182,13 +216,7 @@ class Wardrobe extends ASSETS.Asset {
 
 			if ( !simple ) {
 
-				const handleGeometry = new ASSETS.SmoothExtrudeGeometry(
-					handleProfileShape, {
-						extrudePath: handleCurve,
-						steps: 10,
-						caps: [ 0, 0 ]
-					}
-				);
+				const handleGeometry = new ASSETS.SmoothExtrudeGeometry( handleProfileShape, handleData );
 				handleGeometry.uvIndex = 1;
 				this.doors.push( handleGeometry );
 

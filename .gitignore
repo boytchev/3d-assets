@@ -9,5 +9,3 @@ online/temp.html
 *.bkp
 
 paper/*
-!paper/paper.tex
-!paper/resume.tex

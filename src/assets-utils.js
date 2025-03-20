@@ -352,6 +352,13 @@ class RoundedBoxGeometry extends BufferGeometry {
 			!roundFaces[ 5 ] && ( ( !roundFaces[ 0 ]&&!roundFaces[ 1 ])||( !roundFaces[ 2 ]&&!roundFaces[ 3 ]) ),
 		];
 
+		const radius = relativeRoundness ? RoundedBoxGeometry.computeCurveRadius( x, y, z, roundness ) : roundness;
+
+		const skipCenter = [ 0, 0, 0 ];
+		if ( radius * 2 >= x ) detail[ 0 ] -= ( skipCenter[ 0 ] = 1 );
+		if ( radius * 2 >= y ) detail[ 1 ] -= ( skipCenter[ 1 ] = 1 );
+		if ( radius * 2 >= z ) detail[ 2 ] -= ( skipCenter[ 2 ] = 1 );
+
 		const vertexCount =
 			( simplify[ 0 ] ? 4 : faces[ 0 ] * ( detail[ 0 ]+1 ) * ( detail[ 1 ]+1 ) ) +
 			( simplify[ 1 ] ? 4 : faces[ 1 ] * ( detail[ 0 ]+1 ) * ( detail[ 1 ]+1 ) ) +
@@ -368,8 +375,6 @@ class RoundedBoxGeometry extends BufferGeometry {
 			( simplify[ 4 ] ? 1 : faces[ 4 ] * detail[ 2 ] * detail[ 0 ]) +
 			( simplify[ 5 ] ? 1 : faces[ 5 ] * detail[ 2 ] * detail[ 0 ])
 		;
-
-		const radius = relativeRoundness ? RoundedBoxGeometry.computeCurveRadius( x, y, z, roundness ) : roundness;
 
 		const vertices = new Float32Array( vertexCount * 3 );
 		const normals = new Float32Array( vertexCount * 3 );
@@ -484,13 +489,21 @@ class RoundedBoxGeometry extends BufferGeometry {
 
 							if ( i < ( seg * 2 + 1 ) / 2 )
 								vertex.x = i * radius / d - size[ axis0 ] / 2;
-							else
+							else {
+
+								if ( skipCenter[ perm[ axis0 ] ]) ++i;
 								vertex.x = size[ axis0 ] / 2 - radius + ( i-d-1 ) * radius / d;
+
+							}
 
 							if ( j < ( seg * 2 + 1 ) / 2 )
 								vertex.y = j * radius / d - size[ axis1 ] / 2;
-							else
+							else {
+
+								if ( skipCenter[ perm[ axis1 ] ]) ++j;
 								vertex.y = size[ axis1 ] / 2 - radius + ( j-d-1 ) * radius / d;
+
+							}
 
 							vertex.z = ( u - 0.5 ) * size[ axis2 ];
 

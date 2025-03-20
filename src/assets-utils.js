@@ -4,7 +4,7 @@
 
 
 
-import { Box2, BufferAttribute, BufferGeometry, Group, LatheGeometry, Line3, MathUtils, Matrix3, Matrix4, MeshPhysicalMaterial, RGBA_ASTC_10x5_Format, Shape, ShapeGeometry, Vector2, Vector3 } from 'three';
+import { Box2, BufferAttribute, BufferGeometry, Group, LatheGeometry, Line3, MathUtils, Matrix3, Matrix4, MeshPhysicalMaterial, /*RGBA_ASTC_10x5_Format,*/ Shape, ShapeGeometry, Vector2, Vector3 } from 'three';
 //import { MeshPhysicalNodeMaterial } from 'three/nodes';
 //import { marble } from "tsl-textures/marble.js";
 

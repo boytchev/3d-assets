@@ -355,9 +355,12 @@ class RoundedBoxGeometry extends BufferGeometry {
 		const radius = relativeRoundness ? RoundedBoxGeometry.computeCurveRadius( x, y, z, roundness ) : roundness;
 
 		const skipCenter = [ 0, 0, 0 ];
-		if ( radius * 2 >= x ) detail[ 0 ] -= ( skipCenter[ 0 ] = 1 );
-		if ( radius * 2 >= y ) detail[ 1 ] -= ( skipCenter[ 1 ] = 1 );
-		if ( radius * 2 >= z ) detail[ 2 ] -= ( skipCenter[ 2 ] = 1 );
+		if ( radius * 2 >= size[ 0 ] && roundFaces[ perm[ 1 ] * 2 ] && roundFaces[ perm[ 1 ] * 2 + 1 ])
+			detail[ perm[ 0 ] ] -= ( skipCenter[ perm[ 0 ] ] = 1 );
+		if ( radius * 2 >= size[ 1 ] && roundFaces[ perm[ 2 ] * 2 ] && roundFaces[ perm[ 2 ] * 2 + 1 ])
+			detail[ perm[ 1 ] ] -= ( skipCenter[ perm[ 1 ] ] = 1 );
+		if ( radius * 2 >= size[ 2 ] && roundFaces[ perm[ 0 ] * 2 ] && roundFaces[ perm[ 0 ] * 2 + 1 ])
+			detail[ perm[ 2 ] ] -= ( skipCenter[ perm[ 2 ] ] = 1 );
 
 		const vertexCount =
 			( simplify[ 0 ] ? 4 : faces[ 0 ] * ( detail[ 0 ]+1 ) * ( detail[ 1 ]+1 ) ) +

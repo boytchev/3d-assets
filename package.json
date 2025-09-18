@@ -23,7 +23,8 @@
     "package.json",
     "package-lock.json",
     "README.md",
-    "src"
+    "src",
+	"index.js"
   ],
   "license": "MIT",
   "bugs": {
